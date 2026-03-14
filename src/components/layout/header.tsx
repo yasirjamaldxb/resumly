@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 const navLinks = [
   {
@@ -27,17 +26,23 @@ const navLinks = [
       { label: 'View All Examples', href: '/resume-examples' },
     ],
   },
-  { label: 'Cover Letter', href: '/cover-letter-builder' },
-  { label: 'ATS Checker', href: '/ats-checker' },
+  {
+    label: 'Cover Letter',
+    href: '/cover-letter-builder',
+    dropdown: [
+      { label: 'Cover Letter Builder', href: '/cover-letter-builder' },
+      { label: 'Cover Letter Examples', href: '/blog/cover-letter-tips' },
+    ],
+  },
+  { label: 'FAQ', href: '/#faq' },
   {
     label: 'Resources',
     href: '/blog',
     dropdown: [
       { label: 'How to Write a Resume', href: '/blog/how-to-write-a-resume' },
       { label: 'ATS Resume Guide', href: '/blog/ats-resume-guide' },
-      { label: 'Resume Tips 2025', href: '/blog/resume-tips' },
       { label: 'AI Resume Builder', href: '/ai-resume-builder' },
-      { label: 'All Guides →', href: '/blog' },
+      { label: 'All Guides', href: '/blog' },
     ],
   },
 ];
@@ -47,47 +52,48 @@ export function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="flex items-center justify-between h-[72px]">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">R</span>
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <svg className="w-4.5 h-4.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+              </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">
-              resumly<span className="text-blue-600">.app</span>
+            <span className="text-[22px] font-bold text-neutral-90 tracking-tight">
+              resumly<span className="text-primary">.app</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navLinks.map((link) => (
-              <div key={link.label} className="relative group">
+              <div
+                key={link.label}
+                className="relative"
+                onMouseEnter={() => link.dropdown && setOpenDropdown(link.label)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
                 <Link
                   href={link.href}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                  onMouseEnter={() => link.dropdown && setOpenDropdown(link.label)}
-                  onMouseLeave={() => setOpenDropdown(null)}
+                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-neutral-70 hover:text-neutral-90 transition-colors"
                 >
                   {link.label}
                   {link.dropdown && (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3.5 h-3.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
                 </Link>
                 {link.dropdown && openDropdown === link.label && (
-                  <div
-                    className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50"
-                    onMouseEnter={() => setOpenDropdown(link.label)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
+                  <div className="absolute top-full left-0 mt-0 w-56 bg-white rounded-lg shadow-xl border border-neutral-20 py-2 z-50">
                     {link.dropdown.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        className="block px-4 py-2.5 text-[14px] text-neutral-60 hover:text-primary hover:bg-primary-light transition-colors"
                       >
                         {item.label}
                       </Link>
@@ -99,18 +105,18 @@ export function Header() {
           </nav>
 
           {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+          <div className="hidden lg:flex items-center gap-4">
+            <Link href="/auth/login" className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors">
               Sign in
             </Link>
-            <Button size="md" asChild>
-              <Link href="/resume-builder">Build My Resume</Link>
+            <Button size="md" variant="outline" asChild>
+              <Link href="/resume-builder">My Account</Link>
             </Button>
           </div>
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -128,23 +134,23 @@ export function Header() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-gray-100 py-3 space-y-1">
+          <div className="lg:hidden border-t border-neutral-20 py-4 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg"
+                className="block px-3 py-2.5 text-[15px] font-medium text-neutral-70 hover:text-primary rounded-lg"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 flex flex-col gap-2">
-              <Link href="/auth/login" className="block px-3 py-2 text-sm font-medium text-gray-700">
+            <div className="pt-4 flex flex-col gap-2 px-3">
+              <Link href="/auth/login" className="block py-2 text-[15px] font-medium text-neutral-70">
                 Sign in
               </Link>
-              <Button size="md" className="mx-3" asChild>
-                <Link href="/resume-builder">Build My Resume</Link>
+              <Button size="lg" asChild>
+                <Link href="/resume-builder">Create my resume</Link>
               </Button>
             </div>
           </div>
