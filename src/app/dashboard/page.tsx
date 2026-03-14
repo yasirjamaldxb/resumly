@@ -56,7 +56,7 @@ export default async function DashboardPage() {
           {[
             { label: 'Resumes', value: resumes?.length || 0, icon: '📄' },
             { label: 'ATS Ready', value: resumes?.length || 0, icon: '✅' },
-            { label: 'Templates', value: 6, icon: '🎨' },
+            { label: 'Templates', value: 10, icon: '🎨' },
             { label: 'Downloads', value: 0, icon: '⬇️' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">

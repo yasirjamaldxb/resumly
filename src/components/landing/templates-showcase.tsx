@@ -2,12 +2,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 const templates = [
-  { id: 'ats-pro', name: 'ATS Pro', category: 'Functional', users: '2,200,000+', color: '#1a91f0' },
-  { id: 'modern', name: 'Modern', category: "Today's job", users: '1,800,000+', color: '#7c3aed' },
+  { id: 'ats-pro', name: 'ATS Pro', category: 'ATS Optimized', users: '2,200,000+', color: '#1a91f0' },
+  { id: 'modern', name: 'Modern', category: 'Sidebar', users: '1,800,000+', color: '#7c3aed' },
   { id: 'professional', name: 'Professional', category: 'Classic', users: '1,500,000+', color: '#1e3a5f' },
-  { id: 'minimal', name: 'Minimal', category: 'Compact', users: '900,000+', color: '#0d9488' },
-  { id: 'executive', name: 'Executive', category: 'Professional', users: '750,000+', color: '#16a34a' },
-  { id: 'creative', name: 'Creative', category: 'Prime ATS', users: '600,000+', color: '#ea580c' },
+  { id: 'minimal', name: 'Minimal', category: 'Clean', users: '900,000+', color: '#0d9488' },
+  { id: 'executive', name: 'Executive', category: 'Leadership', users: '750,000+', color: '#16a34a' },
+  { id: 'compact', name: 'Compact', category: 'Dense', users: '680,000+', color: '#2563eb' },
+  { id: 'elegant', name: 'Elegant', category: 'Refined', users: '540,000+', color: '#8b5cf6' },
+  { id: 'technical', name: 'Technical', category: 'Engineering', users: '470,000+', color: '#2d3748' },
+  { id: 'classic', name: 'Classic', category: 'Traditional', users: '420,000+', color: '#374151' },
+  { id: 'creative', name: 'Creative', category: 'Sidebar', users: '600,000+', color: '#ea580c' },
 ];
 
 function TemplateMockup({ color }: { color: string }) {
@@ -54,7 +58,7 @@ export function TemplatesShowcase() {
           Pick from our collection of beautiful, recruiter-tested templates. Download to PDF in one click.
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-14">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 mb-14">
           {templates.map((t) => (
             <Link key={t.id} href={`/resume-templates#${t.id}`} className="group block">
               <TemplateMockup color={t.color} />
