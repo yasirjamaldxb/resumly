@@ -77,22 +77,32 @@ export default function BuilderPage() {
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const res = await fetch('/api/resume/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resumeData),
+      const el = document.getElementById('resume-preview');
+      if (!el) throw new Error('Preview not found');
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: 794,
       });
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${resumeData.personalDetails.firstName || 'resume'}-${resumeData.personalDetails.lastName || ''}-resume.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let position = 0;
+      // Handle multi-page resumes
+      while (position < pdfHeight) {
+        if (position > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
+        position += pageHeight;
       }
+      const firstName = resumeData.personalDetails.firstName || 'resume';
+      const lastName = resumeData.personalDetails.lastName || '';
+      pdf.save(`${firstName}-${lastName}-resume.pdf`.replace(/\s+/g, '-'));
     } catch {
-      // Fallback: print
       window.print();
     } finally {
       setDownloading(false);
