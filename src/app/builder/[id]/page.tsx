@@ -79,34 +79,62 @@ export default function BuilderPage() {
     try {
       const el = document.getElementById('resume-preview');
       if (!el) throw new Error('Preview not found');
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        windowWidth: 794,
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      let position = 0;
-      // Handle multi-page resumes
-      while (position < pdfHeight) {
-        if (position > 0) pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
-        position += pageHeight;
-      }
+
       const firstName = resumeData.personalDetails.firstName || 'resume';
       const lastName = resumeData.personalDetails.lastName || '';
-      pdf.save(`${firstName}-${lastName}-resume.pdf`.replace(/\s+/g, '-'));
+      const filename = `${firstName}-${lastName}-resume.pdf`.replace(/\s+/g, '-');
+
+      // Server-side PDF generation (text-based, ATS-friendly)
+      const response = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: el.outerHTML }),
+      });
+
+      if (response.ok && response.headers.get('content-type')?.includes('application/pdf')) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        // Fallback: browser print (also produces text-based PDF)
+        printResumeFallback(el);
+      }
     } catch {
-      window.print();
+      // Fallback: browser print
+      const el = document.getElementById('resume-preview');
+      if (el) printResumeFallback(el);
+      else window.print();
     } finally {
       setDownloading(false);
     }
+  };
+
+  const printResumeFallback = (el: HTMLElement) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) { window.print(); return; }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Resume</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            @page { size: A4; margin: 0; }
+            body { width: 794px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @media print { body { width: 794px; } }
+          </style>
+        </head>
+        <body>${el.outerHTML}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 300);
   };
 
   const currentStep = STEPS[step - 1];
