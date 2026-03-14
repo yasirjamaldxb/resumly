@@ -28,43 +28,59 @@ export function ProfessionalTemplate({ data, scale = 1 }: Props) {
       }}
     >
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: `${16 * scale}px` }}>
-        {fullName && (
-          <h1
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: `${16 * scale}px`, marginBottom: `${16 * scale}px` }}>
+        {p.photo && (
+          <img
+            src={p.photo}
+            alt=""
             style={{
-              fontSize: `${26 * scale}px`,
-              fontWeight: 700,
-              margin: 0,
-              color: '#1a1a1a',
-              letterSpacing: '0.02em',
+              width: `${65 * scale}px`,
+              height: `${65 * scale}px`,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: `${2 * scale}px solid ${data.colorScheme}`,
+              flexShrink: 0,
             }}
-          >
-            {fullName}
-          </h1>
+          />
         )}
-        {p.jobTitle && (
-          <p
-            style={{
-              fontSize: `${12 * scale}px`,
-              color: '#555',
-              margin: `${4 * scale}px 0 0`,
-              fontStyle: 'italic',
-            }}
-          >
-            {p.jobTitle}
-          </p>
-        )}
-        {contactParts.length > 0 && (
-          <p
-            style={{
-              fontSize: `${10 * scale}px`,
-              color: '#666',
-              margin: `${8 * scale}px 0 0`,
-            }}
-          >
-            {contactParts.join(' | ')}
-          </p>
-        )}
+        <div style={{ textAlign: 'center' }}>
+          {fullName && (
+            <h1
+              style={{
+                fontSize: `${26 * scale}px`,
+                fontWeight: 700,
+                margin: 0,
+                color: '#1a1a1a',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {fullName}
+            </h1>
+          )}
+          {p.jobTitle && (
+            <p
+              style={{
+                fontSize: `${12 * scale}px`,
+                color: '#555',
+                margin: `${4 * scale}px 0 0`,
+                fontStyle: 'italic',
+              }}
+            >
+              {p.jobTitle}
+            </p>
+          )}
+          {contactParts.length > 0 && (
+            <p
+              style={{
+                fontSize: `${10 * scale}px`,
+                color: '#666',
+                margin: `${8 * scale}px 0 0`,
+              }}
+            >
+              {contactParts.join(' | ')}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Summary */}

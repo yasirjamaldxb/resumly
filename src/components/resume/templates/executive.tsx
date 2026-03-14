@@ -44,43 +44,59 @@ export function ExecutiveTemplate({ data, scale = 1 }: Props) {
         }}
       >
         {/* Header */}
-        <div style={{ marginBottom: `${12 * scale}px` }}>
-          {fullName && (
-            <h1
+        <div style={{ marginBottom: `${12 * scale}px`, display: 'flex', alignItems: 'center', gap: `${16 * scale}px` }}>
+          {p.photo && (
+            <img
+              src={p.photo}
+              alt=""
               style={{
-                fontSize: `${26 * scale}px`,
-                fontWeight: 700,
-                margin: 0,
-                color: '#1a1a1a',
-                letterSpacing: '-0.01em',
+                width: `${70 * scale}px`,
+                height: `${70 * scale}px`,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: `${3 * scale}px solid ${data.colorScheme}`,
+                flexShrink: 0,
               }}
-            >
-              {fullName}
-            </h1>
+            />
           )}
-          {p.jobTitle && (
-            <p
-              style={{
-                fontSize: `${13 * scale}px`,
-                color: data.colorScheme,
-                fontWeight: 600,
-                margin: `${4 * scale}px 0 0`,
-              }}
-            >
-              {p.jobTitle}
-            </p>
-          )}
-          {contactParts.length > 0 && (
-            <p
-              style={{
-                fontSize: `${9.5 * scale}px`,
-                color: '#666',
-                margin: `${8 * scale}px 0 0`,
-              }}
-            >
-              {contactParts.join('  |  ')}
-            </p>
-          )}
+          <div>
+            {fullName && (
+              <h1
+                style={{
+                  fontSize: `${26 * scale}px`,
+                  fontWeight: 700,
+                  margin: 0,
+                  color: '#1a1a1a',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {fullName}
+              </h1>
+            )}
+            {p.jobTitle && (
+              <p
+                style={{
+                  fontSize: `${13 * scale}px`,
+                  color: data.colorScheme,
+                  fontWeight: 600,
+                  margin: `${4 * scale}px 0 0`,
+                }}
+              >
+                {p.jobTitle}
+              </p>
+            )}
+            {contactParts.length > 0 && (
+              <p
+                style={{
+                  fontSize: `${9.5 * scale}px`,
+                  color: '#666',
+                  margin: `${8 * scale}px 0 0`,
+                }}
+              >
+                {contactParts.join('  |  ')}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Horizontal rule */}

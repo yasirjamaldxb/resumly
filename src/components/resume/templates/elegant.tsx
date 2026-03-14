@@ -45,6 +45,21 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
           textAlign: 'center',
         }}
       >
+        {p.photo && (
+          <div style={{ marginBottom: `${10 * scale}px` }}>
+            <img
+              src={p.photo}
+              alt=""
+              style={{
+                width: `${80 * scale}px`,
+                height: `${80 * scale}px`,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: `${3 * scale}px solid ${data.colorScheme}`,
+              }}
+            />
+          </div>
+        )}
         {fullName && (
           <h1
             style={{

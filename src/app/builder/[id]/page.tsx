@@ -30,9 +30,41 @@ export default function BuilderPage() {
   const [previewVisible, setPreviewVisible] = useState(true);
   const [saving, setSaving] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [atsScore, setAtsScore] = useState(0);
   const previewRef = useRef<HTMLDivElement>(null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load saved resume data from Supabase
+  useEffect(() => {
+    const loadResume = async () => {
+      const resumeId = params.id as string;
+      if (!resumeId || resumeId === 'new') {
+        setLoading(false);
+        return;
+      }
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoading(false); return; }
+        const { data: resume } = await supabase
+          .from('resumes')
+          .select('*')
+          .eq('id', resumeId)
+          .eq('user_id', user.id)
+          .single();
+        if (resume?.resume_data) {
+          const saved = resume.resume_data as ResumeData;
+          setResumeData({ ...saved, id: resume.id });
+        }
+      } catch {
+        // If loading fails, start with empty resume
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadResume();
+  }, [params.id]);
 
   // Auto-calculate ATS score
   useEffect(() => {
@@ -138,6 +170,17 @@ export default function BuilderPage() {
   };
 
   const currentStep = STEPS[step - 1];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">Loading your resume...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

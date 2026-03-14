@@ -8,6 +8,7 @@ export interface PersonalDetails {
   linkedIn: string;
   website: string;
   summary: string;
+  photo?: string;
 }
 
 export interface WorkExperience {
@@ -193,6 +194,7 @@ export const emptyResume = (): ResumeData => ({
     linkedIn: '',
     website: '',
     summary: '',
+    photo: '',
   },
   workExperience: [],
   education: [],

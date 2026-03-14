@@ -224,6 +224,23 @@ export function CreativeTemplate({ data, scale = 1 }: Props) {
           padding: `${30 * scale}px ${18 * scale}px`,
         }}
       >
+        {/* Photo */}
+        {p.photo && (
+          <div style={{ textAlign: 'center', marginBottom: `${12 * scale}px` }}>
+            <img
+              src={p.photo}
+              alt=""
+              style={{
+                width: `${80 * scale}px`,
+                height: `${80 * scale}px`,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: `${3 * scale}px solid ${data.colorScheme}`,
+              }}
+            />
+          </div>
+        )}
+
         {/* Contact */}
         {contactItems.length > 0 && (
           <SidebarSection title="Contact" color={data.colorScheme} scale={scale}>
