@@ -42,20 +42,20 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+      <div className="bg-white rounded-2xl shadow-sm border border-neutral-20 p-8 text-center">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Check your email!</h2>
-        <p className="text-gray-600 text-sm">We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.</p>
+        <h2 className="text-xl font-bold text-neutral-90 mb-2">Check your email!</h2>
+        <p className="text-neutral-50 text-sm">We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    <div className="bg-white rounded-2xl shadow-sm border border-neutral-20 p-8">
       <Button variant="outline" size="lg" className="w-full gap-3 mb-6" onClick={handleGoogle}>
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -68,10 +68,10 @@ export function SignupForm() {
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-neutral-20" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 text-gray-500">or</span>
+          <span className="bg-white px-3 text-neutral-40">or</span>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export function SignupForm() {
         <Button type="submit" size="lg" loading={loading} className="w-full">
           Create Free Account
         </Button>
-        <p className="text-xs text-center text-gray-500">
+        <p className="text-xs text-center text-neutral-40">
           By creating an account, you agree to our{' '}
           <a href="/terms" className="underline">Terms</a> and{' '}
           <a href="/privacy" className="underline">Privacy Policy</a>.

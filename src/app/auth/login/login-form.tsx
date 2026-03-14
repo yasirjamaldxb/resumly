@@ -42,7 +42,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    <div className="bg-white rounded-2xl shadow-sm border border-neutral-20 p-8">
       <Button
         variant="outline"
         size="lg"
@@ -61,10 +61,10 @@ export function LoginForm() {
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-neutral-20" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 text-gray-500">or</span>
+          <span className="bg-white px-3 text-neutral-40">or</span>
         </div>
       </div>
 

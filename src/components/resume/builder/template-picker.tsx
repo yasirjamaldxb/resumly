@@ -98,8 +98,8 @@ export function TemplatePicker({ data, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Choose Template</h2>
-        <p className="text-sm text-gray-500">All templates are ATS-optimized. Your content, beautifully presented.</p>
+        <h2 className="text-lg font-semibold text-neutral-90 mb-1">Choose Template</h2>
+        <p className="text-sm text-neutral-50">All templates are ATS-optimized. Your content, beautifully presented.</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-3">
@@ -112,26 +112,26 @@ export function TemplatePicker({ data, onChange }: Props) {
               className={cn(
                 'relative rounded-xl border-2 p-2.5 text-left transition-all',
                 isSelected
-                  ? 'border-blue-600 bg-blue-50 shadow-md'
-                  : 'border-gray-200 hover:border-blue-300 bg-white'
+                  ? 'border-primary bg-primary-light shadow-md'
+                  : 'border-neutral-20 hover:border-primary bg-white'
               )}
             >
               {template.popular && (
-                <span className="absolute top-1.5 right-1.5 bg-blue-600 text-white text-[10px] font-medium px-1.5 py-0.5 rounded-full z-10">
+                <span className="absolute top-1.5 right-1.5 bg-primary text-white text-[10px] font-medium px-1.5 py-0.5 rounded-full z-10">
                   Popular
                 </span>
               )}
               {/* Template preview */}
-              <div className="w-full aspect-[0.75] bg-white rounded-lg border border-gray-200 overflow-hidden mb-2">
+              <div className="w-full aspect-[0.75] bg-white rounded-lg border border-neutral-20 overflow-hidden mb-2">
                 <TemplateMiniPreview templateId={template.id} color={data.colorScheme} selected={isSelected} />
               </div>
               <div>
-                <p className="font-semibold text-xs text-gray-900">{template.name}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5 line-clamp-1">{template.description}</p>
+                <p className="font-semibold text-xs text-neutral-90">{template.name}</p>
+                <p className="text-[10px] text-neutral-50 mt-0.5 line-clamp-1">{template.description}</p>
               </div>
               <div className="mt-1.5 flex items-center gap-1">
                 <div className={cn('w-1.5 h-1.5 rounded-full', template.atsScore >= 95 ? 'bg-green-500' : template.atsScore >= 85 ? 'bg-green-400' : 'bg-yellow-500')} />
-                <span className="text-[10px] text-gray-600">{template.atsScore}% ATS</span>
+                <span className="text-[10px] text-neutral-60">{template.atsScore}% ATS</span>
               </div>
             </button>
           );
@@ -140,7 +140,7 @@ export function TemplatePicker({ data, onChange }: Props) {
 
       {/* Color picker */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Accent Color</h3>
+        <h3 className="text-sm font-semibold text-neutral-90 mb-3">Accent Color</h3>
         <div className="flex flex-wrap gap-2">
           {COLORS.map((color) => (
             <button
@@ -148,7 +148,7 @@ export function TemplatePicker({ data, onChange }: Props) {
               onClick={() => onChange({ ...data, colorScheme: color.value })}
               className={cn(
                 'w-8 h-8 rounded-full border-2 transition-transform hover:scale-110',
-                data.colorScheme === color.value ? 'border-gray-900 scale-110' : 'border-transparent'
+                data.colorScheme === color.value ? 'border-neutral-90 scale-110' : 'border-transparent'
               )}
               style={{ backgroundColor: color.value }}
               title={color.name}
@@ -160,10 +160,10 @@ export function TemplatePicker({ data, onChange }: Props) {
               type="color"
               value={data.colorScheme}
               onChange={(e) => onChange({ ...data, colorScheme: e.target.value })}
-              className="w-8 h-8 rounded-full border-2 border-gray-200 cursor-pointer"
+              className="w-8 h-8 rounded-full border-2 border-neutral-20 cursor-pointer"
               title="Custom color"
             />
-            <span className="text-xs text-gray-500">Custom</span>
+            <span className="text-xs text-neutral-50">Custom</span>
           </div>
         </div>
       </div>

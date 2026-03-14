@@ -99,13 +99,13 @@ export function SkillsForm({ data, onChange }: Props) {
       {/* Skills */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Skills</h2>
-          <p className="text-sm text-gray-500">Add relevant skills that match your target job description.</p>
+          <h2 className="text-lg font-semibold text-neutral-90 mb-1">Skills</h2>
+          <p className="text-sm text-neutral-50">Add relevant skills that match your target job description.</p>
         </div>
 
         <div className="flex gap-2">
           <input
-            className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 text-sm border border-neutral-30 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="Type a skill and press Enter..."
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
@@ -131,18 +131,18 @@ export function SkillsForm({ data, onChange }: Props) {
         {data.skills.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill) => (
-              <div key={skill.id} className="flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg px-2.5 py-1 text-sm">
+              <div key={skill.id} className="flex items-center gap-1.5 bg-primary-light border border-primary text-primary-dark rounded-lg px-2.5 py-1 text-sm">
                 <span>{skill.name}</span>
                 <select
                   value={skill.level}
                   onChange={(e) => updateSkillLevel(skill.id, e.target.value as Skill['level'])}
-                  className="text-xs bg-transparent border-none outline-none text-blue-600 cursor-pointer"
+                  className="text-xs bg-transparent border-none outline-none text-primary cursor-pointer"
                 >
                   {SKILL_LEVELS.map((l) => (
                     <option key={l} value={l}>{l}</option>
                   ))}
                 </select>
-                <button onClick={() => removeSkill(skill.id)} className="text-blue-400 hover:text-red-500 ml-0.5">×</button>
+                <button onClick={() => removeSkill(skill.id)} className="text-primary hover:text-red-500 ml-0.5">×</button>
               </div>
             ))}
           </div>
@@ -151,13 +151,13 @@ export function SkillsForm({ data, onChange }: Props) {
         {/* Suggestions */}
         {suggestions.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-2">Common skills — click to add:</p>
+            <p className="text-xs text-neutral-50 mb-2">Common skills — click to add:</p>
             <div className="flex flex-wrap gap-1.5">
               {suggestions.slice(0, 10).map((s) => (
                 <button
                   key={s}
                   onClick={() => addSkill(s)}
-                  className="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-600 rounded-lg px-2.5 py-1 border border-gray-200 hover:border-blue-300 transition-colors"
+                  className="text-xs bg-neutral-10 hover:bg-primary-light hover:text-primary-dark text-neutral-60 rounded-lg px-2.5 py-1 border border-neutral-20 hover:border-primary transition-colors"
                 >
                   + {s}
                 </button>
@@ -171,14 +171,14 @@ export function SkillsForm({ data, onChange }: Props) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-semibold text-gray-900 mb-1">Certifications</h3>
-            <p className="text-sm text-gray-500">Add relevant certifications and licenses.</p>
+            <h3 className="text-base font-semibold text-neutral-90 mb-1">Certifications</h3>
+            <p className="text-sm text-neutral-50">Add relevant certifications and licenses.</p>
           </div>
           <Button variant="outline" size="sm" onClick={addCert}>+ Add</Button>
         </div>
 
         {data.certifications.map((cert) => (
-          <div key={cert.id} className="border border-gray-200 rounded-xl p-4 space-y-3 bg-white">
+          <div key={cert.id} className="border border-neutral-20 rounded-xl p-4 space-y-3 bg-white">
             <div className="flex justify-between items-start">
               <Input
                 label="Certification Name"
@@ -187,7 +187,7 @@ export function SkillsForm({ data, onChange }: Props) {
                 onChange={(e) => updateCert(cert.id, 'name', e.target.value)}
                 className="flex-1 mr-2"
               />
-              <button onClick={() => removeCert(cert.id)} className="text-gray-400 hover:text-red-500 mt-6">
+              <button onClick={() => removeCert(cert.id)} className="text-neutral-40 hover:text-red-500 mt-6">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -215,8 +215,8 @@ export function SkillsForm({ data, onChange }: Props) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-semibold text-gray-900 mb-1">Languages</h3>
-            <p className="text-sm text-gray-500">List languages you speak and your proficiency level.</p>
+            <h3 className="text-base font-semibold text-neutral-90 mb-1">Languages</h3>
+            <p className="text-sm text-neutral-50">List languages you speak and your proficiency level.</p>
           </div>
           <Button variant="outline" size="sm" onClick={addLang}>+ Add</Button>
         </div>
@@ -231,18 +231,18 @@ export function SkillsForm({ data, onChange }: Props) {
               className="flex-1"
             />
             <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-sm font-medium text-gray-700">Proficiency</label>
+              <label className="text-sm font-medium text-neutral-70">Proficiency</label>
               <select
                 value={lang.proficiency}
                 onChange={(e) => updateLang(lang.id, 'proficiency', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-neutral-30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {LANG_LEVELS.map((l) => (
                   <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>
                 ))}
               </select>
             </div>
-            <button onClick={() => removeLang(lang.id)} className="text-gray-400 hover:text-red-500 mb-2">
+            <button onClick={() => removeLang(lang.id)} className="text-neutral-40 hover:text-red-500 mb-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>

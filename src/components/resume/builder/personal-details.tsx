@@ -88,22 +88,22 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Personal Details</h2>
-        <p className="text-sm text-gray-500">This information appears at the top of your resume.</p>
+        <h2 className="text-lg font-semibold text-neutral-90 mb-1">Personal Details</h2>
+        <p className="text-sm text-neutral-50">This information appears at the top of your resume.</p>
       </div>
 
       {/* Photo Upload */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Profile Photo <span className="text-gray-400 font-normal">(optional)</span></label>
+        <label className="text-sm font-medium text-neutral-70">Profile Photo <span className="text-neutral-40 font-normal">(optional)</span></label>
         <div className="flex items-center gap-4">
           <div
-            className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50 flex-shrink-0 cursor-pointer hover:border-blue-400 transition-colors"
+            className="w-20 h-20 rounded-full border-2 border-dashed border-neutral-30 flex items-center justify-center overflow-hidden bg-neutral-10 flex-shrink-0 cursor-pointer hover:border-primary transition-colors"
             onClick={() => fileInputRef.current?.click()}
           >
             {p.photo ? (
               <img src={p.photo} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-8 h-8 text-neutral-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             )}
@@ -112,7 +112,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 text-left"
+              className="text-sm font-medium text-primary hover:text-primary-dark text-left"
             >
               {p.photo ? 'Change photo' : 'Upload photo'}
             </button>
@@ -125,7 +125,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
                 Remove
               </button>
             )}
-            <p className="text-xs text-gray-400">JPG, PNG. Max 5MB. Shows on supported templates.</p>
+            <p className="text-xs text-neutral-40">JPG, PNG. Max 5MB. Shows on supported templates.</p>
           </div>
           <input
             ref={fileInputRef}
@@ -201,7 +201,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Professional Summary</label>
+          <label className="text-sm font-medium text-neutral-70">Professional Summary</label>
           <Button
             variant="outline"
             size="sm"

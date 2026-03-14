@@ -173,25 +173,25 @@ export default function BuilderPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-10 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Loading your resume...</p>
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-neutral-60 font-medium">Loading your resume...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-neutral-10 flex flex-col">
       {/* Top bar */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-white border-b border-neutral-20 sticky top-0 z-40">
         <div className="max-w-full px-4 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
+            <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
               <span className="text-white font-bold text-xs">R</span>
             </div>
-            <span className="font-bold text-gray-900 hidden sm:block">resumly.app</span>
+            <span className="font-bold text-neutral-90 hidden sm:block">resumly.app</span>
           </Link>
 
           {/* Step progress */}
@@ -203,16 +203,16 @@ export default function BuilderPage() {
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
                   step === i + 1
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-white'
                     : step > i + 1
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-500 hover:bg-gray-100'
+                    ? 'bg-primary-light text-primary-dark'
+                    : 'text-neutral-50 hover:bg-neutral-10'
                 )}
               >
                 <span>{s.icon}</span>
                 <span className="hidden sm:inline">{s.label}</span>
                 {i < STEPS.length - 1 && (
-                  <svg className="w-3 h-3 text-gray-300 ml-1 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3 h-3 text-neutral-30 ml-1 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 )}
@@ -222,14 +222,14 @@ export default function BuilderPage() {
 
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* ATS Score */}
-            <div className="hidden sm:flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
+            <div className="hidden sm:flex items-center gap-2 bg-neutral-10 rounded-lg px-3 py-1.5">
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: atsScore >= 80 ? '#22c55e' : atsScore >= 50 ? '#f59e0b' : '#ef4444' }} />
-              <span className="text-xs font-medium text-gray-700">ATS: {atsScore}%</span>
+              <span className="text-xs font-medium text-neutral-70">ATS: {atsScore}%</span>
             </div>
 
             <button
               onClick={() => setPreviewVisible(!previewVisible)}
-              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
+              className="p-2 text-neutral-50 hover:bg-neutral-10 rounded-lg lg:hidden"
               aria-label="Toggle preview"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -252,7 +252,7 @@ export default function BuilderPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Form Panel */}
         <div className={cn(
-          'w-full lg:w-[420px] flex-shrink-0 overflow-y-auto bg-white border-r border-gray-200',
+          'w-full lg:w-[420px] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
           previewVisible ? 'hidden lg:block' : 'block'
         )}>
           <div className="p-6 pb-24">
@@ -264,7 +264,7 @@ export default function BuilderPage() {
           </div>
 
           {/* Navigation buttons */}
-          <div className="fixed bottom-0 left-0 lg:left-0 lg:w-[420px] bg-white border-t border-gray-200 px-6 py-4 flex justify-between gap-3 z-30">
+          <div className="fixed bottom-0 left-0 lg:left-0 lg:w-[420px] bg-white border-t border-neutral-20 px-6 py-4 flex justify-between gap-3 z-30">
             <Button
               variant="outline"
               onClick={() => setStep(Math.max(1, step - 1))}
@@ -287,13 +287,13 @@ export default function BuilderPage() {
 
         {/* Preview Panel */}
         <div className={cn(
-          'flex-1 bg-gray-100 overflow-auto p-6',
+          'flex-1 bg-neutral-10 overflow-auto p-6',
           !previewVisible ? 'hidden lg:block' : 'block'
         )}>
           <div className="sticky top-0 z-10 flex justify-end mb-4">
             <button
               onClick={() => setPreviewVisible(!previewVisible)}
-              className="lg:hidden bg-white rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 shadow border border-gray-200"
+              className="lg:hidden bg-white rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-70 shadow border border-neutral-20"
             >
               ← Back to Edit
             </button>

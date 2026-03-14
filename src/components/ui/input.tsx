@@ -16,7 +16,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={inputId} className="text-sm font-medium text-neutral-70">
             {label}
           </label>
         )}
@@ -24,15 +24,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-            'disabled:bg-gray-50 disabled:cursor-not-allowed',
+            'w-full rounded-lg border border-neutral-20 bg-white px-3 py-2 text-sm text-neutral-90 placeholder:text-neutral-40 transition-colors',
+            'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+            'disabled:bg-neutral-10 disabled:cursor-not-allowed',
             error && 'border-red-500 focus:ring-red-500',
             className
           )}
           {...props}
         />
-        {hint && !error && <p className="text-xs text-gray-500">{hint}</p>}
+        {hint && !error && <p className="text-xs text-neutral-50">{hint}</p>}
         {error && <p className="text-xs text-red-600">{error}</p>}
       </div>
     );
@@ -54,7 +54,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={inputId} className="text-sm font-medium text-neutral-70">
             {label}
           </label>
         )}
@@ -62,15 +62,15 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 transition-colors resize-y min-h-[80px]',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-            'disabled:bg-gray-50 disabled:cursor-not-allowed',
+            'w-full rounded-lg border border-neutral-20 bg-white px-3 py-2 text-sm text-neutral-90 placeholder:text-neutral-40 transition-colors resize-y min-h-[80px]',
+            'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+            'disabled:bg-neutral-10 disabled:cursor-not-allowed',
             error && 'border-red-500 focus:ring-red-500',
             className
           )}
           {...props}
         />
-        {hint && !error && <p className="text-xs text-gray-500">{hint}</p>}
+        {hint && !error && <p className="text-xs text-neutral-50">{hint}</p>}
         {error && <p className="text-xs text-red-600">{error}</p>}
       </div>
     );
