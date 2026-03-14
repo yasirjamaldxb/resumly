@@ -1,0 +1,233 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { PersonalDetailsForm } from '@/components/resume/builder/personal-details';
+import { WorkExperienceForm } from '@/components/resume/builder/work-experience';
+import { EducationForm } from '@/components/resume/builder/education';
+import { SkillsForm } from '@/components/resume/builder/skills';
+import { TemplatePicker } from '@/components/resume/builder/template-picker';
+import { ResumeTemplate } from '@/components/resume/templates';
+import { ResumeData, emptyResume } from '@/types/resume';
+import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
+
+const STEPS = [
+  { id: 'template', label: 'Template', icon: '🎨' },
+  { id: 'personal', label: 'Personal', icon: '👤' },
+  { id: 'experience', label: 'Experience', icon: '💼' },
+  { id: 'education', label: 'Education', icon: '🎓' },
+  { id: 'skills', label: 'Skills', icon: '⚡' },
+];
+
+export default function BuilderPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+  const [resumeData, setResumeData] = useState<ResumeData>(emptyResume());
+  const [previewVisible, setPreviewVisible] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [atsScore, setAtsScore] = useState(0);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-calculate ATS score
+  useEffect(() => {
+    const p = resumeData.personalDetails;
+    let score = 0;
+    if (p.firstName && p.lastName) score += 10;
+    if (p.email) score += 10;
+    if (p.phone) score += 5;
+    if (p.jobTitle) score += 10;
+    if (p.location) score += 5;
+    if (p.summary && p.summary.length > 50) score += 15;
+    if (resumeData.workExperience.length > 0) score += 20;
+    if (resumeData.education.length > 0) score += 10;
+    if (resumeData.skills.length >= 5) score += 15;
+    setAtsScore(Math.min(score, 100));
+  }, [resumeData]);
+
+  // Auto-save
+  const autoSave = useCallback(async (data: ResumeData) => {
+    if (saveTimeout.current) clearTimeout(saveTimeout.current);
+    saveTimeout.current = setTimeout(async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        await fetch('/api/resume/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, userId: user.id }),
+        });
+      } catch {
+        // Silent fail
+      }
+    }, 1500);
+  }, []);
+
+  const handleDataChange = (data: ResumeData) => {
+    setResumeData(data);
+    autoSave(data);
+  };
+
+  const downloadPDF = async () => {
+    setDownloading(true);
+    try {
+      const res = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resumeData),
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${resumeData.personalDetails.firstName || 'resume'}-${resumeData.personalDetails.lastName || ''}-resume.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // Fallback: print
+      window.print();
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const currentStep = STEPS[step - 1];
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top bar */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-full px-4 h-14 flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-xs">R</span>
+            </div>
+            <span className="font-bold text-gray-900 hidden sm:block">resumly.app</span>
+          </Link>
+
+          {/* Step progress */}
+          <div className="flex items-center gap-1 overflow-x-auto">
+            {STEPS.map((s, i) => (
+              <button
+                key={s.id}
+                onClick={() => setStep(i + 1)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
+                  step === i + 1
+                    ? 'bg-blue-600 text-white'
+                    : step > i + 1
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-500 hover:bg-gray-100'
+                )}
+              >
+                <span>{s.icon}</span>
+                <span className="hidden sm:inline">{s.label}</span>
+                {i < STEPS.length - 1 && (
+                  <svg className="w-3 h-3 text-gray-300 ml-1 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* ATS Score */}
+            <div className="hidden sm:flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: atsScore >= 80 ? '#22c55e' : atsScore >= 50 ? '#f59e0b' : '#ef4444' }} />
+              <span className="text-xs font-medium text-gray-700">ATS: {atsScore}%</span>
+            </div>
+
+            <button
+              onClick={() => setPreviewVisible(!previewVisible)}
+              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
+              aria-label="Toggle preview"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+
+            <Button size="sm" onClick={downloadPDF} loading={downloading} className="gap-1.5">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download PDF
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Form Panel */}
+        <div className={cn(
+          'w-full lg:w-[420px] flex-shrink-0 overflow-y-auto bg-white border-r border-gray-200',
+          previewVisible ? 'hidden lg:block' : 'block'
+        )}>
+          <div className="p-6 pb-24">
+            {step === 1 && <TemplatePicker data={resumeData} onChange={handleDataChange} />}
+            {step === 2 && <PersonalDetailsForm data={resumeData} onChange={handleDataChange} />}
+            {step === 3 && <WorkExperienceForm data={resumeData} onChange={handleDataChange} />}
+            {step === 4 && <EducationForm data={resumeData} onChange={handleDataChange} />}
+            {step === 5 && <SkillsForm data={resumeData} onChange={handleDataChange} />}
+          </div>
+
+          {/* Navigation buttons */}
+          <div className="fixed bottom-0 left-0 lg:left-0 lg:w-[420px] bg-white border-t border-gray-200 px-6 py-4 flex justify-between gap-3 z-30">
+            <Button
+              variant="outline"
+              onClick={() => setStep(Math.max(1, step - 1))}
+              disabled={step === 1}
+              className="flex-1"
+            >
+              ← Back
+            </Button>
+            {step < STEPS.length ? (
+              <Button onClick={() => setStep(step + 1)} className="flex-1">
+                Next →
+              </Button>
+            ) : (
+              <Button onClick={downloadPDF} loading={downloading} className="flex-1">
+                Download PDF 🎉
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Preview Panel */}
+        <div className={cn(
+          'flex-1 bg-gray-100 overflow-auto p-6',
+          !previewVisible ? 'hidden lg:block' : 'block'
+        )}>
+          <div className="sticky top-0 z-10 flex justify-end mb-4">
+            <button
+              onClick={() => setPreviewVisible(!previewVisible)}
+              className="lg:hidden bg-white rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 shadow border border-gray-200"
+            >
+              ← Back to Edit
+            </button>
+          </div>
+
+          <div
+            ref={previewRef}
+            className="bg-white shadow-xl mx-auto"
+            style={{ width: '794px', maxWidth: '100%', transformOrigin: 'top center' }}
+            id="resume-preview"
+          >
+            <ResumeTemplate data={resumeData} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
