@@ -1,32 +1,29 @@
 import Link from 'next/link';
 
 const footerLinks = {
-  'AI Resume Builder': [
+  'Resume Tools': [
     { label: 'Free Resume Builder', href: '/resume-builder' },
-    { label: 'ATS Resume Checker', href: '/ats-checker' },
-    { label: 'Cover Letter Builder', href: '/cover-letter-builder' },
     { label: 'Resume Templates', href: '/resume-templates' },
-    { label: 'Cover Letter Examples', href: '/blog/cover-letter-tips' },
-    { label: 'Cover Letter Templates', href: '/cover-letter-builder' },
+    { label: 'ATS Resume Checker', href: '/ats-checker' },
+    { label: 'AI Resume Builder', href: '/ai-resume-builder' },
+    { label: 'Cover Letter Builder', href: '/cover-letter-builder' },
   ],
-  'Job Search': [
+  'Resume Examples': [
     { label: 'Software Engineer', href: '/resume-examples/software-engineer' },
     { label: 'Marketing Manager', href: '/resume-examples/marketing-manager' },
     { label: 'Nurse Resume', href: '/resume-examples/nurse' },
     { label: 'Student Resume', href: '/resume-examples/student' },
     { label: 'All Examples', href: '/resume-examples' },
   ],
-  'About Us': [
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Sponsorship Program', href: '/about' },
-    { label: 'Affiliates', href: '/about' },
+  'Resources': [
+    { label: 'How to Write a Resume', href: '/blog/how-to-write-a-resume' },
+    { label: 'Cover Letter Guide', href: '/blog/cover-letter-guide' },
+    { label: 'Resume Format Guide', href: '/blog/resume-format-guide' },
+    { label: 'All Articles', href: '/blog' },
   ],
-  'Help': [
-    { label: 'Contact Us', href: '/contact' },
+  'Legal': [
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Service', href: '/terms' },
-    { label: 'Right of Withdrawal', href: '/terms' },
-    { label: 'Do Not Sell My Data', href: '/privacy' },
   ],
 };
 
@@ -48,15 +45,8 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-[14px] leading-relaxed mb-5 text-neutral-40">
-              Build ATS-friendly resumes that get you hired. Free and trusted by millions.
+              Free ATS-friendly resume builder. Create professional resumes with text-based PDF downloads.
             </p>
-            <div className="flex gap-3">
-              {['T', 'in', 'f', 'ig'].map((s) => (
-                <div key={s} className="w-8 h-8 bg-neutral-80 rounded-lg flex items-center justify-center text-[12px] text-neutral-40 hover:bg-primary hover:text-white transition-colors cursor-pointer font-semibold">
-                  {s}
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Links */}
@@ -80,9 +70,10 @@ export function Footer() {
           <p className="text-[13px] text-neutral-50">
             &copy; {new Date().getFullYear()} Resumly.app. All rights reserved.
           </p>
-          <p className="text-[13px] text-neutral-50">
-            Free Privacy-Friendly Resume Builder
-          </p>
+          <div className="flex gap-4 text-[13px] text-neutral-50">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+          </div>
         </div>
       </div>
     </footer>

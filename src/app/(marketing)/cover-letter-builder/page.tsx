@@ -5,10 +5,14 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'Free Cover Letter Builder – Write a Cover Letter in Minutes | Resumly',
+  title: 'Free Cover Letter Builder: Write Your Cover Letter in Minutes (2026)',
   description:
-    'Create a professional cover letter in minutes with AI assistance. Free cover letter builder with customizable templates. Pair with your Resumly resume.',
+    'Create a professional cover letter in minutes with AI assistance. Pair with your ATS-friendly resume for a complete job application. Free templates and expert writing guide.',
   alternates: { canonical: 'https://resumly.app/cover-letter-builder' },
+  openGraph: {
+    title: 'Free Cover Letter Builder: Write Online in Minutes · Resumly',
+    description: 'Create a professional cover letter in minutes with AI assistance. Free templates and expert guide.',
+  },
 };
 
 export default function CoverLetterBuilderPage() {
@@ -26,9 +30,9 @@ export default function CoverLetterBuilderPage() {
               Pair it with your Resumly resume for a complete job application.
             </p>
             <Button size="xl" asChild>
-              <Link href="/builder/new">Start Building →</Link>
+              <Link href="/blog/how-to-write-a-cover-letter">Read Our Cover Letter Guide →</Link>
             </Button>
-            <p className="text-sm text-gray-500 mt-3">Coming soon — join the waitlist</p>
+            <p className="text-sm text-gray-500 mt-3">Cover letter builder coming soon. In the meantime, check out our expert guide.</p>
           </div>
         </section>
 

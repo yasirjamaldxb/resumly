@@ -25,7 +25,7 @@ export function HeroSection() {
                 <Link href="/resume-builder">Create my resume</Link>
               </Button>
               <Button size="xl" variant="outline" asChild>
-                <Link href="/resume-templates">Upload my resume</Link>
+                <Link href="/resume-templates">Browse templates</Link>
               </Button>
             </div>
 
@@ -35,13 +35,19 @@ export function HeroSection() {
                 <svg className="w-5 h-5 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-neutral-60"><strong className="text-neutral-90">39%</strong> more likely to land the job</span>
+                <span className="text-neutral-60"><strong className="text-neutral-90">ATS-optimized</strong> templates that pass screening software</span>
               </div>
               <div className="flex items-center gap-2 text-[15px]">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-neutral-60"><strong className="text-neutral-90">Trustpilot</strong> 4.4 out of 5 | 37,389 reviews</span>
+                <span className="text-neutral-60"><strong className="text-neutral-90">Text-based PDF</strong> downloads — not images, real text</span>
+              </div>
+              <div className="flex items-center gap-2 text-[15px]">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-neutral-60"><strong className="text-neutral-90">100% free</strong> — no hidden fees, no credit card required</span>
               </div>
             </div>
           </div>

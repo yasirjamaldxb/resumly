@@ -1,85 +1,54 @@
-const reviews = [
+const benefits = [
   {
-    stars: 5,
-    title: 'Satisfied',
-    text: 'The UI is easy to understand and use, and in addition to a helpful AI feature, this site really helps you build your...',
-    author: 'Rizky Febriyanto',
-    time: 'about 10 hours ago',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    title: 'ATS-Friendly Format',
+    description: 'Every template is designed to pass Applicant Tracking Systems. Your resume gets seen by real humans, not filtered out by software.',
   },
   {
-    stars: 5,
-    title: 'The Resume Game-Cha...',
-    text: "I've been using Resumly to update my professional profile, and it has honestly taken the stress out of the entire...",
-    author: 'Robert Lein',
-    time: 'about 21 hours ago',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+    title: 'Real Text-Based PDFs',
+    description: 'Unlike other builders that export images, our PDFs contain real, selectable text. Recruiters and ATS can actually read your content.',
   },
   {
-    stars: 5,
-    title: 'Love it',
-    text: 'Love it! this has been so helpful to use during the stressful job market! Love all the recommendations it tells...',
-    author: 'Mia Audier',
-    time: '2 days ago',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    title: '100% Free Forever',
+    description: 'No hidden fees, no premium paywalls, no credit card required. Create unlimited resumes with full access to all 10 templates.',
   },
 ];
-
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {[...Array(count)].map((_, i) => (
-        <svg key={i} className="w-[18px] h-[18px] text-green-500 fill-current" viewBox="0 0 24 24">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
 
 export function TestimonialsSection() {
   return (
     <section className="py-20 bg-neutral-10">
       <div className="max-w-[1200px] mx-auto px-6">
-        <h2 className="text-[40px] sm:text-[48px] font-medium text-neutral-90 text-center mb-14 tracking-tight leading-tight">
-          92% of customers recommend us
+        <h2 className="text-[40px] sm:text-[48px] font-medium text-neutral-90 text-center mb-4 tracking-tight leading-tight">
+          Why job seekers choose Resumly
         </h2>
+        <p className="text-[17px] text-neutral-50 text-center mb-14 max-w-[560px] mx-auto">
+          We built the resume builder we wished existed when we were job hunting. Here&apos;s what makes it different.
+        </p>
 
-        <div className="grid md:grid-cols-4 gap-6 mb-10">
-          {/* Rating summary */}
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="text-[28px] font-semibold text-neutral-90 mb-2">4.3 out of 5</div>
-            <Stars count={5} />
-            <div className="mt-3 flex items-center gap-1.5">
-              <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-              <span className="text-[14px] font-bold text-neutral-90">Trustpilot</span>
-            </div>
-            <p className="text-[13px] text-neutral-40 mt-1">based on 55,276 reviews</p>
-          </div>
-
-          {/* Review cards */}
-          {reviews.map((r) => (
-            <div key={r.title} className="bg-white rounded-2xl border border-neutral-20 p-6 hover:shadow-md transition-shadow">
-              <Stars count={r.stars} />
-              <h3 className="text-[17px] font-semibold text-neutral-90 mt-3 mb-2">{r.title}</h3>
-              <p className="text-[14px] text-neutral-50 leading-relaxed mb-4">{r.text}</p>
-              <div className="text-[13px] text-neutral-40">
-                <span className="text-neutral-60 font-medium">{r.author}</span> &middot; {r.time}
+        <div className="grid md:grid-cols-3 gap-8">
+          {benefits.map((benefit) => (
+            <div key={benefit.title} className="bg-white rounded-2xl border border-neutral-20 p-8 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+                {benefit.icon}
               </div>
+              <h3 className="text-[20px] font-semibold text-neutral-90 mb-3">{benefit.title}</h3>
+              <p className="text-[15px] text-neutral-50 leading-relaxed">{benefit.description}</p>
             </div>
           ))}
-        </div>
-
-        <div className="flex items-center justify-center gap-3">
-          <button className="w-8 h-8 rounded-full border border-neutral-20 flex items-center justify-center text-neutral-40 hover:border-neutral-40 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button className="w-8 h-8 rounded-full border border-neutral-20 flex items-center justify-center text-neutral-40 hover:border-neutral-40 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
     </section>

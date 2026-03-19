@@ -1,14 +1,15 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { SignupForm } from './signup-form';
+import { Suspense } from 'react';
+import { ResetPasswordForm } from './reset-password-form';
 
 export const metadata: Metadata = {
-  title: 'Create Free Account – Resumly',
-  description: 'Create a free Resumly account and start building your ATS-friendly resume today.',
+  title: 'Set New Password – Resumly',
+  description: 'Set a new password for your Resumly account.',
   robots: 'noindex',
 };
 
-export default function SignupPage() {
+export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel - branding */}
@@ -24,20 +25,18 @@ export default function SignupPage() {
             </div>
             <span className="text-xl font-semibold text-white tracking-tight">resumly<span className="text-white/70">.app</span></span>
           </Link>
-          <h2 className="text-[36px] leading-[1.2] font-medium text-white tracking-tight mb-5">Start your career<br />transformation today</h2>
-          <p className="text-white/70 text-[17px] leading-relaxed max-w-[360px]">Create a professional, ATS-optimized resume in under 10 minutes. No design skills needed.</p>
+          <h2 className="text-[36px] leading-[1.2] font-medium text-white tracking-tight mb-5">Almost there!</h2>
+          <p className="text-white/70 text-[17px] leading-relaxed max-w-[360px]">Choose a strong password to secure your account.</p>
         </div>
-        <div className="relative z-10">
-          <div className="space-y-4">
-            {['10 ATS-friendly templates', 'Text-based PDF downloads', 'AI writing suggestions', '100% free — no credit card'].map((text) => (
-              <div key={text} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-xs font-bold">&#10003;</span>
-                </div>
-                <span className="text-white/80 text-[15px]">{text}</span>
+        <div className="relative z-10 space-y-4">
+          {['Use at least 8 characters', 'Mix letters and numbers', 'Include special characters'].map((text) => (
+            <div key={text} className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs font-bold">&#10003;</span>
               </div>
-            ))}
-          </div>
+              <span className="text-white/80 text-[15px]">{text}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -53,14 +52,12 @@ export default function SignupPage() {
             </Link>
           </div>
           <div className="mb-8">
-            <h1 className="text-[28px] font-medium text-neutral-90 tracking-tight">Create your free account</h1>
-            <p className="text-neutral-50 mt-1.5 text-[15px]">Build your perfect resume in minutes</p>
+            <h1 className="text-[28px] font-medium text-neutral-90 tracking-tight">Set new password</h1>
+            <p className="text-neutral-50 mt-1.5 text-[15px]">Enter your new password below</p>
           </div>
-          <SignupForm />
-          <p className="text-center text-[14px] text-neutral-50 mt-8">
-            Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:text-primary-dark font-semibold">Sign in</Link>
-          </p>
+          <Suspense fallback={<div className="rounded-xl h-48 animate-pulse bg-neutral-10" />}>
+            <ResetPasswordForm />
+          </Suspense>
         </div>
       </div>
     </div>

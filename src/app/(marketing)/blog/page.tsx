@@ -4,16 +4,20 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Resume Tips & Career Advice Blog 2025 | Resumly',
+  title: 'Resume & Career Blog: Expert Tips, Examples & Guides (2026)',
   description:
-    'Expert resume writing tips, career advice, and job search strategies. Learn how to write an ATS-friendly resume, ace interviews, and land your dream job.',
+    'Expert resume writing tips, ATS optimization guides, and career advice from hiring professionals. Learn how to write a resume that gets interviews in 2026.',
   alternates: { canonical: 'https://resumly.app/blog' },
+  openGraph: {
+    title: 'Resume & Career Blog: Expert Tips & Guides · Resumly',
+    description: 'Expert resume writing tips, ATS optimization guides, and career advice from hiring professionals.',
+  },
 };
 
 export const BLOG_POSTS = [
   {
     slug: 'how-to-write-a-resume',
-    title: 'How to Write a Resume in 2025: The Complete Guide',
+    title: 'How to Write a Resume in 2026: The Complete Guide',
     description: 'A step-by-step guide to writing a resume that gets interviews. Covers format, sections, keywords, and ATS optimization.',
     category: 'Resume Writing',
     readTime: '12 min read',
@@ -31,7 +35,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'resume-summary-examples',
-    title: '50 Resume Summary Examples That Get Interviews (2025)',
+    title: '50 Resume Summary Examples That Get Interviews (2026)',
     description: 'Real, copy-ready professional summary examples for every industry and career level. Plus the formula to write your own.',
     category: 'Resume Writing',
     readTime: '8 min read',
@@ -39,15 +43,15 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'resume-skills',
-    title: 'Best Skills to Put on a Resume in 2025 (With Examples)',
-    description: 'The top hard and soft skills employers are looking for in 2025, organized by industry and role.',
+    title: 'Best Skills to Put on a Resume in 2026 (With Examples)',
+    description: 'The top hard and soft skills employers are looking for in 2026, organized by industry and role.',
     category: 'Resume Writing',
     readTime: '7 min read',
     date: '2025-01-05',
   },
   {
     slug: 'how-to-write-a-cover-letter',
-    title: 'How to Write a Cover Letter in 2025 (With Examples)',
+    title: 'How to Write a Cover Letter in 2026 (With Examples)',
     description: 'A complete guide to writing a compelling cover letter that gets read. Includes templates and real examples.',
     category: 'Cover Letter',
     readTime: '9 min read',
@@ -55,7 +59,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'resume-action-words',
-    title: '200+ Resume Action Words and Power Verbs for 2025',
+    title: '200+ Resume Action Words and Power Verbs for 2026',
     description: 'The ultimate list of strong action verbs to make your resume bullet points more impactful and ATS-friendly.',
     category: 'Resume Writing',
     readTime: '5 min read',
@@ -71,7 +75,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'resume-with-no-experience',
-    title: 'How to Write a Resume With No Experience (2025 Guide)',
+    title: 'How to Write a Resume With No Experience (2026 Guide)',
     description: 'A practical guide to building a strong resume when you have little or no work experience. For students and career changers.',
     category: 'Entry Level',
     readTime: '8 min read',
@@ -79,7 +83,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'resume-tips',
-    title: 'Top 25 Resume Tips for 2025 from HR Professionals',
+    title: 'Top 25 Resume Tips for 2026 from HR Professionals',
     description: 'Actionable resume tips from real hiring managers and HR professionals to help you get more callbacks.',
     category: 'Resume Writing',
     readTime: '10 min read',

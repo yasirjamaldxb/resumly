@@ -8,7 +8,7 @@ const tools = [
       </svg>
     ),
     title: 'Resume Builder',
-    description: 'Create a job-winning resume with our step-by-step builder. AI-powered suggestions help you write compelling content.',
+    description: 'Create a job-winning resume with our step-by-step builder. AI-powered suggestions help you write compelling content that gets noticed.',
     color: 'bg-blue-50',
     iconColor: 'text-primary',
     link: '/resume-builder',
@@ -17,42 +17,40 @@ const tools = [
   {
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
       </svg>
     ),
-    title: 'Job Board',
-    description: 'Search for any job posted in any company. We aggregate millions of positions from top job boards worldwide.',
+    title: 'ATS Score Checker',
+    description: 'Check how well your resume performs with applicant tracking systems. Get instant feedback and actionable tips to improve your score.',
     color: 'bg-green-50',
     iconColor: 'text-green-600',
-    link: '/resume-builder',
-    linkText: 'Find jobs',
+    link: '/ats-checker',
+    linkText: 'Check your score',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
       </svg>
     ),
-    title: 'Auto Apply',
-    description: 'Set your preferences and let our system automatically apply to matching positions. Save hours of manual applications.',
+    title: 'Resume Examples',
+    description: 'Browse real resume examples from 30+ industries. See exactly what works for your field and use them as inspiration for your own.',
     color: 'bg-purple-50',
     iconColor: 'text-purple-600',
-    link: '/resume-builder',
-    linkText: 'Start applying',
+    link: '/resume-examples',
+    linkText: 'Browse examples',
   },
 ];
-
-const companies = ['Booking.com', 'Google', 'Amazon', 'Spotify', 'Accenture', 'Apple'];
 
 export function FeaturesSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-[1200px] mx-auto px-6">
         <h2 className="text-[40px] sm:text-[48px] font-medium text-neutral-90 text-center mb-16 tracking-tight leading-tight">
-          Every tool you need is here...
+          Everything you need to land the job
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid md:grid-cols-3 gap-6">
           {tools.map((tool) => (
             <div key={tool.title} className={`${tool.color} rounded-2xl p-8 transition-all hover:shadow-lg group`}>
               <div className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center mb-5 ${tool.iconColor} shadow-sm`}>
@@ -79,16 +77,6 @@ export function FeaturesSection() {
               </Link>
             </div>
           ))}
-        </div>
-
-        {/* Company logos */}
-        <div className="text-center">
-          <p className="text-[14px] text-neutral-40 mb-8">Our resumes get people hired at</p>
-          <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-14">
-            {companies.map((name) => (
-              <span key={name} className="text-neutral-30 font-bold text-[18px] sm:text-[20px] tracking-tight select-none">{name}</span>
-            ))}
-          </div>
         </div>
       </div>
     </section>

@@ -5,22 +5,22 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder – Build Your Resume Online in Minutes',
+  title: 'Free Resume Builder: Make & Download Your Resume Easily (2026)',
   description:
-    'Use our free online resume builder to create a professional, ATS-friendly resume in under 10 minutes. AI writing assistance, 6+ templates, instant PDF download.',
+    'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant text-based PDF download. No watermarks, no fees — completely free.',
   alternates: { canonical: 'https://resumly.app/resume-builder' },
   openGraph: {
-    title: 'Free Resume Builder | Resumly',
-    description: 'Build your professional resume in minutes with AI assistance. Free, ATS-optimized, instant PDF.',
+    title: 'Free Resume Builder: Make & Download Your Resume Easily · Resumly',
+    description: 'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant PDF.',
   },
 };
 
 const benefits = [
   { icon: '🤖', text: 'AI writes your bullets & summary' },
-  { icon: '✅', text: '99% ATS pass rate guaranteed' },
+  { icon: '✅', text: 'ATS-optimized templates that pass screening' },
   { icon: '⚡', text: 'Build in under 10 minutes' },
-  { icon: '📄', text: 'Download PDF free, no watermarks' },
-  { icon: '🎨', text: '6 professional templates' },
+  { icon: '📄', text: 'Text-based PDF — no watermarks, no images' },
+  { icon: '🎨', text: '10 professional templates' },
   { icon: '📊', text: 'Real-time ATS score checker' },
 ];
 
@@ -66,7 +66,7 @@ export default function ResumeBuilderPage() {
 
               <h3 className="text-xl font-bold text-gray-900">Step 1: Choose a template</h3>
               <p>
-                Select from 6 professionally designed resume templates. All templates are ATS-optimized and tested with major ATS systems including Workday, Greenhouse, and Lever. The <strong>ATS Pro template</strong> achieves a 99% ATS pass rate and is ideal for most job seekers.
+                Select from 10 professionally designed resume templates. All templates are ATS-optimized with clean formatting that works with major ATS systems including Workday, Greenhouse, and Lever. The <strong>ATS Pro template</strong> is our most popular choice and is ideal for most job seekers.
               </p>
 
               <h3 className="text-xl font-bold text-gray-900">Step 2: Add your personal details</h3>
@@ -97,6 +97,48 @@ export default function ResumeBuilderPage() {
             </div>
           </div>
         </section>
+        {/* FAQ structured data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: [
+                {
+                  '@type': 'Question',
+                  name: 'Is this resume builder really free?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, Resumly is 100% free. There are no hidden charges, no premium paywalls, and no credit card required. You get full access to all 10 templates, AI writing assistance, ATS scoring, and unlimited PDF downloads.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'How long does it take to build a resume?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Most users complete their resume in under 10 minutes using our step-by-step builder. The AI writing feature speeds things up by generating professional summaries and bullet points for you.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Are the resume templates ATS-friendly?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, all 10 templates are designed to pass Applicant Tracking Systems. They use clean formatting, standard fonts, and proper section headings. Our PDFs are text-based (not images), so ATS systems can read every word.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'What format can I download my resume in?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'You can download your resume as a text-based PDF. Unlike some builders that create image-based PDFs, ours contain real selectable text that ATS systems and recruiters can read perfectly.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Can I create multiple resumes?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, you can create and save unlimited resumes. We recommend creating a tailored resume for each job application to maximize your chances of getting an interview.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'How is Resumly different from other resume builders?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Resumly generates real text-based PDFs instead of image screenshots, which means your resume is fully readable by ATS systems. It is also completely free with no watermarks, includes AI writing assistance, and offers a real-time ATS score checker.' },
+                },
+              ],
+            }),
+          }}
+        />
       </main>
       <Footer />
     </>

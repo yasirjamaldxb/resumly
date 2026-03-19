@@ -4,10 +4,14 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Resume Examples 2025 – 500+ Examples by Job Title & Industry',
+  title: '500+ Free Resume Examples by Industry & Job Title (2026)',
   description:
-    'Browse 500+ real resume examples for every job title and industry. See what works, get inspired, and build your own with our free resume builder.',
+    'Browse 500+ free resume examples with writing guides for every industry. See real samples, learn what works, and build your own ATS-friendly resume in minutes.',
   alternates: { canonical: 'https://resumly.app/resume-examples' },
+  openGraph: {
+    title: '500+ Free Resume Examples by Industry & Job Title (2026) · Resumly',
+    description: 'Browse 500+ resume examples with writing guides. See what works for your field and build yours free.',
+  },
 };
 
 const EXAMPLES = [
@@ -46,7 +50,7 @@ export default function ResumeExamplesPage() {
         <section className="bg-gradient-to-b from-gray-50 to-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">
-              500+ Resume Examples for 2025
+              500+ Resume Examples for 2026
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Find the perfect resume example for your job title and industry.

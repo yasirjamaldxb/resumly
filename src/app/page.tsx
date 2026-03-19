@@ -12,26 +12,27 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder – Create ATS-Friendly Resumes | Resumly',
+  title: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
   description:
-    'Build a professional, ATS-friendly resume in minutes with Resumly. Choose from 6+ expert-designed templates, get AI writing assistance, and download as PDF. Free resume builder trusted by 100,000+ job seekers.',
+    'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, and instant text-based PDF download. 100% free — no credit card, no watermarks. Start building now.',
   keywords: [
     'free resume builder', 'resume builder', 'ATS resume', 'resume templates',
     'CV builder', 'resume maker', 'professional resume', 'ATS friendly resume',
-    'online resume builder', 'resume builder free',
+    'online resume builder', 'resume builder free', 'best resume builder 2026',
+    'resume builder no sign up', 'ATS optimized resume', 'text based resume PDF',
   ].join(', '),
   alternates: { canonical: 'https://resumly.app' },
   openGraph: {
-    title: 'Free Resume Builder – Create ATS-Friendly Resumes | Resumly',
-    description: 'Build a professional ATS-friendly resume in minutes. AI-powered, free, and trusted by 100,000+ job seekers.',
+    title: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
+    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF. 100% free.',
     url: 'https://resumly.app',
     siteName: 'Resumly',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Resume Builder | Resumly',
-    description: 'Build ATS-friendly resumes in minutes with AI assistance.',
+    title: 'Free Resume Builder · Resumly',
+    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF. 100% free.',
   },
 };
 
@@ -49,8 +50,8 @@ const exampleCategories = [
 ];
 
 const blogPosts = [
-  { title: 'How to write a resume: Expert guide & examples (2025)', slug: 'how-to-write-a-resume', tag: 'FIELD TESTED', tagColor: 'bg-orange-100 text-orange-700', cardBg: 'bg-orange-50' },
-  { title: 'How to write a cover letter: expert guide & examples (2025)', slug: 'cover-letter-guide', tag: 'HR APPROVED', tagColor: 'bg-pink-100 text-pink-700', cardBg: 'bg-pink-50' },
+  { title: 'How to write a resume: Expert guide & examples (2026)', slug: 'how-to-write-a-resume', tag: 'FIELD TESTED', tagColor: 'bg-orange-100 text-orange-700', cardBg: 'bg-orange-50' },
+  { title: 'How to Write a Cover Letter in 2026', slug: 'how-to-write-a-cover-letter', tag: 'HR APPROVED', tagColor: 'bg-pink-100 text-pink-700', cardBg: 'bg-pink-50' },
 ];
 
 function ResumeExamplesPreview() {
@@ -180,7 +181,6 @@ export default function HomePage() {
             description: 'Free ATS-friendly resume builder with AI assistance and professional templates.',
             applicationCategory: 'BusinessApplication',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-            aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '12400' },
           }),
         }}
       />

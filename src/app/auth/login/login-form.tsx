@@ -42,7 +42,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-neutral-20 p-8">
+    <div>
       <Button
         variant="outline"
         size="lg"
@@ -77,14 +77,21 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <Input
-          label="Password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div>
+          <Input
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <div className="flex justify-end mt-1.5">
+            <a href="/auth/forgot-password" className="text-[13px] text-primary hover:text-primary-dark font-medium transition-colors">
+              Forgot password?
+            </a>
+          </div>
+        </div>
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
             {error}
