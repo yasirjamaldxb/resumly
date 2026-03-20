@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { TEMPLATE_LIST } from '@/types/resume';
+import { TemplatePreview } from '@/components/resume/template-preview';
 
 interface ResumeCardProps {
   resume: {
@@ -106,29 +107,9 @@ export function ResumeCard({ resume }: ResumeCardProps) {
       {/* Preview header */}
       <div className="h-[140px] relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${color}15, ${color}08)` }}>
         <div className="absolute inset-4">
-          {/* Mini resume mockup */}
-          <div className="bg-white rounded-lg shadow-sm border border-neutral-20/50 p-3 h-full overflow-hidden">
-            <div className="flex items-center gap-2 mb-2">
-              {resumeData?.personalDetails?.photo ? (
-                <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                  <img src={resumeData.personalDetails.photo} alt="" className="w-full h-full object-cover" />
-                </div>
-              ) : (
-                <div className="w-6 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: `${color}25` }} />
-              )}
-              <div>
-                <div className="h-2 rounded-full bg-neutral-90/70 w-20" />
-                <div className="h-1.5 rounded-full mt-1 w-14" style={{ backgroundColor: `${color}60` }} />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <div className="h-1 bg-neutral-20 rounded-full w-full" />
-              <div className="h-1 bg-neutral-20 rounded-full w-4/5" />
-              <div className="h-1 bg-neutral-20 rounded-full w-3/5" />
-              <div className="h-1.5 rounded-full w-16 mt-2" style={{ backgroundColor: `${color}30` }} />
-              <div className="h-1 bg-neutral-20 rounded-full w-full" />
-              <div className="h-1 bg-neutral-20 rounded-full w-2/3" />
-            </div>
+          {/* Mini resume mockup matching actual template */}
+          <div className="bg-white rounded-lg shadow-sm border border-neutral-20/50 h-full overflow-hidden">
+            <TemplatePreview templateId={resume.template_id || 'ats-pro'} color={color} className="w-full h-full" />
           </div>
         </div>
         {/* Template badge */}

@@ -2,6 +2,7 @@
 
 import { ResumeData, TEMPLATE_LIST } from '@/types/resume';
 import { cn } from '@/lib/utils';
+import { TemplatePreview } from '@/components/resume/template-preview';
 
 interface Props {
   data: ResumeData;
@@ -18,81 +19,6 @@ const COLORS = [
   { name: 'Red', value: '#dc2626' },
   { name: 'Orange', value: '#ea580c' },
 ];
-
-const LAYOUT_PREVIEWS: Record<string, 'single' | 'sidebar-left' | 'sidebar-right' | 'accent-bar'> = {
-  'ats-pro': 'single',
-  'modern': 'sidebar-left',
-  'professional': 'single',
-  'minimal': 'single',
-  'executive': 'accent-bar',
-  'creative': 'sidebar-right',
-  'compact': 'single',
-  'elegant': 'single',
-  'technical': 'sidebar-left',
-  'classic': 'single',
-};
-
-function TemplateMiniPreview({ templateId, color, selected }: { templateId: string; color: string; selected: boolean }) {
-  const layout = LAYOUT_PREVIEWS[templateId] || 'single';
-  const accent = selected ? color : '#c4c9d4';
-  const lineColor = selected ? '#bcc3d0' : '#dde0e6';
-  const headerColor = selected ? '#4a5068' : '#9fa4b0';
-
-  if (layout === 'sidebar-left') {
-    return (
-      <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-        <div style={{ width: '32%', backgroundColor: accent, padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.8)', borderRadius: 1, width: '70%' }} />
-          <div style={{ height: 2, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1, width: '50%' }} />
-          <div style={{ marginTop: 6 }}>
-            {[1,2,3].map(i => <div key={i} style={{ height: 2, backgroundColor: 'rgba(255,255,255,0.35)', borderRadius: 1, marginBottom: 3, width: `${60 + i * 10}%` }} />)}
-          </div>
-        </div>
-        <div style={{ flex: 1, padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {[1,2,3,4,5].map(i => <div key={i} style={{ height: 2, backgroundColor: lineColor, borderRadius: 1, width: `${70 + (i % 3) * 10}%` }} />)}
-        </div>
-      </div>
-    );
-  }
-
-  if (layout === 'sidebar-right') {
-    return (
-      <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-        <div style={{ flex: 1, padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <div style={{ height: 4, backgroundColor: headerColor, borderRadius: 1, width: '60%' }} />
-          <div style={{ height: 2, backgroundColor: accent, borderRadius: 1, width: '35%', marginBottom: 4 }} />
-          {[1,2,3,4].map(i => <div key={i} style={{ height: 2, backgroundColor: lineColor, borderRadius: 1, width: `${65 + (i % 3) * 10}%` }} />)}
-        </div>
-        <div style={{ width: '30%', backgroundColor: '#f3f4f6', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {[1,2,3].map(i => <div key={i} style={{ height: 2, backgroundColor: '#ccd0d8', borderRadius: 1, width: `${60 + i * 10}%` }} />)}
-        </div>
-      </div>
-    );
-  }
-
-  if (layout === 'accent-bar') {
-    return (
-      <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-        <div style={{ width: 5, backgroundColor: accent, flexShrink: 0 }} />
-        <div style={{ flex: 1, padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <div style={{ height: 4, backgroundColor: headerColor, borderRadius: 1, width: '55%' }} />
-          <div style={{ height: 2, backgroundColor: accent, borderRadius: 1, width: '30%', marginBottom: 4 }} />
-          {[1,2,3,4,5].map(i => <div key={i} style={{ height: 2, backgroundColor: lineColor, borderRadius: 1, width: `${65 + (i % 3) * 10}%` }} />)}
-        </div>
-      </div>
-    );
-  }
-
-  // single column
-  return (
-    <div style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 3, height: '100%' }}>
-      <div style={{ height: 4, backgroundColor: headerColor, borderRadius: 1, width: '55%', ...(templateId === 'elegant' || templateId === 'classic' ? { alignSelf: 'center' } : {}) }} />
-      <div style={{ height: 2, backgroundColor: accent, borderRadius: 1, width: '35%', marginBottom: 4, ...(templateId === 'elegant' || templateId === 'classic' ? { alignSelf: 'center' } : {}) }} />
-      {templateId === 'ats-pro' && <div style={{ height: 1, backgroundColor: accent, width: '100%', marginBottom: 2 }} />}
-      {[1,2,3,4,5].map(i => <div key={i} style={{ height: 2, backgroundColor: lineColor, borderRadius: 1, width: `${65 + (i % 3) * 10}%` }} />)}
-    </div>
-  );
-}
 
 export function TemplatePicker({ data, onChange }: Props) {
   return (
@@ -123,7 +49,7 @@ export function TemplatePicker({ data, onChange }: Props) {
               )}
               {/* Template preview */}
               <div className="w-full aspect-[0.75] bg-white rounded-lg border border-neutral-20 overflow-hidden mb-2">
-                <TemplateMiniPreview templateId={template.id} color={data.colorScheme} selected={isSelected} />
+                <TemplatePreview templateId={template.id} color={isSelected ? data.colorScheme : '#9ca3af'} className="w-full h-full" />
               </div>
               <div>
                 <p className="font-semibold text-xs text-neutral-90">{template.name}</p>

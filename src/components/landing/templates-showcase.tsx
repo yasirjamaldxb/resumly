@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { TemplatePreview } from '@/components/resume/template-preview';
 
 const templates = [
   { id: 'ats-pro', name: 'ATS Pro', category: 'ATS Optimized', color: '#1a91f0' },
@@ -14,39 +15,6 @@ const templates = [
   { id: 'creative', name: 'Creative', category: 'Sidebar', color: '#ea580c' },
 ];
 
-function TemplateMockup({ color }: { color: string }) {
-  return (
-    <div className="w-full aspect-[0.75] bg-white rounded-lg shadow-md border border-neutral-20 p-4 overflow-hidden relative group-hover:shadow-xl transition-all duration-300">
-      {/* Header area */}
-      <div className="mb-3 pb-3" style={{ borderBottom: `2px solid ${color}` }}>
-        <div className="h-4 bg-neutral-90 rounded w-3/4 mb-1.5" />
-        <div className="h-2.5 rounded w-1/2 mb-2" style={{ backgroundColor: color }} />
-        <div className="flex gap-2">
-          <div className="h-2 bg-neutral-20 rounded w-16" />
-          <div className="h-2 bg-neutral-20 rounded w-12" />
-          <div className="h-2 bg-neutral-20 rounded w-14" />
-        </div>
-      </div>
-      {/* Content sections */}
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="mb-3">
-          <div className="h-2 rounded w-16 mb-1.5" style={{ backgroundColor: color, opacity: 0.7 }} />
-          <div className="space-y-1">
-            <div className="h-1.5 bg-neutral-10 rounded w-full" />
-            <div className="h-1.5 bg-neutral-10 rounded w-11/12" />
-            <div className="h-1.5 bg-neutral-10 rounded w-5/6" />
-            <div className="h-1.5 bg-neutral-10 rounded w-4/5" />
-          </div>
-        </div>
-      ))}
-      {/* Hover overlay */}
-      <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-        <span className="text-white font-semibold text-[15px] px-5 py-2.5 border border-white/40 rounded bg-white/10">Use this template</span>
-      </div>
-    </div>
-  );
-}
-
 export function TemplatesShowcase() {
   return (
     <section className="py-20 bg-neutral-10">
@@ -60,8 +28,13 @@ export function TemplatesShowcase() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 mb-14">
           {templates.map((t) => (
-            <Link key={t.id} href={`/resume-templates#${t.id}`} className="group block">
-              <TemplateMockup color={t.color} />
+            <Link key={t.id} href={`/resume-templates#${t.id}`} className="group block relative">
+              <div className="w-full aspect-[0.75] rounded-lg shadow-md border border-neutral-20 overflow-hidden relative group-hover:shadow-xl transition-all duration-300">
+                <TemplatePreview templateId={t.id} color={t.color} className="w-full h-full" />
+                <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
+                  <span className="text-white font-semibold text-[15px] px-5 py-2.5 border border-white/40 rounded bg-white/10">Use this template</span>
+                </div>
+              </div>
               <div className="mt-4 text-center">
                 <p className="text-[12px] text-neutral-40 mb-0.5">{t.category}</p>
                 <p className="text-[15px] font-semibold text-neutral-90">{t.name}</p>

@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { TEMPLATE_LIST } from '@/types/resume';
+import { TemplatePreview } from '@/components/resume/template-preview';
 
 export const metadata: Metadata = {
   title: 'Free Resume Templates 2026 [Download & Edit Instantly]',
@@ -66,18 +67,12 @@ export default function ResumeTemplatesPage() {
                     <div key={template.id} className="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all">
                       {/* Template preview */}
                       <div className="h-72 bg-gray-50 flex items-center justify-center p-6 border-b border-gray-100">
-                        <div className="w-44 h-60 bg-white shadow-lg rounded border border-gray-200 p-3">
-                          <div className="h-3 bg-gray-800 rounded mb-1" style={{ width: '70%' }} />
-                          <div className="h-2 bg-blue-600 rounded mb-3" style={{ width: '50%' }} />
-                          {['Summary', 'Experience', 'Education', 'Skills'].map((s) => (
-                            <div key={s} className="mb-2">
-                              <div className="h-1.5 bg-blue-600 rounded w-14 mb-1" />
-                              <div className="space-y-0.5">
-                                <div className="h-1 bg-gray-200 rounded w-full" />
-                                <div className="h-1 bg-gray-200 rounded w-4/5" />
-                              </div>
-                            </div>
-                          ))}
+                        <div className="w-44 h-60 bg-white shadow-lg rounded border border-gray-200 overflow-hidden">
+                          <TemplatePreview
+                            templateId={template.id}
+                            color={template.id === 'ats-pro' ? '#1a91f0' : template.id === 'modern' ? '#7c3aed' : template.id === 'professional' ? '#1e3a5f' : template.id === 'minimal' ? '#0d9488' : template.id === 'executive' ? '#16a34a' : template.id === 'creative' ? '#ea580c' : template.id === 'compact' ? '#2563eb' : template.id === 'elegant' ? '#8b5cf6' : template.id === 'technical' ? '#2d3748' : '#374151'}
+                            className="w-full h-full"
+                          />
                         </div>
                       </div>
 
