@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { TEMPLATE_LIST } from '@/types/resume';
-import { TemplatePreview } from '@/components/resume/template-preview';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Free Resume Templates 2026 [Download & Edit Instantly]',
@@ -66,12 +66,15 @@ export default function ResumeTemplatesPage() {
                   {templates.map((template) => (
                     <div key={template.id} className="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all">
                       {/* Template preview */}
-                      <div className="h-72 bg-gray-50 flex items-center justify-center p-6 border-b border-gray-100">
-                        <div className="w-44 h-60 bg-white shadow-lg rounded border border-gray-200 overflow-hidden">
-                          <TemplatePreview
-                            templateId={template.id}
-                            color={template.id === 'ats-pro' ? '#1a91f0' : template.id === 'modern' ? '#7c3aed' : template.id === 'professional' ? '#1e3a5f' : template.id === 'minimal' ? '#0d9488' : template.id === 'executive' ? '#16a34a' : template.id === 'creative' ? '#ea580c' : template.id === 'compact' ? '#2563eb' : template.id === 'elegant' ? '#8b5cf6' : template.id === 'technical' ? '#2d3748' : '#374151'}
-                            className="w-full h-full"
+                      <div className="bg-gray-50 flex items-center justify-center p-6 border-b border-gray-100">
+                        <div className="w-full max-w-[220px] bg-white shadow-lg rounded border border-gray-200 overflow-hidden">
+                          <Image
+                            src={`/templates/${template.id}.png`}
+                            alt={`${template.name} resume template preview`}
+                            width={794}
+                            height={1123}
+                            className="w-full h-auto"
+                            quality={85}
                           />
                         </div>
                       </div>
