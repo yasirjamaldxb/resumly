@@ -35,24 +35,24 @@ export function EducationForm({ data, onChange }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Education</h2>
-        <p className="text-sm text-gray-500">Include your highest level of education. Add honors or GPA if it's 3.5+.</p>
+        <h2 className="text-lg font-semibold text-neutral-90 mb-1">Education</h2>
+        <p className="text-sm text-neutral-50">Include your highest level of education. Add honors or GPA if it's 3.5+.</p>
       </div>
 
       {data.education.length === 0 && (
-        <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-          <p className="text-gray-500 text-sm mb-3">No education added yet</p>
+        <div className="text-center py-10 bg-neutral-10 rounded-xl border-2 border-dashed border-neutral-20">
+          <p className="text-neutral-50 text-sm mb-3">No education added yet</p>
           <Button variant="outline" size="sm" onClick={addEdu}>+ Add Education</Button>
         </div>
       )}
 
       {data.education.map((edu, index) => (
-        <div key={edu.id} className="border border-gray-200 rounded-xl p-4 space-y-4 bg-white">
+        <div key={edu.id} className="border border-neutral-20 rounded-xl p-4 space-y-4 bg-white">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800 text-sm">
+            <h3 className="font-semibold text-neutral-80 text-sm">
               {edu.degree || edu.institution || `Education ${index + 1}`}
             </h3>
-            <button onClick={() => removeEdu(edu.id)} className="text-gray-400 hover:text-red-500 transition-colors p-1">
+            <button onClick={() => removeEdu(edu.id)} className="text-neutral-40 hover:text-red-500 transition-colors p-1">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
@@ -102,9 +102,9 @@ export function EducationForm({ data, onChange }: Props) {
                   type="checkbox"
                   checked={edu.current}
                   onChange={(e) => updateEdu(edu.id, 'current', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600"
+                  className="rounded border-neutral-30 text-primary"
                 />
-                <span className="text-sm text-gray-700">Currently enrolled</span>
+                <span className="text-sm text-neutral-70">Currently enrolled</span>
               </label>
             </div>
           </div>

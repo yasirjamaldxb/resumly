@@ -3,6 +3,14 @@
 import { ResumeData } from '@/types/resume';
 import { ATSProTemplate } from './ats-pro';
 import { ModernTemplate } from './modern';
+import { ProfessionalTemplate } from './professional';
+import { MinimalTemplate } from './minimal';
+import { ExecutiveTemplate } from './executive';
+import { CreativeTemplate } from './creative';
+import { CompactTemplate } from './compact';
+import { ElegantTemplate } from './elegant';
+import { TechnicalTemplate } from './technical';
+import { ClassicTemplate } from './classic';
 
 interface Props {
   data: ResumeData;
@@ -14,17 +22,25 @@ export function ResumeTemplate({ data, scale = 1 }: Props) {
     case 'modern':
       return <ModernTemplate data={data} scale={scale} />;
     case 'professional':
-      return <ATSProTemplate data={data} scale={scale} />;
+      return <ProfessionalTemplate data={data} scale={scale} />;
     case 'minimal':
-      return <ATSProTemplate data={data} scale={scale} />;
+      return <MinimalTemplate data={data} scale={scale} />;
     case 'executive':
-      return <ModernTemplate data={data} scale={scale} />;
+      return <ExecutiveTemplate data={data} scale={scale} />;
     case 'creative':
-      return <ModernTemplate data={data} scale={scale} />;
+      return <CreativeTemplate data={data} scale={scale} />;
+    case 'compact':
+      return <CompactTemplate data={data} scale={scale} />;
+    case 'elegant':
+      return <ElegantTemplate data={data} scale={scale} />;
+    case 'technical':
+      return <TechnicalTemplate data={data} scale={scale} />;
+    case 'classic':
+      return <ClassicTemplate data={data} scale={scale} />;
     case 'ats-pro':
     default:
       return <ATSProTemplate data={data} scale={scale} />;
   }
 }
 
-export { ATSProTemplate, ModernTemplate };
+export { ATSProTemplate, ModernTemplate, ProfessionalTemplate, MinimalTemplate, ExecutiveTemplate, CreativeTemplate, CompactTemplate, ElegantTemplate, TechnicalTemplate, ClassicTemplate };

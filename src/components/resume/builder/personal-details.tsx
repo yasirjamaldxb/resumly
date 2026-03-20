@@ -3,7 +3,7 @@
 import { ResumeData } from '@/types/resume';
 import { Input, Textarea } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface Props {
   data: ResumeData;
@@ -12,12 +12,53 @@ interface Props {
 
 export function PersonalDetailsForm({ data, onChange }: Props) {
   const [aiLoading, setAiLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const update = (field: string, value: string) => {
     onChange({
       ...data,
       personalDetails: { ...data.personalDetails, [field]: value },
     });
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Photo must be under 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      // Resize image to keep resume data manageable
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSize = 200;
+        let w = img.width;
+        let h = img.height;
+        if (w > h) { h = (h / w) * maxSize; w = maxSize; }
+        else { w = (w / h) * maxSize; h = maxSize; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, w, h);
+        const resized = canvas.toDataURL('image/jpeg', 0.85);
+        update('photo', resized);
+      };
+      img.src = base64;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removePhoto = () => {
+    update('photo', '');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const generateSummary = async () => {
@@ -47,8 +88,53 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Personal Details</h2>
-        <p className="text-sm text-gray-500">This information appears at the top of your resume.</p>
+        <h2 className="text-lg font-semibold text-neutral-90 mb-1">Personal Details</h2>
+        <p className="text-sm text-neutral-50">This information appears at the top of your resume.</p>
+      </div>
+
+      {/* Photo Upload */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-neutral-70">Profile Photo <span className="text-neutral-40 font-normal">(optional)</span></label>
+        <div className="flex items-center gap-4">
+          <div
+            className="w-20 h-20 rounded-full border-2 border-dashed border-neutral-30 flex items-center justify-center overflow-hidden bg-neutral-10 flex-shrink-0 cursor-pointer hover:border-primary transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {p.photo ? (
+              <img src={p.photo} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <svg className="w-8 h-8 text-neutral-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            )}
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm font-medium text-primary hover:text-primary-dark text-left"
+            >
+              {p.photo ? 'Change photo' : 'Upload photo'}
+            </button>
+            {p.photo && (
+              <button
+                type="button"
+                onClick={removePhoto}
+                className="text-sm text-red-500 hover:text-red-600 text-left"
+              >
+                Remove
+              </button>
+            )}
+            <p className="text-xs text-neutral-40">JPG, PNG. Max 5MB. Shows on supported templates.</p>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handlePhotoUpload}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -115,7 +201,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Professional Summary</label>
+          <label className="text-sm font-medium text-neutral-70">Professional Summary</label>
           <Button
             variant="outline"
             size="sm"

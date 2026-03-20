@@ -4,10 +4,14 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Resume Examples 2025 – 500+ Examples by Job Title & Industry',
+  title: 'Free Resume Examples by Industry & Job Title (2026)',
   description:
-    'Browse 500+ real resume examples for every job title and industry. See what works, get inspired, and build your own with our free resume builder.',
+    'Browse free resume examples with writing guides for every industry. See real samples, learn what works, and build your own ATS-friendly resume in minutes.',
   alternates: { canonical: 'https://resumly.app/resume-examples' },
+  openGraph: {
+    title: 'Free Resume Examples by Industry & Job Title (2026) · Resumly',
+    description: 'Browse resume examples with writing guides. See what works for your field and build yours free.',
+  },
 };
 
 const EXAMPLES = [
@@ -26,6 +30,11 @@ const EXAMPLES = [
   { slug: 'accountant', title: 'Accountant', icon: '💰', category: 'Business', searches: '78k/mo' },
   { slug: 'project-manager', title: 'Project Manager', icon: '📋', category: 'Business', searches: '88k/mo' },
   { slug: 'sales-manager', title: 'Sales Manager', icon: '🤝', category: 'Business', searches: '52k/mo' },
+  { slug: 'business-analyst', title: 'Business Analyst', icon: '📐', category: 'Business', searches: '58k/mo' },
+  { slug: 'financial-analyst', title: 'Financial Analyst', icon: '💹', category: 'Business', searches: '42k/mo' },
+  { slug: 'hr-manager', title: 'HR Manager', icon: '👥', category: 'Business', searches: '38k/mo' },
+  // Design
+  { slug: 'graphic-designer', title: 'Graphic Designer', icon: '🖌️', category: 'Design', searches: '55k/mo' },
   // Education
   { slug: 'teacher', title: 'Teacher', icon: '📚', category: 'Education', searches: '60k/mo' },
   { slug: 'student', title: 'Student / Entry Level', icon: '🎓', category: 'Education', searches: '115k/mo' },
@@ -46,7 +55,7 @@ export default function ResumeExamplesPage() {
         <section className="bg-gradient-to-b from-gray-50 to-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">
-              500+ Resume Examples for 2025
+              Resume Examples for Every Job Title (2026)
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Find the perfect resume example for your job title and industry.

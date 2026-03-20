@@ -5,14 +5,14 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'AI Resume Builder – Generate Your Resume with AI in Minutes | Resumly',
+  title: 'AI Resume Builder: Land Your Dream Job with AI Help (2026)',
   description:
-    'Build a professional resume using AI. Our AI resume builder generates summaries, bullet points, and suggests skills tailored to your target job. Free to use.',
-  keywords: ['AI resume builder', 'AI resume writer', 'resume builder AI', 'ChatGPT resume', 'AI CV builder'],
+    'Let AI write your resume. Our AI resume builder generates tailored summaries, bullet points, and skills for your target job in seconds. Free — no ChatGPT prompting required.',
+  keywords: ['AI resume builder', 'AI resume writer', 'resume builder AI', 'ChatGPT resume', 'AI CV builder', 'best AI resume builder 2026'],
   alternates: { canonical: 'https://resumly.app/ai-resume-builder' },
   openGraph: {
-    title: 'AI Resume Builder | Resumly',
-    description: 'Let AI write your resume for you. Generate tailored summaries, bullet points, and skills in seconds.',
+    title: 'AI Resume Builder: Land Your Dream Job with AI Help · Resumly',
+    description: 'Let AI write your resume. Tailored summaries, bullet points, and skills in seconds. Free to use.',
   },
 };
 
@@ -176,6 +176,43 @@ export default function AIResumeBuilderPage() {
             </div>
           </div>
         </section>
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: [
+                {
+                  '@type': 'Question',
+                  name: 'Is the AI resume builder free?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, our AI resume builder is completely free to use. AI suggestions for summaries, bullet points, and skills are all included at no cost. No credit card required.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Will AI-generated resumes pass ATS?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes. Our AI is specifically trained to generate ATS-optimized content. It uses the right keywords, action verbs, and formatting that ATS systems are designed to parse. We also include a real-time ATS score so you can verify before downloading.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Is this better than using ChatGPT for my resume?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Our AI is purpose-built for resumes — it understands job titles, industries, and recruiter expectations. Unlike ChatGPT, it integrates directly into our builder so your content flows into a beautifully formatted, ATS-ready template automatically. No copy-pasting or formatting needed.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Can I edit the AI-generated content?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Absolutely — and you should! AI gives you a strong starting point. Always review the suggestions and personalize them with your specific achievements, numbers, and unique experiences for the best results.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'What makes Resumly different from other AI resume builders?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Resumly generates text-based PDFs with real selectable text, not image screenshots. This means ATS systems can actually read your resume. Combined with AI writing that is specifically trained for resume content, you get ATS-optimized resumes that are both human-readable and machine-readable.' },
+                },
+              ],
+            }),
+          }}
+        />
       </main>
       <Footer />
     </>

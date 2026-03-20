@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 
 const STEPS = [
-  { id: 'template', label: 'Template', icon: '🎨' },
-  { id: 'personal', label: 'Personal', icon: '👤' },
-  { id: 'experience', label: 'Experience', icon: '💼' },
-  { id: 'education', label: 'Education', icon: '🎓' },
-  { id: 'skills', label: 'Skills', icon: '⚡' },
+  { id: 'template', label: 'Template' },
+  { id: 'personal', label: 'Personal' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'education', label: 'Education' },
+  { id: 'skills', label: 'Skills & More' },
 ];
 
 export default function BuilderPage() {
@@ -30,9 +30,42 @@ export default function BuilderPage() {
   const [previewVisible, setPreviewVisible] = useState(true);
   const [saving, setSaving] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [atsScore, setAtsScore] = useState(0);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const previewRef = useRef<HTMLDivElement>(null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load saved resume data from Supabase
+  useEffect(() => {
+    const loadResume = async () => {
+      const resumeId = params.id as string;
+      if (!resumeId || resumeId === 'new') {
+        setLoading(false);
+        return;
+      }
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoading(false); return; }
+        const { data: resume } = await supabase
+          .from('resumes')
+          .select('*')
+          .eq('id', resumeId)
+          .eq('user_id', user.id)
+          .single();
+        if (resume?.resume_data) {
+          const saved = resume.resume_data as ResumeData;
+          setResumeData({ ...saved, id: resume.id });
+        }
+      } catch {
+        // If loading fails, start with empty resume
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadResume();
+  }, [params.id]);
 
   // Auto-calculate ATS score
   useEffect(() => {
@@ -50,21 +83,32 @@ export default function BuilderPage() {
     setAtsScore(Math.min(score, 100));
   }, [resumeData]);
 
-  // Auto-save
+  // Auto-save with status indicator
   const autoSave = useCallback(async (data: ResumeData) => {
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
+    setSaveStatus('saving');
     saveTimeout.current = setTimeout(async () => {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        await fetch('/api/resume/save', {
+        const res = await fetch('/api/resume/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...data, userId: user.id }),
         });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.id && !data.id) {
+            // New resume saved — update URL without reload
+            window.history.replaceState(null, '', `/builder/${json.id}`);
+            data.id = json.id;
+          }
+          setSaveStatus('saved');
+          setTimeout(() => setSaveStatus('idle'), 2000);
+        }
       } catch {
-        // Silent fail
+        setSaveStatus('idle');
       }
     }, 1500);
   }, []);
@@ -77,78 +121,124 @@ export default function BuilderPage() {
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const res = await fetch('/api/resume/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resumeData),
-      });
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${resumeData.personalDetails.firstName || 'resume'}-${resumeData.personalDetails.lastName || ''}-resume.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
+      const { downloadMultiPagePDF } = await import('@/components/resume/pdf/multi-page-generator');
+      await downloadMultiPagePDF(resumeData);
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      try {
+        const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
+        await downloadResumePDF(resumeData);
+      } catch {
+        const el = document.getElementById('resume-preview');
+        if (el) {
+          const printWindow = window.open('', '_blank');
+          if (!printWindow) { window.print(); return; }
+          printWindow.document.write(`<!DOCTYPE html><html><head><title>Resume</title><style>*{margin:0;padding:0;box-sizing:border-box}@page{size:A4;margin:0}body{width:794px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${el.outerHTML}</body></html>`);
+          printWindow.document.close();
+          setTimeout(() => { printWindow.print(); }, 300);
+        } else {
+          window.print();
+        }
       }
-    } catch {
-      // Fallback: print
-      window.print();
     } finally {
       setDownloading(false);
     }
   };
 
-  const currentStep = STEPS[step - 1];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-[3px] border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-neutral-50 font-medium text-[15px]">Loading your resume...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const scoreColor = atsScore >= 80 ? '#22a861' : atsScore >= 50 ? '#f59e0b' : '#ef4444';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#f7f9fc] flex flex-col">
       {/* Top bar */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-full px-4 h-14 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-xs">R</span>
-            </div>
-            <span className="font-bold text-gray-900 hidden sm:block">resumly.app</span>
-          </Link>
+      <header className="bg-white border-b border-neutral-20 sticky top-0 z-40">
+        <div className="max-w-full px-3 sm:px-5 h-[56px] flex items-center justify-between gap-2">
+          {/* Logo + Back */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">R</span>
+              </div>
+              <span className="font-semibold text-neutral-90 hidden sm:block text-[15px] tracking-tight">resumly<span className="text-primary">.app</span></span>
+            </Link>
+            <div className="hidden sm:block w-px h-6 bg-neutral-20" />
+            <Link href="/dashboard" className="hidden sm:block text-[13px] text-neutral-50 hover:text-neutral-70 transition-colors">
+              Dashboard
+            </Link>
+          </div>
 
           {/* Step progress */}
-          <div className="flex items-center gap-1 overflow-x-auto">
+          <div className="flex items-center gap-0.5 overflow-x-auto no-scrollbar">
             {STEPS.map((s, i) => (
               <button
                 key={s.id}
                 onClick={() => setStep(i + 1)}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all whitespace-nowrap',
                   step === i + 1
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-white'
                     : step > i + 1
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-500 hover:bg-gray-100'
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-neutral-40 hover:text-neutral-60 hover:bg-neutral-10'
                 )}
               >
-                <span>{s.icon}</span>
+                <span className={cn(
+                  'w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0',
+                  step === i + 1 ? 'bg-white/20' : step > i + 1 ? 'bg-primary/20' : 'bg-neutral-20'
+                )}>
+                  {step > i + 1 ? (
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                  ) : (
+                    i + 1
+                  )}
+                </span>
                 <span className="hidden sm:inline">{s.label}</span>
-                {i < STEPS.length - 1 && (
-                  <svg className="w-3 h-3 text-gray-300 ml-1 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                )}
               </button>
             ))}
           </div>
 
+          {/* Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Save status */}
+            <div className="hidden sm:flex items-center gap-1.5 text-[12px]">
+              {saveStatus === 'saving' && (
+                <span className="text-neutral-40 flex items-center gap-1">
+                  <div className="w-3 h-3 border-2 border-neutral-30 border-t-transparent rounded-full animate-spin" />
+                  Saving...
+                </span>
+              )}
+              {saveStatus === 'saved' && (
+                <span className="text-green-600 flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Saved
+                </span>
+              )}
+            </div>
+
             {/* ATS Score */}
-            <div className="hidden sm:flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: atsScore >= 80 ? '#22c55e' : atsScore >= 50 ? '#f59e0b' : '#ef4444' }} />
-              <span className="text-xs font-medium text-gray-700">ATS: {atsScore}%</span>
+            <div className="hidden md:flex items-center gap-2 rounded-lg px-2.5 py-1.5 border border-neutral-20">
+              <div className="relative w-6 h-6">
+                <svg className="w-6 h-6 -rotate-90" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="#e5e7eb" strokeWidth="3" />
+                  <circle cx="12" cy="12" r="10" fill="none" stroke={scoreColor} strokeWidth="3" strokeDasharray={`${atsScore * 0.628} 100`} strokeLinecap="round" />
+                </svg>
+              </div>
+              <span className="text-[12px] font-semibold" style={{ color: scoreColor }}>ATS {atsScore}%</span>
             </div>
 
             <button
               onClick={() => setPreviewVisible(!previewVisible)}
-              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
+              className="p-2 text-neutral-50 hover:bg-neutral-10 rounded-lg lg:hidden"
               aria-label="Toggle preview"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,11 +247,11 @@ export default function BuilderPage() {
               </svg>
             </button>
 
-            <Button size="sm" onClick={downloadPDF} loading={downloading} className="gap-1.5">
+            <Button size="sm" onClick={downloadPDF} loading={downloading} className="gap-1.5 text-[13px]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Download PDF
+              <span className="hidden sm:inline">Download PDF</span>
             </Button>
           </div>
         </div>
@@ -171,10 +261,10 @@ export default function BuilderPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Form Panel */}
         <div className={cn(
-          'w-full lg:w-[420px] flex-shrink-0 overflow-y-auto bg-white border-r border-gray-200',
+          'w-full lg:w-[420px] xl:w-[440px] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
           previewVisible ? 'hidden lg:block' : 'block'
         )}>
-          <div className="p-6 pb-24">
+          <div className="p-5 sm:p-6 pb-[120px]">
             {step === 1 && <TemplatePicker data={resumeData} onChange={handleDataChange} />}
             {step === 2 && <PersonalDetailsForm data={resumeData} onChange={handleDataChange} />}
             {step === 3 && <WorkExperienceForm data={resumeData} onChange={handleDataChange} />}
@@ -182,23 +272,24 @@ export default function BuilderPage() {
             {step === 5 && <SkillsForm data={resumeData} onChange={handleDataChange} />}
           </div>
 
-          {/* Navigation buttons */}
-          <div className="fixed bottom-0 left-0 lg:left-0 lg:w-[420px] bg-white border-t border-gray-200 px-6 py-4 flex justify-between gap-3 z-30">
+          {/* Navigation buttons — sticky at bottom, scoped to form panel width */}
+          <div className="fixed bottom-0 left-0 w-full lg:w-[420px] xl:w-[440px] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3.5 flex justify-between gap-3 z-30">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setStep(Math.max(1, step - 1))}
               disabled={step === 1}
               className="flex-1"
             >
-              ← Back
+              Back
             </Button>
             {step < STEPS.length ? (
-              <Button onClick={() => setStep(step + 1)} className="flex-1">
-                Next →
+              <Button size="sm" onClick={() => setStep(step + 1)} className="flex-1">
+                Next: {STEPS[step]?.label || ''}
               </Button>
             ) : (
-              <Button onClick={downloadPDF} loading={downloading} className="flex-1">
-                Download PDF 🎉
+              <Button size="sm" onClick={downloadPDF} loading={downloading} className="flex-1">
+                Download PDF
               </Button>
             )}
           </div>
@@ -206,21 +297,21 @@ export default function BuilderPage() {
 
         {/* Preview Panel */}
         <div className={cn(
-          'flex-1 bg-gray-100 overflow-auto p-6',
+          'flex-1 bg-[#f0f2f5] overflow-auto p-4 sm:p-6',
           !previewVisible ? 'hidden lg:block' : 'block'
         )}>
-          <div className="sticky top-0 z-10 flex justify-end mb-4">
+          <div className="sticky top-0 z-10 flex justify-end mb-3">
             <button
               onClick={() => setPreviewVisible(!previewVisible)}
-              className="lg:hidden bg-white rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 shadow border border-gray-200"
+              className="lg:hidden bg-white rounded-lg px-3 py-1.5 text-[13px] font-medium text-neutral-70 shadow-sm border border-neutral-20"
             >
-              ← Back to Edit
+              Back to Edit
             </button>
           </div>
 
           <div
             ref={previewRef}
-            className="bg-white shadow-xl mx-auto"
+            className="bg-white shadow-lg mx-auto rounded-sm"
             style={{ width: '794px', maxWidth: '100%', transformOrigin: 'top center' }}
             id="resume-preview"
           >

@@ -422,7 +422,7 @@ function getExampleData(slug: string): ExampleData {
   const title = slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   return {
     title,
-    description: `A strong ${title} resume highlights your most relevant experience, skills, and achievements for the role. Here's how to create a resume that gets past ATS filters and impresses hiring managers in 2025.`,
+    description: `A strong ${title} resume highlights your most relevant experience, skills, and achievements for the role. Here's how to create a resume that gets past ATS filters and impresses hiring managers in 2026.`,
     keySkills: ['Communication', 'Problem Solving', 'Time Management', 'Teamwork', 'Leadership', 'Microsoft Office', 'Attention to Detail', 'Customer Service'],
     sections: ['Professional Summary', 'Work Experience', 'Education', 'Skills'],
     tips: [
@@ -448,11 +448,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
   const data = getExampleData(category);
   return {
-    title: `${data.title} Resume Example & Writing Tips for 2025`,
-    description: `See a real ${data.title} resume example for 2025 with expert writing tips. Learn exactly what to include, what keywords to use, and how to pass ATS. Build yours free in minutes.`,
+    title: `${data.title} Resume Example & Writing Tips for 2026`,
+    description: `See a real ${data.title} resume example for 2026 with expert writing tips. Learn exactly what to include, what keywords to use, and how to pass ATS. Build yours free in minutes.`,
     alternates: { canonical: `https://resumly.app/resume-examples/${category}` },
     openGraph: {
-      title: `${data.title} Resume Example 2025 | Resumly`,
+      title: `${data.title} Resume Example 2026 | Resumly`,
       description: `Expert-written ${data.title} resume example with ATS-optimized keywords and tips.`,
     },
   };
@@ -480,7 +480,7 @@ export default async function ResumeExamplePage({ params }: Props) {
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
               <div className="flex-1">
                 <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
-                  {data.title} Resume Example for 2025
+                  {data.title} Resume Example for 2026
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed">{data.description}</p>
               </div>
@@ -543,7 +543,7 @@ export default async function ResumeExamplePage({ params }: Props) {
                 {/* Writing tips */}
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    {data.title} resume writing tips for 2025
+                    {data.title} resume writing tips for 2026
                   </h2>
                   <div className="space-y-3">
                     {data.tips.map((tip, i) => (
@@ -596,7 +596,7 @@ export default async function ResumeExamplePage({ params }: Props) {
                 {/* Key skills */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-5">
                   <h3 className="font-bold text-gray-900 mb-4">
-                    Top {data.title} Skills for 2025
+                    Top {data.title} Skills for 2026
                   </h3>
                   <p className="text-xs text-gray-500 mb-3">Include as many relevant ones as apply to you:</p>
                   <div className="flex flex-wrap gap-2">
@@ -630,7 +630,7 @@ export default async function ResumeExamplePage({ params }: Props) {
                       <p className="text-xs text-gray-500">With our ATS Pro template</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-600">Our ATS Pro template achieves a 99% pass rate for all major ATS systems including Workday, Greenhouse, and Lever.</p>
+                  <p className="text-xs text-gray-600">Our ATS Pro template uses clean formatting designed to work with major ATS systems including Workday, Greenhouse, and Lever.</p>
                 </div>
               </div>
             </div>
@@ -667,11 +667,11 @@ export default async function ResumeExamplePage({ params }: Props) {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Article',
-            headline: `${data.title} Resume Example for 2025`,
+            headline: `${data.title} Resume Example for 2026`,
             description: data.description,
             author: { '@type': 'Organization', name: 'Resumly' },
             publisher: { '@type': 'Organization', name: 'Resumly', url: 'https://resumly.app' },
-            datePublished: '2025-01-01',
+            datePublished: '2026-01-01',
             dateModified: new Date().toISOString().split('T')[0],
           }),
         }}

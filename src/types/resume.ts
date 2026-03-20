@@ -8,6 +8,7 @@ export interface PersonalDetails {
   linkedIn: string;
   website: string;
   summary: string;
+  photo?: string;
 }
 
 export interface WorkExperience {
@@ -138,10 +139,43 @@ export const TEMPLATE_LIST: Template[] = [
   {
     id: 'creative',
     name: 'Creative',
-    description: 'Stand out with a unique design for creative industries.',
+    description: 'Contemporary design with sidebar for creative industries.',
     category: 'creative',
     preview: '/templates/creative.png',
-    atsScore: 78,
+    atsScore: 85,
+  },
+  {
+    id: 'compact',
+    name: 'Compact',
+    description: 'Maximum content density. Perfect for experienced professionals.',
+    category: 'ats',
+    preview: '/templates/compact.png',
+    atsScore: 97,
+    popular: true,
+  },
+  {
+    id: 'elegant',
+    name: 'Elegant',
+    description: 'Refined, sophisticated design with centered layout.',
+    category: 'classic',
+    preview: '/templates/elegant.png',
+    atsScore: 91,
+  },
+  {
+    id: 'technical',
+    name: 'Technical',
+    description: 'Optimized for engineers, developers, and IT professionals.',
+    category: 'modern',
+    preview: '/templates/technical.png',
+    atsScore: 88,
+  },
+  {
+    id: 'classic',
+    name: 'Classic',
+    description: 'Timeless Harvard-style format. Maximum ATS compatibility.',
+    category: 'classic',
+    preview: '/templates/classic.png',
+    atsScore: 98,
   },
 ];
 
@@ -160,6 +194,7 @@ export const emptyResume = (): ResumeData => ({
     linkedIn: '',
     website: '',
     summary: '',
+    photo: '',
   },
   workExperience: [],
   education: [],

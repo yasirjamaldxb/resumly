@@ -27,6 +27,21 @@ export function ATSProTemplate({ data, scale = 1 }: Props) {
     >
       {/* Header */}
       <div style={{ borderBottom: `2px solid ${data.colorScheme}`, paddingBottom: `${12 * scale}px`, marginBottom: `${16 * scale}px` }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: `${14 * scale}px` }}>
+          {p.photo && (
+            <img
+              src={p.photo}
+              alt=""
+              style={{
+                width: `${60 * scale}px`,
+                height: `${60 * scale}px`,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                flexShrink: 0,
+              }}
+            />
+          )}
+          <div>
         {fullName && (
           <h1 style={{ fontSize: `${22 * scale}px`, fontWeight: 700, margin: 0, color: '#1a1a1a', letterSpacing: '-0.3px' }}>
             {fullName}
@@ -43,6 +58,8 @@ export function ATSProTemplate({ data, scale = 1 }: Props) {
           {p.location && <span>{p.location}</span>}
           {p.linkedIn && <span>{p.linkedIn}</span>}
           {p.website && <span>{p.website}</span>}
+        </div>
+          </div>
         </div>
       </div>
 

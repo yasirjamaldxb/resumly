@@ -36,6 +36,23 @@ export function ModernTemplate({ data, scale = 1 }: Props) {
           padding: `${24 * scale}px ${16 * scale}px`,
         }}
       >
+        {/* Photo */}
+        {p.photo && (
+          <div style={{ textAlign: 'center', marginBottom: `${12 * scale}px` }}>
+            <img
+              src={p.photo}
+              alt=""
+              style={{
+                width: `${80 * scale}px`,
+                height: `${80 * scale}px`,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: `${3 * scale}px solid white`,
+              }}
+            />
+          </div>
+        )}
+
         {/* Name/Title */}
         {fullName && (
           <h1 style={{ fontSize: `${17 * scale}px`, fontWeight: 700, margin: `0 0 ${4 * scale}px`, lineHeight: 1.3 }}>

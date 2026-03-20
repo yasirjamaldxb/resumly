@@ -84,26 +84,26 @@ export function WorkExperienceForm({ data, onChange }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Work Experience</h2>
-        <p className="text-sm text-gray-500">Add your most recent jobs first. Use specific achievements with numbers.</p>
+        <h2 className="text-lg font-semibold text-neutral-90 mb-1">Work Experience</h2>
+        <p className="text-sm text-neutral-50">Add your most recent jobs first. Use specific achievements with numbers.</p>
       </div>
 
       {data.workExperience.length === 0 && (
-        <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-          <p className="text-gray-500 text-sm mb-3">No work experience added yet</p>
+        <div className="text-center py-10 bg-neutral-10 rounded-xl border-2 border-dashed border-neutral-20">
+          <p className="text-neutral-50 text-sm mb-3">No work experience added yet</p>
           <Button variant="outline" size="sm" onClick={addJob}>+ Add Work Experience</Button>
         </div>
       )}
 
       {data.workExperience.map((job, index) => (
-        <div key={job.id} className="border border-gray-200 rounded-xl p-4 space-y-4 bg-white">
+        <div key={job.id} className="border border-neutral-20 rounded-xl p-4 space-y-4 bg-white">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800 text-sm">
+            <h3 className="font-semibold text-neutral-80 text-sm">
               {job.position || job.company || `Position ${index + 1}`}
             </h3>
             <button
               onClick={() => removeJob(job.id)}
-              className="text-gray-400 hover:text-red-500 transition-colors p-1"
+              className="text-neutral-40 hover:text-red-500 transition-colors p-1"
               aria-label="Remove"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,9 +155,9 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                   type="checkbox"
                   checked={job.current}
                   onChange={(e) => updateJob(job.id, 'current', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600"
+                  className="rounded border-neutral-30 text-primary"
                 />
-                <span className="text-sm text-gray-700">Currently working here</span>
+                <span className="text-sm text-neutral-70">Currently working here</span>
               </label>
             </div>
           </div>
@@ -165,7 +165,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
           {/* Bullets */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">Key Achievements / Responsibilities</label>
+              <label className="text-sm font-medium text-neutral-70">Key Achievements / Responsibilities</label>
               <Button
                 variant="outline"
                 size="sm"
@@ -180,19 +180,19 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                 AI Suggest
               </Button>
             </div>
-            <p className="text-xs text-gray-400">Start with action verbs. Include numbers where possible. (e.g., "Increased sales by 30%")</p>
+            <p className="text-xs text-neutral-40">Start with action verbs. Include numbers where possible. (e.g., "Increased sales by 30%")</p>
             {job.bullets.map((bullet, idx) => (
               <div key={idx} className="flex gap-2">
-                <span className="text-gray-400 mt-2 flex-shrink-0">•</span>
+                <span className="text-neutral-40 mt-2 flex-shrink-0">•</span>
                 <input
-                  className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 text-sm border border-neutral-20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Developed and maintained..."
                   value={bullet}
                   onChange={(e) => updateBullet(job.id, idx, e.target.value)}
                 />
                 <button
                   onClick={() => removeBullet(job.id, idx)}
-                  className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0 mt-1.5"
+                  className="text-neutral-30 hover:text-red-400 transition-colors flex-shrink-0 mt-1.5"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -202,7 +202,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
             ))}
             <button
               onClick={() => addBullet(job.id)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium mt-1"
+              className="text-sm text-primary hover:text-primary-dark font-medium mt-1"
             >
               + Add bullet point
             </button>

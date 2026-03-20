@@ -3,32 +3,34 @@ import { Button } from '@/components/ui/button';
 
 export function CTASection() {
   return (
-    <section className="py-24 bg-blue-600">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-6">
-          Your dream job is one resume away
+    <section className="py-16 bg-primary">
+      <div className="max-w-[720px] mx-auto px-6 text-center">
+        <h2 className="text-[28px] sm:text-[34px] font-medium text-white mb-3 tracking-tight leading-tight">
+          Ready to build your
+          <br />
+          winning resume?
         </h2>
-        <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-          Join 100,000+ job seekers who built their resumes with Resumly. Free, fast, and proven to work.
+        <p className="text-[15px] text-white/80 mb-7">
+          Start for free — no credit card, no catch. Your next interview is one resume away.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            size="xl"
-            className="bg-white text-blue-600 hover:bg-blue-50 shadow-xl"
-            asChild
-          >
-            <Link href="/resume-builder">Build My Free Resume →</Link>
-          </Button>
-          <Button
-            variant="outline"
-            size="xl"
-            className="border-white text-white hover:bg-blue-700"
-            asChild
-          >
-            <Link href="/resume-examples">See Examples</Link>
-          </Button>
+        <Button
+          size="lg"
+          className="bg-white text-primary hover:bg-neutral-10 shadow-lg font-semibold"
+          asChild
+        >
+          <Link href="/resume-builder">Create my resume</Link>
+        </Button>
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+          {['10 Templates', 'ATS-Optimized', 'Text-Based PDF', 'Free Forever'].map((item) => (
+            <div key={item} className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-white/70 font-medium text-[13px]">{item}</span>
+            </div>
+          ))}
         </div>
-        <p className="text-blue-200 text-sm mt-6">No sign-up required. No credit card. No watermarks.</p>
       </div>
     </section>
   );

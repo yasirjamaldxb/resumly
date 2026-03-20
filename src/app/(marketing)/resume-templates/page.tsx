@@ -4,15 +4,16 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { TEMPLATE_LIST } from '@/types/resume';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Templates 2025 – ATS-Friendly & Professional',
+  title: 'Free Resume Templates 2026 [Download & Edit Instantly]',
   description:
-    'Download free resume templates designed for 2025. All templates are ATS-friendly, professionally designed, and tested by hiring experts. Choose from modern, classic, minimal, and creative styles.',
+    'Download free, ATS-friendly resume templates for 2026. 10 professionally designed templates — modern, classic, minimal, creative. Edit online and download as text-based PDF.',
   alternates: { canonical: 'https://resumly.app/resume-templates' },
   openGraph: {
-    title: 'Free Resume Templates 2025 | Resumly',
-    description: '6+ free, ATS-optimized resume templates for every industry. Download instantly.',
+    title: 'Free Resume Templates 2026 [Download & Edit] · Resumly',
+    description: '10 free, ATS-optimized resume templates. Edit online, download as text-based PDF instantly.',
   },
 };
 
@@ -34,7 +35,7 @@ export default function ResumeTemplatesPage() {
         <section className="bg-gradient-to-b from-gray-50 to-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">
-              Free Resume Templates for 2025
+              Free Resume Templates for 2026
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
               {TEMPLATE_LIST.length} professionally designed templates. All ATS-tested. All free.
@@ -65,19 +66,16 @@ export default function ResumeTemplatesPage() {
                   {templates.map((template) => (
                     <div key={template.id} className="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all">
                       {/* Template preview */}
-                      <div className="h-72 bg-gray-50 flex items-center justify-center p-6 border-b border-gray-100">
-                        <div className="w-44 h-60 bg-white shadow-lg rounded border border-gray-200 p-3">
-                          <div className="h-3 bg-gray-800 rounded mb-1" style={{ width: '70%' }} />
-                          <div className="h-2 bg-blue-600 rounded mb-3" style={{ width: '50%' }} />
-                          {['Summary', 'Experience', 'Education', 'Skills'].map((s) => (
-                            <div key={s} className="mb-2">
-                              <div className="h-1.5 bg-blue-600 rounded w-14 mb-1" />
-                              <div className="space-y-0.5">
-                                <div className="h-1 bg-gray-200 rounded w-full" />
-                                <div className="h-1 bg-gray-200 rounded w-4/5" />
-                              </div>
-                            </div>
-                          ))}
+                      <div className="bg-gray-50 flex items-center justify-center p-6 border-b border-gray-100">
+                        <div className="w-full max-w-[220px] bg-white shadow-lg rounded border border-gray-200 overflow-hidden">
+                          <Image
+                            src={`/templates/${template.id}.png`}
+                            alt={`${template.name} resume template preview`}
+                            width={794}
+                            height={1123}
+                            className="w-full h-auto"
+                            quality={85}
+                          />
                         </div>
                       </div>
 
@@ -124,15 +122,51 @@ export default function ResumeTemplatesPage() {
               </p>
               <h3 className="text-lg font-bold text-gray-900">For most job seekers: ATS Pro or Professional</h3>
               <p>
-                If you&apos;re applying to corporate roles, tech companies, healthcare, or finance, our ATS Pro and Professional templates are your safest bet. They achieve 99% ATS compatibility and are trusted by hiring managers at Fortune 500 companies.
+                If you&apos;re applying to corporate roles, tech companies, healthcare, or finance, our ATS Pro and Professional templates are your safest bet. They use clean formatting, standard fonts, and proper section headings designed to pass ATS screening.
               </p>
               <h3 className="text-lg font-bold text-gray-900">For creative roles: Modern or Creative</h3>
               <p>
-                Designers, marketers, and creative professionals can benefit from our Modern template, which adds visual appeal while maintaining solid ATS compatibility (92%). The Creative template is best reserved for portfolio submissions where design matters most.
+                Designers, marketers, and creative professionals can benefit from our Modern template, which adds visual appeal while maintaining ATS compatibility. The Creative template is best reserved for portfolio submissions where design matters most.
               </p>
             </div>
           </div>
         </section>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: [
+                {
+                  '@type': 'Question',
+                  name: 'Are these resume templates free to download?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, all 10 resume templates are completely free to use. You can edit them online and download as a text-based PDF with no watermarks, no fees, and no credit card required.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Which resume template should I use?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'For most job seekers, the ATS Pro or Professional templates are the safest choice. They use clean formatting that works with all major Applicant Tracking Systems. For creative roles, try the Modern or Creative templates. The Minimal template works well for tech and startup jobs.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Will these templates pass ATS screening?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, all templates are designed with ATS compatibility in mind. They use standard section headings, clean fonts, and proper formatting. Our PDFs contain real text (not images), so ATS systems can parse every word of your resume.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Can I customize the colors and fonts?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, you can customize the color scheme of any template using our 8 preset colors or a custom color picker. The fonts are optimized for readability and ATS compatibility.' },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'What file format do the templates download in?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'All templates download as text-based PDF files. This means the text in your resume is real and selectable, not an image screenshot. This is critical for ATS compatibility and is the format preferred by most employers.' },
+                },
+              ],
+            }),
+          }}
+        />
       </main>
       <Footer />
     </>
