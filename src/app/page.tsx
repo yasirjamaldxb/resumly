@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { HeroSection } from '@/components/landing/hero';
 import { StatsBar } from '@/components/landing/stats-bar';
 import { FeaturesSection } from '@/components/landing/features';
@@ -56,16 +57,16 @@ const blogPosts = [
 
 function ResumeExamplesPreview() {
   return (
-    <section className="bg-[#1a1c6a] py-20">
+    <section className="bg-[#1a1c6a] py-16">
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Category pills */}
-        <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2">
-          <span className="px-4 py-1.5 bg-primary rounded-full text-white text-[13px] font-semibold whitespace-nowrap">All</span>
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none">
+          <span className="px-3 py-1 bg-primary rounded-full text-white text-[12px] font-semibold whitespace-nowrap">All</span>
           {exampleCategories.map(cat => (
             <Link
               key={cat.slug}
               href={`/resume-examples/${cat.slug}`}
-              className="px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-white/80 text-[13px] font-medium whitespace-nowrap transition-colors"
+              className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-white/80 text-[12px] font-medium whitespace-nowrap transition-colors"
             >
               {cat.title}
             </Link>
@@ -73,46 +74,46 @@ function ResumeExamplesPreview() {
         </div>
 
         {/* Content */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-[36px] sm:text-[44px] font-medium text-white leading-tight tracking-tight mb-4">
+            <h2 className="text-[28px] sm:text-[34px] font-medium text-white leading-tight tracking-tight mb-3">
               Get the interview
               <br />
               with professional
               <br />
               resume examples
             </h2>
-            <p className="text-[16px] text-white/60 mb-8 max-w-[400px]">
+            <p className="text-[14px] text-white/60 mb-6 max-w-[380px]">
               Explore our library of profession-specific examples. Find inspiration and see what works for your field.
             </p>
-            <Link href="/resume-examples" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded font-semibold text-[15px] transition-colors">
+            <Link href="/resume-examples" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded font-semibold text-[13px] transition-colors">
               See all resume examples
             </Link>
           </div>
 
-          {/* Example cards */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Resume thumbnails - like resume.io */}
+          <div className="flex gap-4 justify-center">
             {[
-              { name: 'Marion Diaz', role: 'Legal Administrative Assistant' },
-              { name: 'Dr. Emmit Jackson', role: 'Family Medicine Physician' },
-            ].map(person => (
-              <div key={person.name} className="bg-white rounded-xl p-4 shadow-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neutral-20 to-neutral-30 flex items-center justify-center">
-                    <span className="text-neutral-60 text-[12px] font-bold">{person.name.split(' ').map(n => n[0]).join('')}</span>
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-semibold text-neutral-90">{person.name}</div>
-                    <div className="text-[11px] text-neutral-40">{person.role}</div>
-                  </div>
+              { id: 'professional', name: 'Professional', role: 'Marketing Manager' },
+              { id: 'modern', name: 'Modern', role: 'Software Engineer' },
+              { id: 'ats-pro', name: 'ATS Pro', role: 'Project Manager' },
+            ].map((example, i) => (
+              <Link key={example.id} href={`/resume-examples`} className={`group block ${i === 2 ? 'hidden sm:block' : ''}`}>
+                <div className="w-[160px] bg-white rounded-lg shadow-xl overflow-hidden transition-transform group-hover:scale-105 group-hover:shadow-2xl">
+                  <Image
+                    src={`/templates/${example.id}.png`}
+                    alt={`${example.name} resume example`}
+                    width={794}
+                    height={1123}
+                    className="w-full h-auto"
+                    quality={80}
+                  />
                 </div>
-                <div className="space-y-1.5">
-                  <div className="h-2 bg-neutral-10 rounded w-full" />
-                  <div className="h-2 bg-neutral-10 rounded w-5/6" />
-                  <div className="h-2 bg-neutral-10 rounded w-4/5" />
-                  <div className="h-2 bg-neutral-10 rounded w-full" />
+                <div className="mt-2.5 text-center">
+                  <p className="text-[12px] font-semibold text-white">{example.role}</p>
+                  <p className="text-[11px] text-white/50">{example.name} template</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -123,25 +124,25 @@ function ResumeExamplesPreview() {
 
 function ExpertAdvice() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-16 bg-white">
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-[36px] sm:text-[44px] font-medium text-neutral-90 tracking-tight leading-tight">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-[28px] sm:text-[34px] font-medium text-neutral-90 tracking-tight leading-tight">
             Need some expert advice?
           </h2>
-          <Link href="/blog" className="text-primary hover:text-primary-dark text-[15px] font-semibold inline-flex items-center gap-1 transition-colors">
+          <Link href="/blog" className="text-primary hover:text-primary-dark text-[13px] font-semibold inline-flex items-center gap-1 transition-colors">
             Read the blog
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-2 gap-5">
           {blogPosts.map((post) => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className={`group ${post.cardBg} rounded-2xl p-8 hover:shadow-lg transition-all min-h-[200px] flex flex-col justify-end`}>
-              <span className={`inline-block text-[11px] font-bold px-3 py-1 rounded ${post.tagColor} mb-3 w-fit`}>{post.tag}</span>
-              <h3 className="text-[22px] font-semibold text-neutral-90 leading-tight group-hover:text-primary transition-colors">
+            <Link key={post.slug} href={`/blog/${post.slug}`} className={`group ${post.cardBg} rounded-2xl p-6 hover:shadow-lg transition-all min-h-[160px] flex flex-col justify-end`}>
+              <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded ${post.tagColor} mb-2 w-fit`}>{post.tag}</span>
+              <h3 className="text-[18px] font-semibold text-neutral-90 leading-tight group-hover:text-primary transition-colors">
                 {post.title}
               </h3>
             </Link>

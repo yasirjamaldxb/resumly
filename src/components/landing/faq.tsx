@@ -18,9 +18,9 @@ export function FAQSection() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-20 bg-white">
-      <div className="max-w-[720px] mx-auto px-6">
-        <h2 className="text-[40px] sm:text-[48px] font-medium text-neutral-90 text-center mb-14 tracking-tight leading-tight">
+    <section id="faq" className="py-16 bg-white">
+      <div className="max-w-[680px] mx-auto px-6">
+        <h2 className="text-[28px] sm:text-[34px] font-medium text-neutral-90 text-center mb-10 tracking-tight leading-tight">
           Frequently Asked Questions
         </h2>
 
@@ -28,15 +28,15 @@ export function FAQSection() {
           {faqs.map((faq, i) => (
             <div key={i}>
               <button
-                className="w-full flex items-center justify-between py-5 text-left group"
+                className="w-full flex items-center justify-between py-4 text-left group"
                 onClick={() => setOpen(open === i ? null : i)}
                 aria-expanded={open === i}
               >
-                <span className={`text-[16px] font-medium pr-6 transition-colors ${open === i ? 'text-primary' : 'text-neutral-80 group-hover:text-neutral-90'}`}>
+                <span className={`text-[14px] font-medium pr-6 transition-colors ${open === i ? 'text-primary' : 'text-neutral-80 group-hover:text-neutral-90'}`}>
                   {faq.q}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-neutral-40 flex-shrink-0 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-neutral-40 flex-shrink-0 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -44,8 +44,8 @@ export function FAQSection() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className={`overflow-hidden transition-all duration-200 ${open === i ? 'max-h-[500px] pb-5' : 'max-h-0'}`}>
-                <p className="text-[15px] text-neutral-50 leading-relaxed pr-10">{faq.a}</p>
+              <div className={`overflow-hidden transition-all duration-200 ${open === i ? 'max-h-[500px] pb-4' : 'max-h-0'}`}>
+                <p className="text-[13px] text-neutral-50 leading-relaxed pr-10">{faq.a}</p>
               </div>
             </div>
           ))}
