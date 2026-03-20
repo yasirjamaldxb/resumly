@@ -31,7 +31,7 @@ const navLinks = [
     href: '/cover-letter-builder',
     dropdown: [
       { label: 'Cover Letter Builder', href: '/cover-letter-builder' },
-      { label: 'Cover Letter Examples', href: '/blog/cover-letter-tips' },
+      { label: 'Cover Letter Guide', href: '/blog/how-to-write-a-cover-letter' },
     ],
   },
   { label: 'FAQ', href: '/#faq' },

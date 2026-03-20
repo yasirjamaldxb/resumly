@@ -17,8 +17,8 @@ const footerLinks = {
   ],
   'Resources': [
     { label: 'How to Write a Resume', href: '/blog/how-to-write-a-resume' },
-    { label: 'Cover Letter Guide', href: '/blog/cover-letter-guide' },
-    { label: 'Resume Format Guide', href: '/blog/resume-format-guide' },
+    { label: 'Cover Letter Guide', href: '/blog/how-to-write-a-cover-letter' },
+    { label: 'ATS Resume Guide', href: '/blog/ats-resume-guide' },
     { label: 'All Articles', href: '/blog' },
   ],
   'Legal': [
