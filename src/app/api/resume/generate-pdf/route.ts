@@ -14,8 +14,9 @@ const FONT_CSS_MAP: Record<string, string> = {
   calibri: 'Calibri, Candara, sans-serif',
 };
 
-// Google Fonts URL for all supported font families
-const GOOGLE_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@400;700&display=swap';
+// A4 at 96 DPI — same values Reactive Resume uses
+const PAGE_WIDTH = 794;
+const PAGE_HEIGHT = 1123;
 
 export async function POST(req: NextRequest) {
   let browser: any = null;
@@ -31,8 +32,7 @@ export async function POST(req: NextRequest) {
     // Dynamic import of react-dom/server (Turbopack blocks static import in routes)
     const { renderToStaticMarkup } = await import('react-dom/server');
 
-    // Dynamically import the template components (they use 'use client' but
-    // renderToStaticMarkup works with any React component — no hooks, no browser APIs)
+    // Dynamically import template components
     const { ATSProTemplate } = await import('@/components/resume/templates/ats-pro');
     const { ModernTemplate } = await import('@/components/resume/templates/modern');
     const { ProfessionalTemplate } = await import('@/components/resume/templates/professional');
@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
     const { TechnicalTemplate } = await import('@/components/resume/templates/technical');
     const { ClassicTemplate } = await import('@/components/resume/templates/classic');
 
-    // Pick the right template component based on templateId
     const templateMap: Record<string, any> = {
       'ats-pro': ATSProTemplate,
       'modern': ModernTemplate,
@@ -61,26 +60,27 @@ export async function POST(req: NextRequest) {
     const TemplateComponent = templateMap[resumeData.templateId] || ATSProTemplate;
     const fontCss = FONT_CSS_MAP[resumeData.fontFamily] || FONT_CSS_MAP['inter'];
 
-    // Server-render the SAME React template component that the preview uses
-    // scale=1 for full A4 size (794px width)
+    // Server-render the SAME React template the browser preview uses (scale=1 for A4)
     const templateElement = createElement(TemplateComponent, { data: resumeData, scale: 1 });
     const wrapperElement = createElement('div', { style: { fontFamily: fontCss } }, templateElement);
     const templateHtml = renderToStaticMarkup(wrapperElement);
 
-    // Build a complete HTML document matching the preview context
+    // Build HTML document that matches the browser preview context exactly
     const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <link href="${GOOGLE_FONTS_URL}" rel="stylesheet" />
+  <meta name="viewport" content="width=${PAGE_WIDTH}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    @page { size: A4; margin: 0; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 794px;
-      min-height: 1123px;
+      width: ${PAGE_WIDTH}px;
       margin: 0;
       padding: 0;
+      background: #ffffff;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
       color-adjust: exact;
@@ -88,7 +88,16 @@ export async function POST(req: NextRequest) {
     body {
       font-family: ${fontCss};
     }
-    ul { list-style-position: outside; }
+    @media print {
+      html, body {
+        width: ${PAGE_WIDTH}px;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
   </style>
 </head>
 <body>${templateHtml}</body>
@@ -101,13 +110,12 @@ export async function POST(req: NextRequest) {
       const puppeteer = (await import('puppeteer-core')).default;
 
       browser = await puppeteer.launch({
-        args: [...chromium.args, '--disable-gpu', '--single-process'],
-        defaultViewport: { width: 794, height: 1123 },
+        args: [...chromium.args, '--disable-dev-shm-usage'],
+        defaultViewport: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
         executablePath: await chromium.executablePath(),
         headless: true,
       });
     } else {
-      // Dev mode: find local Chrome
       const puppeteer = (await import('puppeteer-core')).default;
       const chromePaths = [
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -130,18 +138,39 @@ export async function POST(req: NextRequest) {
       browser = await puppeteer.launch({
         executablePath,
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        defaultViewport: { width: 794, height: 1123 },
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+        defaultViewport: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
       });
     }
 
     const page = await browser.newPage();
+
+    // CRITICAL: Emulate screen media BEFORE setting content
+    // Without this, Puppeteer uses "print" media which changes CSS layout
+    // (Reactive Resume uses "print", but since our templates are designed for screen, use "screen")
+    await page.emulateMediaType('screen');
+
+    // Set content and wait for everything to load
     await page.setContent(fullHtml, { waitUntil: 'networkidle0', timeout: 30000 });
 
+    // Wait for fonts to fully load
+    await page.evaluateHandle('document.fonts.ready');
+
+    // Ensure body background is white and margins are zero
+    await page.evaluate(() => {
+      document.documentElement.style.margin = '0';
+      document.documentElement.style.padding = '0';
+      document.body.style.margin = '0';
+      document.body.style.padding = '0';
+      document.body.style.background = '#ffffff';
+    });
+
+    // Generate PDF with EXACT pixel dimensions (not format: 'A4')
+    // This is what Reactive Resume does — ensures pixel-perfect match
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      width: `${PAGE_WIDTH}px`,
+      height: `${PAGE_HEIGHT}px`,
       printBackground: true,
-      preferCSSPageSize: true,
       margin: { top: 0, right: 0, bottom: 0, left: 0 },
     });
 
