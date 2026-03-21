@@ -272,18 +272,40 @@ export default function BuilderPage() {
         </div>
       </header>
 
-      {/* 100% ATS celebration banner */}
+      {/* 100% ATS completion modal */}
       {showAtsBanner && (
-        <div className="bg-green-500 text-white px-4 py-3 flex items-center justify-between gap-3 text-[13px] font-medium">
-          <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-            <span>Your resume is 100% ATS-ready! Now download it or create a matching cover letter.</span>
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <Link href="/cover-letter-builder" className="underline underline-offset-2 hover:no-underline whitespace-nowrap">Cover letter →</Link>
-            <button onClick={() => setShowAtsBanner(false)} className="text-white/70 hover:text-white ml-1" aria-label="Dismiss">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAtsBanner(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-[480px] w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setShowAtsBanner(false)} className="absolute top-4 right-4 text-neutral-30 hover:text-neutral-60 transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+              </div>
+              <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-[12px] font-bold px-3 py-1 rounded-full mb-3">
+                ATS Score: 100%
+              </div>
+              <h2 className="text-[22px] font-semibold text-neutral-90 tracking-tight mb-2">Your resume is ready!</h2>
+              <p className="text-neutral-50 text-[14px]">You&apos;ve completed all sections. Download your resume or take the next step.</p>
+            </div>
+            <div className="space-y-3">
+              <Button size="lg" className="w-full gap-2" onClick={() => { setShowAtsBanner(false); downloadPDF(); }}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Download PDF
+              </Button>
+              <Link href="/cover-letter-builder" className="flex items-center justify-center gap-2 w-full rounded-lg border border-neutral-20 bg-white hover:bg-neutral-10 transition-colors px-4 py-2.5 text-[14px] font-semibold text-neutral-70">
+                <svg className="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Create a matching cover letter
+              </Link>
+              <Link href="/ats-checker" className="flex items-center justify-center gap-2 w-full rounded-lg border border-neutral-20 bg-white hover:bg-neutral-10 transition-colors px-4 py-2.5 text-[14px] font-semibold text-neutral-70">
+                <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                Check ATS score against a job posting
+              </Link>
+              <button onClick={() => setShowAtsBanner(false)} className="w-full text-[13px] text-neutral-40 hover:text-neutral-60 py-1 transition-colors">
+                Continue editing
+              </button>
+            </div>
           </div>
         </div>
       )}
