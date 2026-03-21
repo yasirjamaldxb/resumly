@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Dynamic import for pdf-parse to avoid build issues
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require('pdf-parse');
-  const data = await pdfParse(buffer);
-  return data.text;
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+
+  const uint8Array = new Uint8Array(buffer);
+  const doc = await pdfjsLib.getDocument({ data: uint8Array, useSystemFonts: true }).promise;
+
+  const textParts: string[] = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((item: any) => item.str || '')
+      .join(' ');
+    textParts.push(pageText);
+  }
+
+  return textParts.join('\n');
 }
 
 // --- Scoring Engine ---

@@ -30,7 +30,7 @@
     "next": "16.1.6",
     "next-sitemap": "^4.2.3",
     "openai": "^6.29.0",
-    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^4.0.379",
     "puppeteer-core": "^24.39.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
