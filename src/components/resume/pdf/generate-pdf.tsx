@@ -12,9 +12,16 @@ Font.register({
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
-  const [year, month] = dateStr.split('-');
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${months[parseInt(month) - 1]} ${year}`;
+  // Handle YYYY-MM, YYYYMM, or just YYYY
+  const cleaned = dateStr.replace(/[^0-9]/g, '');
+  if (cleaned.length >= 6) {
+    const year = cleaned.slice(0, 4);
+    const month = parseInt(cleaned.slice(4, 6)) - 1;
+    return `${months[month] || ''} ${year}`.trim();
+  }
+  if (cleaned.length === 4) return cleaned; // Just year
+  return dateStr;
 }
 
 // ─── SHARED HELPERS ─────────────────────────────────────────────
