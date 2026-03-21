@@ -127,18 +127,16 @@ export default function BuilderPage() {
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const el = previewRef.current;
-      if (!el) throw new Error('Preview not found');
-
       const firstName = resumeData.personalDetails.firstName || 'resume';
       const lastName = resumeData.personalDetails.lastName || '';
       const filename = [firstName, lastName].filter(Boolean).join('_') + '_resume.pdf';
 
-      // ── Primary: Server-side Puppeteer (real text, pixel-perfect) ──
+      // Server-side: send resumeData → server renders SAME React template
+      // with renderToStaticMarkup → Puppeteer generates real-text PDF
       const res = await fetch('/api/resume/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ html: el.innerHTML }),
+        body: JSON.stringify({ resumeData }),
       });
 
       if (res.ok) {
@@ -154,13 +152,16 @@ export default function BuilderPage() {
         return;
       }
 
-      // ── Fallback: @react-pdf/renderer (real text, close match) ──
-      console.warn('Server PDF failed, using @react-pdf/renderer fallback');
+      // If server fails, show the error
+      const errBody = await res.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('Server PDF error:', errBody);
+
+      // Fallback: @react-pdf/renderer (still real text, close layout match)
+      console.warn('Using @react-pdf/renderer fallback');
       const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
       await downloadResumePDF(resumeData);
     } catch (err) {
       console.error('PDF generation failed:', err);
-      // Last resort fallback
       try {
         const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
         await downloadResumePDF(resumeData);
