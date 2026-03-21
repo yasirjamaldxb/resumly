@@ -1,8 +1,20 @@
 import { createClient } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST() {
+const getBaseUrl = (req: NextRequest) => {
+  const origin = req.headers.get('origin');
+  if (origin && !origin.includes('localhost')) return origin;
+  return process.env.NEXT_PUBLIC_APP_URL || 'https://resumly.app';
+};
+
+export async function POST(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'));
+  return NextResponse.redirect(new URL('/', getBaseUrl(req)));
+}
+
+export async function GET(req: NextRequest) {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return NextResponse.redirect(new URL('/', getBaseUrl(req)));
 }

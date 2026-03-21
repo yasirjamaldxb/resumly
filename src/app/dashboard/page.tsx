@@ -50,7 +50,8 @@ export default async function DashboardPage() {
 
   const atsReadyCount = (resumes || []).filter((r) => calcAtsScore(r.resume_data as Record<string, unknown>) >= 80).length;
 
-  const firstName = user.user_metadata?.name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
+  const metaName = user.user_metadata?.name?.trim();
+  const firstName = metaName ? metaName.split(' ')[0] : null;
 
   return (
     <div className="min-h-screen bg-[#f7f9fc]">
@@ -77,7 +78,7 @@ export default async function DashboardPage() {
       <main className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Welcome */}
         <div className="mb-8">
-          <h1 className="text-[28px] sm:text-[32px] font-medium text-neutral-90 tracking-tight">Welcome, {firstName}</h1>
+          <h1 className="text-[28px] sm:text-[32px] font-medium text-neutral-90 tracking-tight">{firstName ? `Welcome, ${firstName}` : 'Welcome back'}</h1>
           <p className="text-neutral-50 mt-1 text-[15px]">Create, manage, and download your ATS-optimized resumes.</p>
         </div>
 

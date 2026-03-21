@@ -34,6 +34,7 @@ export default function BuilderPage() {
   const [atsScore, setAtsScore] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const previewRef = useRef<HTMLDivElement>(null);
+  const formPanelRef = useRef<HTMLDivElement>(null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load saved resume data from Supabase
@@ -121,25 +122,34 @@ export default function BuilderPage() {
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const { downloadMultiPagePDF } = await import('@/components/resume/pdf/multi-page-generator');
-      await downloadMultiPagePDF(resumeData);
-    } catch (err) {
-      console.error('PDF generation error:', err);
-      try {
-        const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
-        await downloadResumePDF(resumeData);
-      } catch {
-        const el = document.getElementById('resume-preview');
-        if (el) {
-          const printWindow = window.open('', '_blank');
-          if (!printWindow) { window.print(); return; }
-          printWindow.document.write(`<!DOCTYPE html><html><head><title>Resume</title><style>*{margin:0;padding:0;box-sizing:border-box}@page{size:A4;margin:0}body{width:794px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${el.outerHTML}</body></html>`);
-          printWindow.document.close();
-          setTimeout(() => { printWindow.print(); }, 300);
-        } else {
-          window.print();
-        }
+      const el = previewRef.current || document.getElementById('resume-preview');
+      if (!el) throw new Error('Preview element not found');
+
+      const res = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: el.innerHTML }),
+      });
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const name = [resumeData.personalDetails.firstName, resumeData.personalDetails.lastName].filter(Boolean).join('_') || 'resume';
+        a.href = url;
+        a.download = `${name}_resume.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // Fallback: print dialog
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) { window.print(); return; }
+        printWindow.document.write(`<!DOCTYPE html><html><head><title>Resume</title><style>*{margin:0;padding:0;box-sizing:border-box}@page{size:A4;margin:0}body{width:794px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${el.outerHTML}</body></html>`);
+        printWindow.document.close();
+        setTimeout(() => { printWindow.print(); }, 300);
       }
+    } catch {
+      window.print();
     } finally {
       setDownloading(false);
     }
@@ -182,7 +192,7 @@ export default function BuilderPage() {
             {STEPS.map((s, i) => (
               <button
                 key={s.id}
-                onClick={() => setStep(i + 1)}
+                onClick={() => { setStep(i + 1); formPanelRef.current?.scrollTo({ top: 0 }); }}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all whitespace-nowrap',
                   step === i + 1
@@ -260,7 +270,7 @@ export default function BuilderPage() {
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Form Panel */}
-        <div className={cn(
+        <div ref={formPanelRef} className={cn(
           'w-full lg:w-[420px] xl:w-[440px] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
           previewVisible ? 'hidden lg:block' : 'block'
         )}>
@@ -277,14 +287,14 @@ export default function BuilderPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setStep(Math.max(1, step - 1))}
+              onClick={() => { setStep(Math.max(1, step - 1)); formPanelRef.current?.scrollTo({ top: 0 }); }}
               disabled={step === 1}
               className="flex-1"
             >
               Back
             </Button>
             {step < STEPS.length ? (
-              <Button size="sm" onClick={() => setStep(step + 1)} className="flex-1">
+              <Button size="sm" onClick={() => { setStep(step + 1); formPanelRef.current?.scrollTo({ top: 0 }); }} className="flex-1">
                 Next: {STEPS[step]?.label || ''}
               </Button>
             ) : (
