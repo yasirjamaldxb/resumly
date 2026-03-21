@@ -124,152 +124,49 @@ export default function BuilderPage() {
     autoSave(data);
   };
 
-  // Build all resume text for the invisible ATS text layer
-  const buildATSText = () => {
-    const p = resumeData.personalDetails;
-    const lines: string[] = [];
-
-    // Personal details
-    lines.push([p.firstName, p.lastName].filter(Boolean).join(' '));
-    if (p.jobTitle) lines.push(p.jobTitle);
-    const contact = [p.email, p.phone, p.location, p.linkedIn, p.website].filter(Boolean);
-    if (contact.length) lines.push(contact.join(' | '));
-    if (p.summary) { lines.push(''); lines.push('Professional Summary'); lines.push(p.summary); }
-
-    // Work experience
-    if (resumeData.workExperience.length) {
-      lines.push(''); lines.push('Work Experience');
-      for (const w of resumeData.workExperience) {
-        lines.push([w.position, w.company, w.location].filter(Boolean).join(' - '));
-        const dates = [w.startDate, w.current ? 'Present' : w.endDate].filter(Boolean).join(' to ');
-        if (dates) lines.push(dates);
-        if (w.description) lines.push(w.description);
-        for (const b of w.bullets) { if (b.trim()) lines.push('• ' + b); }
-      }
-    }
-
-    // Education
-    if (resumeData.education.length) {
-      lines.push(''); lines.push('Education');
-      for (const e of resumeData.education) {
-        lines.push([e.degree, e.field].filter(Boolean).join(' in '));
-        lines.push([e.institution, e.location].filter(Boolean).join(', '));
-        const dates = [e.startDate, e.current ? 'Present' : e.endDate].filter(Boolean).join(' to ');
-        if (dates) lines.push(dates);
-        if (e.gpa) lines.push('GPA: ' + e.gpa);
-        if (e.achievements) lines.push(e.achievements);
-      }
-    }
-
-    // Skills
-    if (resumeData.skills.length) {
-      lines.push(''); lines.push('Skills');
-      lines.push(resumeData.skills.map(s => s.name).join(', '));
-    }
-
-    // Certifications
-    if (resumeData.certifications.length) {
-      lines.push(''); lines.push('Certifications');
-      for (const c of resumeData.certifications) {
-        lines.push([c.name, c.issuer, c.date].filter(Boolean).join(' - '));
-      }
-    }
-
-    // Languages
-    if (resumeData.languages.length) {
-      lines.push(''); lines.push('Languages');
-      lines.push(resumeData.languages.map(l => `${l.name} (${l.proficiency})`).join(', '));
-    }
-
-    // Projects
-    if (resumeData.projects.length) {
-      lines.push(''); lines.push('Projects');
-      for (const proj of resumeData.projects) {
-        lines.push(proj.name);
-        if (proj.description) lines.push(proj.description);
-      }
-    }
-
-    return lines.join('\n');
-  };
-
   const downloadPDF = async () => {
     setDownloading(true);
     try {
       const el = previewRef.current;
       if (!el) throw new Error('Preview not found');
 
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-
-      // Render the preview at 2x for crisp output
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        width: 794,
-        windowWidth: 794,
-      });
-
-      const pageW = 210; // A4 width in mm
-      const pageH = 297; // A4 height in mm
-      const imgH = (canvas.height * pageW) / canvas.width;
-      const totalPages = Math.ceil(imgH / pageH);
-
-      const doc = new jsPDF('p', 'mm', 'a4');
-
-      // ── Step 1: Add invisible ATS text layer FIRST (behind the image) ──
-      const atsText = buildATSText();
-      doc.setFontSize(1); // Tiny font — invisible to the eye
-      doc.setTextColor(255, 255, 255); // White text — invisible on white background
-      // Split the ATS text across pages at ~800 lines per page
-      const allLines = atsText.split('\n');
-      const linesPerPage = 800;
-      for (let p = 0; p < totalPages; p++) {
-        if (p > 0) doc.addPage();
-        const pageLines = allLines.slice(p * linesPerPage, (p + 1) * linesPerPage);
-        if (pageLines.length > 0) {
-          doc.text(pageLines.join('\n'), 1, 1);
-        }
-      }
-
-      // ── Step 2: Add image layer ON TOP of the text ──
-      for (let i = 0; i < totalPages; i++) {
-        doc.setPage(i + 1);
-
-        const sliceCanvas = document.createElement('canvas');
-        sliceCanvas.width = canvas.width;
-        const sliceHeight = Math.min(
-          (pageH / pageW) * canvas.width,
-          canvas.height - i * (pageH / pageW) * canvas.width
-        );
-        sliceCanvas.height = sliceHeight;
-
-        const ctx = sliceCanvas.getContext('2d');
-        if (!ctx) continue;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-        ctx.drawImage(
-          canvas,
-          0, i * (pageH / pageW) * canvas.width,
-          canvas.width, sliceHeight,
-          0, 0,
-          canvas.width, sliceHeight
-        );
-
-        const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-        const sliceImgH = (sliceHeight * pageW) / canvas.width;
-        doc.addImage(sliceData, 'JPEG', 0, 0, pageW, sliceImgH);
-      }
-
       const firstName = resumeData.personalDetails.firstName || 'resume';
       const lastName = resumeData.personalDetails.lastName || '';
       const filename = [firstName, lastName].filter(Boolean).join('_') + '_resume.pdf';
-      doc.save(filename);
+
+      // ── Primary: Server-side Puppeteer (real text, pixel-perfect) ──
+      const res = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: el.innerHTML }),
+      });
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      // ── Fallback: @react-pdf/renderer (real text, close match) ──
+      console.warn('Server PDF failed, using @react-pdf/renderer fallback');
+      const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
+      await downloadResumePDF(resumeData);
     } catch (err) {
       console.error('PDF generation failed:', err);
-      alert('PDF generation failed. Please try again.');
+      // Last resort fallback
+      try {
+        const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
+        await downloadResumePDF(resumeData);
+      } catch {
+        alert('PDF generation failed. Please try again.');
+      }
     } finally {
       setDownloading(false);
     }
