@@ -15,14 +15,17 @@ const SKILL_LEVELS: Skill['level'][] = ['beginner', 'intermediate', 'advanced', 
 const LANG_LEVELS: Language['proficiency'][] = ['elementary', 'limited', 'professional', 'full', 'native'];
 
 const COMMON_SKILLS = [
-  'JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'SQL', 'AWS', 'Git',
-  'Project Management', 'Communication', 'Leadership', 'Excel', 'Data Analysis',
-  'Marketing', 'Sales', 'Customer Service', 'Figma', 'Docker', 'Kubernetes'
+  'Communication', 'Leadership', 'Project Management', 'Problem Solving', 'Teamwork',
+  'Microsoft Office', 'Excel', 'Data Analysis', 'Customer Service', 'Time Management',
+  'Presentation Skills', 'Attention to Detail', 'Critical Thinking', 'Adaptability',
+  'Negotiation', 'Sales', 'Marketing', 'Research', 'Writing', 'Budgeting',
+  'Python', 'SQL', 'JavaScript', 'React', 'AWS', 'Git', 'Figma', 'Salesforce',
 ];
 
 export function SkillsForm({ data, onChange }: Props) {
   const [skillInput, setSkillInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const addSkill = (name?: string) => {
     const n = name || skillInput.trim();
@@ -70,6 +73,7 @@ export function SkillsForm({ data, onChange }: Props) {
   const aiSuggestSkills = async () => {
     if (!data.personalDetails.jobTitle) return;
     setAiLoading(true);
+    setAiError(null);
     try {
       const res = await fetch('/api/ai/suggest', {
         method: 'POST',
@@ -83,9 +87,13 @@ export function SkillsForm({ data, onChange }: Props) {
           .filter((s: string) => !existing.has(s.toLowerCase()))
           .map((s: string) => ({ id: generateId(), name: s, level: 'intermediate' as const }));
         onChange({ ...data, skills: [...data.skills, ...newSkills] });
+      } else {
+        setAiError('AI unavailable. Add skills manually from the suggestions below.');
+        setTimeout(() => setAiError(null), 4000);
       }
     } catch {
-      // Silent fail
+      setAiError('AI unavailable. Add skills manually from the suggestions below.');
+      setTimeout(() => setAiError(null), 4000);
     } finally {
       setAiLoading(false);
     }
@@ -102,6 +110,12 @@ export function SkillsForm({ data, onChange }: Props) {
           <h2 className="text-lg font-semibold text-neutral-90 mb-1">Skills</h2>
           <p className="text-sm text-neutral-50">Add relevant skills that match your target job description.</p>
         </div>
+        {aiError && (
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-amber-700">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            {aiError}
+          </div>
+        )}
 
         <div className="flex gap-2">
           <input

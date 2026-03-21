@@ -25,6 +25,7 @@ const emptyJob = (): WorkExperience => ({
 
 export function WorkExperienceForm({ data, onChange }: Props) {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const addJob = () => {
     onChange({ ...data, workExperience: [...data.workExperience, emptyJob()] });
@@ -66,6 +67,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
   const generateBullets = async (job: WorkExperience) => {
     if (!job.position || !job.company) return;
     setAiLoading(job.id);
+    setAiError(null);
     try {
       const res = await fetch('/api/ai/suggest', {
         method: 'POST',
@@ -73,9 +75,15 @@ export function WorkExperienceForm({ data, onChange }: Props) {
         body: JSON.stringify({ type: 'bullets', position: job.position, company: job.company, description: job.description }),
       });
       const json = await res.json();
-      if (json.bullets) updateJob(job.id, 'bullets', json.bullets);
+      if (json.bullets) {
+        updateJob(job.id, 'bullets', json.bullets);
+      } else {
+        setAiError('AI is unavailable. Try again later.');
+        setTimeout(() => setAiError(null), 4000);
+      }
     } catch {
-      // Silent fail
+      setAiError('AI is unavailable. Try again later.');
+      setTimeout(() => setAiError(null), 4000);
     } finally {
       setAiLoading(null);
     }
@@ -87,6 +95,12 @@ export function WorkExperienceForm({ data, onChange }: Props) {
         <h2 className="text-lg font-semibold text-neutral-90 mb-1">Work Experience</h2>
         <p className="text-sm text-neutral-50">Add your most recent jobs first. Use specific achievements with numbers.</p>
       </div>
+      {aiError && (
+        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm text-red-600">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>
+          {aiError}
+        </div>
+      )}
 
       {data.workExperience.length === 0 && (
         <div className="text-center py-10 bg-neutral-10 rounded-xl border-2 border-dashed border-neutral-20">
@@ -187,7 +201,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                 <span className="text-neutral-40 mt-2 flex-shrink-0">•</span>
                 <input
                   className="flex-1 text-sm border border-neutral-20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Developed and maintained..."
+                  placeholder="Describe an achievement, e.g. Increased revenue by 25% by..."
                   value={bullet}
                   onChange={(e) => updateBullet(job.id, idx, e.target.value)}
                 />

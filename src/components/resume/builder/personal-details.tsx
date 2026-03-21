@@ -12,6 +12,7 @@ interface Props {
 
 export function PersonalDetailsForm({ data, onChange }: Props) {
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const update = (field: string, value: string) => {
@@ -64,6 +65,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
   const generateSummary = async () => {
     if (!data.personalDetails.jobTitle) return;
     setAiLoading(true);
+    setAiError(null);
     try {
       const res = await fetch('/api/ai/suggest', {
         method: 'POST',
@@ -75,9 +77,15 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         }),
       });
       const json = await res.json();
-      if (json.text) update('summary', json.text);
+      if (json.text) {
+        update('summary', json.text);
+      } else {
+        setAiError('AI is unavailable. Write your summary manually.');
+        setTimeout(() => setAiError(null), 4000);
+      }
     } catch {
-      // Silent fail
+      setAiError('AI is unavailable. Write your summary manually.');
+      setTimeout(() => setAiError(null), 4000);
     } finally {
       setAiLoading(false);
     }
@@ -214,6 +222,13 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         value={p.website}
         onChange={(e) => update('website', e.target.value)}
       />
+
+      {aiError && (
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-amber-700">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          {aiError}
+        </div>
+      )}
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">

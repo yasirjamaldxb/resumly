@@ -33,6 +33,8 @@ export default function BuilderPage() {
   const [loading, setLoading] = useState(true);
   const [atsScore, setAtsScore] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [showAtsBanner, setShowAtsBanner] = useState(false);
+  const prevAtsScore = useRef(0);
   const previewRef = useRef<HTMLDivElement>(null);
   const formPanelRef = useRef<HTMLDivElement>(null);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,7 +83,10 @@ export default function BuilderPage() {
     if (resumeData.workExperience.length > 0) score += 20;
     if (resumeData.education.length > 0) score += 10;
     if (resumeData.skills.length >= 5) score += 15;
-    setAtsScore(Math.min(score, 100));
+    const newScore = Math.min(score, 100);
+    if (newScore === 100 && prevAtsScore.current < 100) setShowAtsBanner(true);
+    prevAtsScore.current = newScore;
+    setAtsScore(newScore);
   }, [resumeData]);
 
   // Auto-save with status indicator
@@ -266,6 +271,22 @@ export default function BuilderPage() {
           </div>
         </div>
       </header>
+
+      {/* 100% ATS celebration banner */}
+      {showAtsBanner && (
+        <div className="bg-green-500 text-white px-4 py-3 flex items-center justify-between gap-3 text-[13px] font-medium">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+            <span>Your resume is 100% ATS-ready! Now download it or create a matching cover letter.</span>
+          </div>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <Link href="/cover-letter-builder" className="underline underline-offset-2 hover:no-underline whitespace-nowrap">Cover letter →</Link>
+            <button onClick={() => setShowAtsBanner(false)} className="text-white/70 hover:text-white ml-1" aria-label="Dismiss">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
