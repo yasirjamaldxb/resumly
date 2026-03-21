@@ -60,6 +60,24 @@ export function ATSCheckerClient() {
     if (f) handleFile(f);
   }, [handleFile]);
 
+  const extractTextFromPDF = async (pdfFile: File): Promise<string> => {
+    const pdfjsLib = await import('pdfjs-dist');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+    const textParts: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pageText = content.items.map((item: any) => item.str || '').join(' ');
+      textParts.push(pageText);
+    }
+    return textParts.join('\n');
+  };
+
   const handleAnalyze = async () => {
     if (!file) return;
     setLoading(true);
@@ -67,12 +85,27 @@ export function ATSCheckerClient() {
     setResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append('resume', file);
+      // Step 1: Extract text from PDF in the browser
+      let text: string;
+      try {
+        text = await extractTextFromPDF(file);
+      } catch {
+        setError('Could not read this PDF. It may be image-based, password-protected, or corrupted. Try a different file.');
+        setLoading(false);
+        return;
+      }
 
+      if (text.trim().length < 10) {
+        setError('No readable text found in this PDF. It may be an image-based PDF (scanned document). Try rebuilding your resume with Resumly for a text-based PDF.');
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Send text to API for scoring
       const res = await fetch('/api/ats-check', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
       });
 
       const data = await res.json();
@@ -83,12 +116,11 @@ export function ATSCheckerClient() {
       }
 
       setResult(data);
-      // Scroll to results
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError('Something went wrong. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }

@@ -1,25 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
-
-  const uint8Array = new Uint8Array(buffer);
-  const doc = await pdfjsLib.getDocument({ data: uint8Array, useSystemFonts: true }).promise;
-
-  const textParts: string[] = [];
-  for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i);
-    const content = await page.getTextContent();
-    const pageText = content.items
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((item: any) => item.str || '')
-      .join(' ');
-    textParts.push(pageText);
-  }
-
-  return textParts.join('\n');
-}
-
 // --- Scoring Engine ---
 
 interface CheckResult {
@@ -325,31 +305,15 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const file = formData.get('resume') as File | null;
+    const body = await request.json();
+    const text = body.text;
 
-    if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    if (!text || typeof text !== 'string') {
+      return NextResponse.json({ error: 'No resume text provided' }, { status: 400 });
     }
 
-    if (file.type !== 'application/pdf') {
-      return NextResponse.json({ error: 'Only PDF files are supported' }, { status: 400 });
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large. Maximum 10MB.' }, { status: 400 });
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    let text: string;
-    try {
-      text = await extractTextFromPDF(buffer);
-    } catch {
-      return NextResponse.json({
-        error: 'Could not read PDF. It may be password-protected or corrupted.',
-      }, { status: 400 });
+    if (text.trim().length < 10) {
+      return NextResponse.json({ error: 'Resume text is too short to analyze' }, { status: 400 });
     }
 
     const { checks, totalScore, maxScore, sections } = analyzeResume(text);
