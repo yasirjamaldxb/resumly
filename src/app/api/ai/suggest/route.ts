@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { trackEvent, logError } from '@/lib/analytics';
 
 export async function POST(req: NextRequest) {
   const openai = new OpenAI({
@@ -64,9 +65,11 @@ export async function POST(req: NextRequest) {
     });
 
     const content = completion.choices[0]?.message?.content || '';
+    trackEvent({ event: 'ai_suggest', metadata: { type, jobTitle: jobTitle || position } });
     return NextResponse.json(responseParser(content));
   } catch (error) {
     console.error('AI suggestion error:', error);
+    logError({ endpoint: '/api/ai/suggest', errorMessage: error instanceof Error ? error.message : 'AI suggestion failed' });
     return NextResponse.json({ error: 'AI service unavailable' }, { status: 500 });
   }
 }

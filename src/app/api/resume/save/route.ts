@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { trackEvent, logError } from '@/lib/analytics';
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,9 +41,17 @@ export async function POST(req: NextRequest) {
     }
 
     if (result.error) throw result.error;
+
+    trackEvent({
+      event: id ? 'resume_save' : 'resume_create',
+      userId: user.id,
+      metadata: { resumeId: result.data.id, templateId: rest.templateId },
+    });
+
     return NextResponse.json({ id: result.data.id, success: true });
   } catch (error) {
     console.error('Save error:', error);
+    logError({ endpoint: '/api/resume/save', errorMessage: error instanceof Error ? error.message : 'Save failed' });
     return NextResponse.json({ error: 'Save failed' }, { status: 500 });
   }
 }

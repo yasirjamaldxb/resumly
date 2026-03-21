@@ -18,7 +18,7 @@ export function CTASection() {
           className="bg-white text-primary hover:bg-neutral-10 shadow-lg font-semibold"
           asChild
         >
-          <Link href="/resume-builder">Create my resume</Link>
+          <Link href="/builder/new">Create my resume</Link>
         </Button>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-6">

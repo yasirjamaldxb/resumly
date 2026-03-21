@@ -16,11 +16,39 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/auth/login');
 
-  const { data: resumes } = await supabase
-    .from('resumes')
-    .select('id, title, template_id, color_scheme, updated_at, resume_data')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false });
+  const [{ data: resumes }, { count: downloadCount }] = await Promise.all([
+    supabase
+      .from('resumes')
+      .select('id, title, template_id, color_scheme, updated_at, resume_data, is_public')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false }),
+    supabase
+      .from('analytics_events')
+      .select('*', { count: 'exact', head: true })
+      .eq('event_type', 'pdf_download')
+      .eq('user_id', user.id),
+  ]);
+
+  // Calculate ATS score for each resume (mirrors builder logic)
+  const calcAtsScore = (rd: Record<string, unknown>): number => {
+    const p = rd?.personalDetails as Record<string, string> | undefined;
+    const we = rd?.workExperience as unknown[] | undefined;
+    const edu = rd?.education as unknown[] | undefined;
+    const skills = rd?.skills as unknown[] | undefined;
+    let score = 0;
+    if (p?.firstName && p?.lastName) score += 10;
+    if (p?.email) score += 10;
+    if (p?.phone) score += 5;
+    if (p?.jobTitle) score += 10;
+    if (p?.location) score += 5;
+    if (p?.summary && p.summary.length > 50) score += 15;
+    if (we && we.length > 0) score += 20;
+    if (edu && edu.length > 0) score += 10;
+    if (skills && skills.length >= 5) score += 15;
+    return Math.min(score, 100);
+  };
+
+  const atsReadyCount = (resumes || []).filter((r) => calcAtsScore(r.resume_data as Record<string, unknown>) >= 80).length;
 
   const firstName = user.user_metadata?.name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
 
@@ -57,9 +85,9 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
           {[
             { label: 'Resumes', value: String(resumes?.length || 0), color: 'bg-primary/10 text-primary' },
-            { label: 'ATS Ready', value: String(resumes?.length || 0), color: 'bg-green-50 text-green-600' },
+            { label: 'ATS Ready', value: String(atsReadyCount), color: 'bg-green-50 text-green-600' },
             { label: 'Templates', value: '10', color: 'bg-purple-50 text-purple-600' },
-            { label: 'Downloads', value: '\u221E', color: 'bg-orange-50 text-orange-600' },
+            { label: 'Downloads', value: String(downloadCount || 0), color: 'bg-orange-50 text-orange-600' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl border border-neutral-20/80 p-4 hover:shadow-sm transition-shadow">
               <div className={`w-9 h-9 rounded-lg ${stat.color} flex items-center justify-center mb-3 text-[15px] font-bold`}>
@@ -119,6 +147,7 @@ export default async function DashboardPage() {
                     template_id: resume.template_id,
                     color_scheme: resume.color_scheme,
                     updated_at: resume.updated_at,
+                    is_public: resume.is_public ?? false,
                     resume_data: resume.resume_data as { personalDetails?: { firstName?: string; lastName?: string; jobTitle?: string; photo?: string }; colorScheme?: string } | null,
                   }}
                 />

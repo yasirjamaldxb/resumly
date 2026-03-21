@@ -36,8 +36,55 @@ export function ATSCheckerClient() {
   const [result, setResult] = useState<ATSResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [emailUnlocked, setEmailUnlocked] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLDivElement>(null);
+
+  const handleUnlockReport = async () => {
+    if (!email.trim()) {
+      setEmailError('Please enter your email');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email');
+      return;
+    }
+    setEmailLoading(true);
+    setEmailError('');
+    try {
+      const res = await fetch('/api/ats-check/collect-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          score: result?.score,
+          rating: result?.rating,
+          suggestions: result?.suggestions,
+          categories: result?.categories,
+          wordCount: result?.wordCount,
+          sections: result?.sections,
+        }),
+      });
+      const data = await res.json();
+      if (data.emailSent) {
+        console.log('ATS report email sent successfully');
+      } else if (data.emailError) {
+        console.warn('Email not sent:', data.emailError);
+      }
+      // Always unlock even if API fails — don't block the user
+      setEmailUnlocked(true);
+    } catch {
+      // Still unlock on error
+      setEmailUnlocked(true);
+    } finally {
+      setEmailLoading(false);
+    }
+  };
 
   const handleFile = useCallback((f: File) => {
     if (f.type !== 'application/pdf') {
@@ -349,69 +396,175 @@ export function ATSCheckerClient() {
               </div>
             </div>
 
-            {/* Suggestions to fix */}
-            {result.suggestions.length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-[18px] font-semibold text-neutral-90 mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                  Issues to fix ({result.suggestions.length})
-                </h3>
-                <div className="space-y-3">
-                  {result.suggestions.map((s, i) => (
-                    <div key={i} className="bg-red-50 border border-red-200 rounded-xl p-4">
+            {/* Email gate or full report */}
+            {!emailUnlocked ? (
+              <>
+                {/* Teaser: show first 2 issues blurred */}
+                {result.suggestions.length > 0 && (
+                  <div className="mb-6 relative">
+                    <h3 className="text-[18px] font-semibold text-neutral-90 mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      {result.suggestions.length} issue{result.suggestions.length !== 1 ? 's' : ''} found — here&apos;s how to fix them
+                    </h3>
+                    {/* Show first suggestion clearly */}
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
                       <div className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 text-[12px] font-bold mt-0.5">
-                          {i + 1}
-                        </div>
+                        <div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 text-[12px] font-bold mt-0.5">1</div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-[14px] font-semibold text-red-800">{s.title}</h4>
-                            <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-medium">{s.category}</span>
+                            <h4 className="text-[14px] font-semibold text-red-800">{result.suggestions[0]?.title}</h4>
+                            <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-medium">{result.suggestions[0]?.category}</span>
                           </div>
-                          <p className="text-[13px] text-red-700 leading-relaxed">{s.fix}</p>
+                          <p className="text-[13px] text-red-700 leading-relaxed">{result.suggestions[0]?.fix}</p>
                         </div>
+                      </div>
+                    </div>
+                    {/* Blurred remaining suggestions */}
+                    {result.suggestions.length > 1 && (
+                      <div className="relative">
+                        <div className="space-y-3 blur-[6px] pointer-events-none select-none" aria-hidden="true">
+                          {result.suggestions.slice(1, 4).map((s, i) => (
+                            <div key={i} className="bg-red-50 border border-red-200 rounded-xl p-4">
+                              <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 text-[12px] font-bold mt-0.5">{i + 2}</div>
+                                <div>
+                                  <h4 className="text-[14px] font-semibold text-red-800">{s.title}</h4>
+                                  <p className="text-[13px] text-red-700">{s.fix}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-white/90" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Email capture card */}
+                <div ref={emailRef} className="bg-gradient-to-br from-primary/5 to-blue-50 border-2 border-primary/20 rounded-2xl p-8 mb-8 text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-[20px] font-semibold text-neutral-90 mb-2">
+                    Unlock your full ATS report
+                  </h3>
+                  <p className="text-[14px] text-neutral-60 mb-6 max-w-[400px] mx-auto">
+                    Get your complete analysis with all {result.suggestions.length} fix suggestions and detailed breakdown — we&apos;ll also email you the full report so you can reference it later.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-3 max-w-[440px] mx-auto">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                      onKeyDown={(e) => e.key === 'Enter' && handleUnlockReport()}
+                      placeholder="Enter your email"
+                      className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-20 text-[14px] text-neutral-90 placeholder:text-neutral-40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    />
+                    <button
+                      onClick={handleUnlockReport}
+                      disabled={emailLoading}
+                      className="px-6 py-2.5 rounded-lg text-[14px] font-semibold text-white bg-primary hover:bg-primary-dark transition-all shadow-md disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {emailLoading ? 'Unlocking...' : 'Get full report'}
+                    </button>
+                  </div>
+                  {emailError && <p className="text-[12px] text-red-500 mt-2">{emailError}</p>}
+
+                  <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-neutral-50">
+                    <span className="flex items-center gap-1">
+                      <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                      No spam, ever
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Instant access
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Unsubscribe anytime
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* UNLOCKED: Full suggestions */}
+                {result.suggestions.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-[18px] font-semibold text-neutral-90 mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      Issues to fix ({result.suggestions.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {result.suggestions.map((s, i) => (
+                        <div key={i} className="bg-red-50 border border-red-200 rounded-xl p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 text-[12px] font-bold mt-0.5">
+                              {i + 1}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="text-[14px] font-semibold text-red-800">{s.title}</h4>
+                                <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-medium">{s.category}</span>
+                              </div>
+                              <p className="text-[13px] text-red-700 leading-relaxed">{s.fix}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* UNLOCKED: Detailed checks */}
+                <div className="mb-8">
+                  <h3 className="text-[18px] font-semibold text-neutral-90 mb-4">Detailed Analysis</h3>
+                  {Object.entries(result.categories).map(([catName, cat]) => (
+                    <div key={catName} className="mb-5">
+                      <h4 className="text-[14px] font-semibold text-neutral-70 mb-2 uppercase tracking-wide">{catName}</h4>
+                      <div className="bg-neutral-10 rounded-xl overflow-hidden divide-y divide-neutral-20">
+                        {cat.checks.map((check, i) => (
+                          <div key={i} className="flex items-center gap-3 px-4 py-3">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${check.passed ? 'bg-green-100' : 'bg-red-100'}`}>
+                              {check.passed ? (
+                                <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3 h-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-[13px] font-medium text-neutral-80">{check.name}</span>
+                              <span className="text-[12px] text-neutral-50 ml-2">{check.message}</span>
+                            </div>
+                            <span className={`text-[12px] font-semibold ${check.passed ? 'text-green-600' : 'text-red-500'}`}>
+                              {check.score}/{check.maxScore}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              </>
             )}
-
-            {/* Detailed checks */}
-            <div className="mb-8">
-              <h3 className="text-[18px] font-semibold text-neutral-90 mb-4">Detailed Analysis</h3>
-              {Object.entries(result.categories).map(([catName, cat]) => (
-                <div key={catName} className="mb-5">
-                  <h4 className="text-[14px] font-semibold text-neutral-70 mb-2 uppercase tracking-wide">{catName}</h4>
-                  <div className="bg-neutral-10 rounded-xl overflow-hidden divide-y divide-neutral-20">
-                    {cat.checks.map((check, i) => (
-                      <div key={i} className="flex items-center gap-3 px-4 py-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${check.passed ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {check.passed ? (
-                            <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <svg className="w-3 h-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <span className="text-[13px] font-medium text-neutral-80">{check.name}</span>
-                          <span className="text-[12px] text-neutral-50 ml-2">{check.message}</span>
-                        </div>
-                        <span className={`text-[12px] font-semibold ${check.passed ? 'text-green-600' : 'text-red-500'}`}>
-                          {check.score}/{check.maxScore}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
@@ -422,7 +575,7 @@ export function ATSCheckerClient() {
                 Check another resume
               </button>
               <Link
-                href="/resume-builder"
+                href="/builder/new"
                 className="px-6 py-2.5 rounded-lg text-[14px] font-semibold text-white bg-primary hover:bg-primary-dark transition-all shadow-md"
               >
                 Build an ATS-optimized resume

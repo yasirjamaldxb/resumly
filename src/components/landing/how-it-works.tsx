@@ -6,7 +6,7 @@ const features = [
     tagColor: 'bg-primary/10 text-primary',
     title: 'Step-by-step guidance',
     description: 'Our resume builder walks you through each section and tells you exactly what to fill out and how.',
-    link: '/resume-builder',
+    link: '/builder/new',
     linkText: 'Create my resume',
     bg: 'bg-white',
     mockup: (
@@ -86,7 +86,7 @@ const features = [
     tagColor: 'bg-orange-100 text-orange-700',
     title: 'Paste any job link',
     description: "Paste a job URL and we'll tailor your resume automatically, matching keywords and requirements.",
-    link: '/resume-builder',
+    link: '/builder/new',
     linkText: 'Try smart match',
     bg: 'bg-white',
     mockup: (

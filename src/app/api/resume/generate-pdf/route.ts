@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { trackEvent, logError } from '@/lib/analytics';
 
 export const maxDuration = 30;
 
@@ -60,6 +61,8 @@ export async function POST(req: NextRequest) {
       });
 
       await browser.close();
+
+      trackEvent({ event: 'pdf_download', metadata: { method: 'server-puppeteer' } });
 
       return new NextResponse(pdfBuffer, {
         headers: {
@@ -123,6 +126,8 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     console.error('PDF generation error:', error);
+    logError({ endpoint: '/api/resume/generate-pdf', errorMessage: error instanceof Error ? error.message : 'PDF generation failed' });
+    trackEvent({ event: 'pdf_download_error', metadata: { error: error instanceof Error ? error.message : 'unknown' } });
     return NextResponse.json(
       { error: 'Failed to generate PDF. Please try the print option.' },
       { status: 500 }

@@ -9,6 +9,15 @@ interface Props {
   onChange: (data: ResumeData) => void;
 }
 
+const FONTS = [
+  { name: 'Inter', value: 'inter', css: 'Inter, sans-serif' },
+  { name: 'Georgia', value: 'georgia', css: 'Georgia, serif' },
+  { name: 'Times New Roman', value: 'times', css: '"Times New Roman", serif' },
+  { name: 'Arial', value: 'arial', css: 'Arial, Helvetica, sans-serif' },
+  { name: 'Garamond', value: 'garamond', css: 'Garamond, Georgia, serif' },
+  { name: 'Calibri', value: 'calibri', css: 'Calibri, Candara, sans-serif' },
+];
+
 const COLORS = [
   { name: 'Blue', value: '#2563eb' },
   { name: 'Navy', value: '#1e3a5f' },
@@ -62,6 +71,28 @@ export function TemplatePicker({ data, onChange }: Props) {
             </button>
           );
         })}
+      </div>
+
+      {/* Font picker */}
+      <div>
+        <h3 className="text-sm font-semibold text-neutral-90 mb-3">Font</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {FONTS.map((font) => (
+            <button
+              key={font.value}
+              onClick={() => onChange({ ...data, fontFamily: font.value })}
+              className={cn(
+                'px-3 py-2 rounded-lg border text-xs text-left transition-all',
+                data.fontFamily === font.value
+                  ? 'border-primary bg-primary-light text-primary-dark font-medium'
+                  : 'border-neutral-20 bg-white text-neutral-60 hover:border-primary'
+              )}
+              style={{ fontFamily: font.css }}
+            >
+              {font.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Color picker */}

@@ -12,13 +12,24 @@ import { ElegantTemplate } from './elegant';
 import { TechnicalTemplate } from './technical';
 import { ClassicTemplate } from './classic';
 
+const FONT_CSS_MAP: Record<string, string> = {
+  inter: 'Inter, sans-serif',
+  georgia: 'Georgia, serif',
+  times: '"Times New Roman", serif',
+  arial: 'Arial, Helvetica, sans-serif',
+  garamond: 'Garamond, Georgia, serif',
+  calibri: 'Calibri, Candara, sans-serif',
+};
+
 interface Props {
   data: ResumeData;
   scale?: number;
 }
 
 export function ResumeTemplate({ data, scale = 1 }: Props) {
-  switch (data.templateId) {
+  const fontCss = FONT_CSS_MAP[data.fontFamily] || FONT_CSS_MAP['inter'];
+
+  const template = (() => { switch (data.templateId) {
     case 'modern':
       return <ModernTemplate data={data} scale={scale} />;
     case 'professional':
@@ -40,7 +51,9 @@ export function ResumeTemplate({ data, scale = 1 }: Props) {
     case 'ats-pro':
     default:
       return <ATSProTemplate data={data} scale={scale} />;
-  }
+  } })();
+
+  return <div style={{ fontFamily: fontCss }}>{template}</div>;
 }
 
 export { ATSProTemplate, ModernTemplate, ProfessionalTemplate, MinimalTemplate, ExecutiveTemplate, CreativeTemplate, CompactTemplate, ElegantTemplate, TechnicalTemplate, ClassicTemplate };

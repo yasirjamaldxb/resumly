@@ -11,7 +11,7 @@ const tools = [
     description: 'Create a job-winning resume with our step-by-step builder. AI-powered suggestions help you write compelling content that gets noticed.',
     color: 'bg-blue-50',
     iconColor: 'text-primary',
-    link: '/resume-builder',
+    link: '/builder/new',
     linkText: 'Create a resume',
   },
   {

@@ -85,12 +85,28 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
   const p = data.personalDetails;
 
+  // Validation
+  const missing: string[] = [];
+  if (!p.firstName || !p.lastName) missing.push('Full name');
+  if (!p.email) missing.push('Email');
+  if (!p.jobTitle) missing.push('Job title');
+  const showWarning = missing.length > 0 && (p.firstName || p.lastName || p.email);
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-neutral-90 mb-1">Personal Details</h2>
         <p className="text-sm text-neutral-50">This information appears at the top of your resume.</p>
       </div>
+
+      {showWarning && (
+        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 text-sm text-amber-700">
+          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
+          <span>Missing required fields: <strong>{missing.join(', ')}</strong></span>
+        </div>
+      )}
 
       {/* Photo Upload */}
       <div className="space-y-2">
@@ -139,13 +155,13 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="First Name"
+          label="First Name *"
           placeholder="John"
           value={p.firstName}
           onChange={(e) => update('firstName', e.target.value)}
         />
         <Input
-          label="Last Name"
+          label="Last Name *"
           placeholder="Smith"
           value={p.lastName}
           onChange={(e) => update('lastName', e.target.value)}
@@ -153,7 +169,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
       </div>
 
       <Input
-        label="Job Title / Target Role"
+        label="Job Title / Target Role *"
         placeholder="Senior Software Engineer"
         value={p.jobTitle}
         onChange={(e) => update('jobTitle', e.target.value)}
@@ -162,7 +178,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="Email Address"
+          label="Email Address *"
           type="email"
           placeholder="john@example.com"
           value={p.email}

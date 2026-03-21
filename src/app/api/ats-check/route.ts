@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { trackEvent, logError } from '@/lib/analytics';
 
 // --- Scoring Engine ---
 
@@ -342,6 +343,8 @@ export async function POST(request: NextRequest) {
         percentage >= 50 ? 'Needs Improvement' :
           'Poor';
 
+    trackEvent({ event: 'ats_check', metadata: { score: percentage, rating, wordCount: text.split(/\s+/).filter(w => w.length > 1).length } });
+
     return NextResponse.json({
       score: percentage,
       rating,
@@ -354,6 +357,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('ATS check error:', error);
+    logError({ endpoint: '/api/ats-check', errorMessage: error instanceof Error ? error.message : 'ATS check failed' });
     return NextResponse.json({ error: 'Failed to analyze resume. Please try again.' }, { status: 500 });
   }
 }

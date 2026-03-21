@@ -22,7 +22,7 @@ export function HeroSection() {
 
             <div className="flex flex-wrap gap-3 mb-8">
               <Button size="lg" asChild>
-                <Link href="/resume-builder">Create my resume</Link>
+                <Link href="/builder/new">Create my resume</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link href="/resume-templates">Browse templates</Link>

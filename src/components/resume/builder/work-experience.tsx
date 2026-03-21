@@ -90,7 +90,8 @@ export function WorkExperienceForm({ data, onChange }: Props) {
 
       {data.workExperience.length === 0 && (
         <div className="text-center py-10 bg-neutral-10 rounded-xl border-2 border-dashed border-neutral-20">
-          <p className="text-neutral-50 text-sm mb-3">No work experience added yet</p>
+          <p className="text-neutral-50 text-sm mb-1">No work experience added yet</p>
+          <p className="text-xs text-amber-600 mb-3">Adding experience improves your ATS score by 20 points</p>
           <Button variant="outline" size="sm" onClick={addJob}>+ Add Work Experience</Button>
         </div>
       )}

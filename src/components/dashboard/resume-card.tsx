@@ -13,6 +13,7 @@ interface ResumeCardProps {
     template_id: string | null;
     color_scheme: string | null;
     updated_at: string;
+    is_public: boolean;
     resume_data: {
       personalDetails?: {
         firstName?: string;
@@ -31,6 +32,49 @@ export function ResumeCard({ resume }: ResumeCardProps) {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isPublic, setIsPublic] = useState(resume.is_public);
+  const [sharing, setSharing] = useState(false);
+  const [showShareToast, setShowShareToast] = useState(false);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [title, setTitle] = useState(resume.title);
+
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/r/${resume.id}` : `/r/${resume.id}`;
+
+  const saveTitle = async (newTitle: string) => {
+    const trimmed = newTitle.trim();
+    if (!trimmed || trimmed === resume.title) { setTitle(resume.title); setEditingTitle(false); return; }
+    setTitle(trimmed);
+    setEditingTitle(false);
+    await fetch('/api/resume/rename', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resumeId: resume.id, title: trimmed }),
+    });
+  };
+
+  const handleShare = async () => {
+    setSharing(true);
+    try {
+      const newState = !isPublic;
+      const res = await fetch('/api/resume/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeId: resume.id, isPublic: newState }),
+      });
+      if (res.ok) {
+        setIsPublic(newState);
+        if (newState) {
+          await navigator.clipboard.writeText(shareUrl);
+          setShowShareToast(true);
+          setTimeout(() => setShowShareToast(false), 3000);
+        }
+      }
+    } catch {
+      // Silent fail
+    } finally {
+      setSharing(false);
+    }
+  };
 
   const templateInfo = TEMPLATE_LIST.find(t => t.id === resume.template_id);
   const resumeData = resume.resume_data;
@@ -71,6 +115,13 @@ export function ResumeCard({ resume }: ResumeCardProps) {
 
   return (
     <div className="bg-white border border-neutral-20/80 rounded-xl overflow-hidden hover:shadow-md hover:border-neutral-30 transition-all group relative">
+      {/* Share toast */}
+      {showShareToast && (
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-neutral-90 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
+          Link copied to clipboard!
+        </div>
+      )}
+
       {/* Delete confirmation overlay */}
       {showDeleteConfirm && (
         <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 rounded-xl">
@@ -129,7 +180,26 @@ export function ResumeCard({ resume }: ResumeCardProps) {
       </div>
 
       <div className="p-4">
-        <h3 className="font-semibold text-neutral-90 text-[15px] truncate">{resume.title}</h3>
+        {editingTitle ? (
+          <input
+            autoFocus
+            defaultValue={title}
+            className="font-semibold text-neutral-90 text-[15px] w-full border-b-2 border-primary outline-none bg-transparent pb-0.5"
+            onBlur={(e) => saveTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveTitle(e.currentTarget.value);
+              if (e.key === 'Escape') { setEditingTitle(false); }
+            }}
+          />
+        ) : (
+          <h3
+            className="font-semibold text-neutral-90 text-[15px] truncate cursor-pointer hover:text-primary transition-colors"
+            onClick={() => setEditingTitle(true)}
+            title="Click to rename"
+          >
+            {title}
+          </h3>
+        )}
         {(fullName || jobTitle) && (
           <p className="text-[13px] text-neutral-50 truncate mt-0.5">
             {fullName}{fullName && jobTitle ? ' \u2022 ' : ''}{jobTitle}
@@ -161,6 +231,24 @@ export function ResumeCard({ resume }: ResumeCardProps) {
               </svg>
             )}
           </Button>
+          <button
+            onClick={handleShare}
+            disabled={sharing}
+            title={isPublic ? 'Sharing on — click to disable & copy link' : 'Share resume — creates a public link'}
+            className={`px-2.5 rounded-lg border transition-all text-[13px] ${
+              isPublic
+                ? 'border-green-300 bg-green-50 text-green-600 hover:bg-green-100'
+                : 'border-neutral-20 text-neutral-50 hover:border-primary hover:text-primary'
+            }`}
+          >
+            {sharing ? (
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
     </div>

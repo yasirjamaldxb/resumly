@@ -110,7 +110,7 @@ export function Header() {
               Sign in
             </Link>
             <Button size="md" variant="outline" asChild>
-              <Link href="/resume-builder">My Account</Link>
+              <Link href="/dashboard">My Account</Link>
             </Button>
           </div>
 
@@ -150,7 +150,7 @@ export function Header() {
                 Sign in
               </Link>
               <Button size="lg" asChild>
-                <Link href="/resume-builder">Create my resume</Link>
+                <Link href="/builder/new">Create my resume</Link>
               </Button>
             </div>
           </div>
