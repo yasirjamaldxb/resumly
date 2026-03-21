@@ -124,13 +124,81 @@ export default function BuilderPage() {
     autoSave(data);
   };
 
+  // Build all resume text for the invisible ATS text layer
+  const buildATSText = () => {
+    const p = resumeData.personalDetails;
+    const lines: string[] = [];
+
+    // Personal details
+    lines.push([p.firstName, p.lastName].filter(Boolean).join(' '));
+    if (p.jobTitle) lines.push(p.jobTitle);
+    const contact = [p.email, p.phone, p.location, p.linkedIn, p.website].filter(Boolean);
+    if (contact.length) lines.push(contact.join(' | '));
+    if (p.summary) { lines.push(''); lines.push('Professional Summary'); lines.push(p.summary); }
+
+    // Work experience
+    if (resumeData.workExperience.length) {
+      lines.push(''); lines.push('Work Experience');
+      for (const w of resumeData.workExperience) {
+        lines.push([w.position, w.company, w.location].filter(Boolean).join(' - '));
+        const dates = [w.startDate, w.current ? 'Present' : w.endDate].filter(Boolean).join(' to ');
+        if (dates) lines.push(dates);
+        if (w.description) lines.push(w.description);
+        for (const b of w.bullets) { if (b.trim()) lines.push('• ' + b); }
+      }
+    }
+
+    // Education
+    if (resumeData.education.length) {
+      lines.push(''); lines.push('Education');
+      for (const e of resumeData.education) {
+        lines.push([e.degree, e.field].filter(Boolean).join(' in '));
+        lines.push([e.institution, e.location].filter(Boolean).join(', '));
+        const dates = [e.startDate, e.current ? 'Present' : e.endDate].filter(Boolean).join(' to ');
+        if (dates) lines.push(dates);
+        if (e.gpa) lines.push('GPA: ' + e.gpa);
+        if (e.achievements) lines.push(e.achievements);
+      }
+    }
+
+    // Skills
+    if (resumeData.skills.length) {
+      lines.push(''); lines.push('Skills');
+      lines.push(resumeData.skills.map(s => s.name).join(', '));
+    }
+
+    // Certifications
+    if (resumeData.certifications.length) {
+      lines.push(''); lines.push('Certifications');
+      for (const c of resumeData.certifications) {
+        lines.push([c.name, c.issuer, c.date].filter(Boolean).join(' - '));
+      }
+    }
+
+    // Languages
+    if (resumeData.languages.length) {
+      lines.push(''); lines.push('Languages');
+      lines.push(resumeData.languages.map(l => `${l.name} (${l.proficiency})`).join(', '));
+    }
+
+    // Projects
+    if (resumeData.projects.length) {
+      lines.push(''); lines.push('Projects');
+      for (const proj of resumeData.projects) {
+        lines.push(proj.name);
+        if (proj.description) lines.push(proj.description);
+      }
+    }
+
+    return lines.join('\n');
+  };
+
   const downloadPDF = async () => {
     setDownloading(true);
     try {
       const el = previewRef.current;
       if (!el) throw new Error('Preview not found');
 
-      // Dynamically import html2canvas and jsPDF
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
 
@@ -144,21 +212,32 @@ export default function BuilderPage() {
         windowWidth: 794,
       });
 
-      // A4 dimensions in mm
-      const pageW = 210;
-      const pageH = 297;
-
-      // Calculate how many pages we need
-      const imgW = pageW;
+      const pageW = 210; // A4 width in mm
+      const pageH = 297; // A4 height in mm
       const imgH = (canvas.height * pageW) / canvas.width;
       const totalPages = Math.ceil(imgH / pageH);
 
       const doc = new jsPDF('p', 'mm', 'a4');
 
-      for (let i = 0; i < totalPages; i++) {
-        if (i > 0) doc.addPage();
+      // ── Step 1: Add invisible ATS text layer FIRST (behind the image) ──
+      const atsText = buildATSText();
+      doc.setFontSize(1); // Tiny font — invisible to the eye
+      doc.setTextColor(255, 255, 255); // White text — invisible on white background
+      // Split the ATS text across pages at ~800 lines per page
+      const allLines = atsText.split('\n');
+      const linesPerPage = 800;
+      for (let p = 0; p < totalPages; p++) {
+        if (p > 0) doc.addPage();
+        const pageLines = allLines.slice(p * linesPerPage, (p + 1) * linesPerPage);
+        if (pageLines.length > 0) {
+          doc.text(pageLines.join('\n'), 1, 1);
+        }
+      }
 
-        // Crop each page slice from the canvas
+      // ── Step 2: Add image layer ON TOP of the text ──
+      for (let i = 0; i < totalPages; i++) {
+        doc.setPage(i + 1);
+
         const sliceCanvas = document.createElement('canvas');
         sliceCanvas.width = canvas.width;
         const sliceHeight = Math.min(
