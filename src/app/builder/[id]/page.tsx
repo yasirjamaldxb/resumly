@@ -127,8 +127,67 @@ export default function BuilderPage() {
   const downloadPDF = async () => {
     setDownloading(true);
     try {
-      const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
-      await downloadResumePDF(resumeData);
+      const el = previewRef.current;
+      if (!el) throw new Error('Preview not found');
+
+      // Dynamically import html2canvas and jsPDF
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
+      // Render the preview at 2x for crisp output
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        width: 794,
+        windowWidth: 794,
+      });
+
+      // A4 dimensions in mm
+      const pageW = 210;
+      const pageH = 297;
+
+      // Calculate how many pages we need
+      const imgW = pageW;
+      const imgH = (canvas.height * pageW) / canvas.width;
+      const totalPages = Math.ceil(imgH / pageH);
+
+      const doc = new jsPDF('p', 'mm', 'a4');
+
+      for (let i = 0; i < totalPages; i++) {
+        if (i > 0) doc.addPage();
+
+        // Crop each page slice from the canvas
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        const sliceHeight = Math.min(
+          (pageH / pageW) * canvas.width,
+          canvas.height - i * (pageH / pageW) * canvas.width
+        );
+        sliceCanvas.height = sliceHeight;
+
+        const ctx = sliceCanvas.getContext('2d');
+        if (!ctx) continue;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        ctx.drawImage(
+          canvas,
+          0, i * (pageH / pageW) * canvas.width,
+          canvas.width, sliceHeight,
+          0, 0,
+          canvas.width, sliceHeight
+        );
+
+        const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+        const sliceImgH = (sliceHeight * pageW) / canvas.width;
+        doc.addImage(sliceData, 'JPEG', 0, 0, pageW, sliceImgH);
+      }
+
+      const firstName = resumeData.personalDetails.firstName || 'resume';
+      const lastName = resumeData.personalDetails.lastName || '';
+      const filename = [firstName, lastName].filter(Boolean).join('_') + '_resume.pdf';
+      doc.save(filename);
     } catch (err) {
       console.error('PDF generation failed:', err);
       alert('PDF generation failed. Please try again.');
