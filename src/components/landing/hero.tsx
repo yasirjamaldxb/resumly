@@ -5,10 +5,10 @@ export function HeroSection() {
   return (
     <section className="relative bg-neutral-10 overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 pt-12 pb-16">
-        <div className="grid xl:grid-cols-2 gap-8 items-center min-h-[360px] xl:min-h-[460px]">
+        <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[360px] lg:min-h-[460px]">
           {/* Left content */}
           <div className="max-w-[480px]">
-            <h1 className="text-[32px] sm:text-[40px] xl:text-[48px] font-medium text-neutral-90 leading-[1.05] tracking-[-0.02em] mb-5">
+            <h1 className="text-[32px] sm:text-[40px] lg:text-[48px] font-medium text-neutral-90 leading-[1.05] tracking-[-0.02em] mb-5">
               This resume
               <br />
               builder gets you
@@ -53,7 +53,7 @@ export function HeroSection() {
           </div>
 
           {/* Right side - Rich floating UI mockup */}
-          <div className="relative hidden xl:block h-[460px]">
+          <div className="relative hidden lg:block h-[460px]">
             {/* Main resume document */}
             <div className="absolute top-6 left-12 w-[300px] bg-white rounded-lg shadow-lg border border-neutral-20 p-4 z-10">
               <div className="mb-3">

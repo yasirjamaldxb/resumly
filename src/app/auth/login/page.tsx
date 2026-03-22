@@ -13,7 +13,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel - product preview */}
-      <div className="hidden xl:flex xl:w-[480px] 2xl:w-[540px] bg-primary relative flex-col justify-between p-12 overflow-hidden flex-shrink-0">
+      <div className="hidden lg:flex lg:w-[480px] xl:w-[540px] bg-primary relative flex-col justify-between p-12 overflow-hidden flex-shrink-0">
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-3 mb-12">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
@@ -75,7 +75,7 @@ export default function LoginPage() {
       {/* Right panel - form */}
       <div className="flex-1 bg-white flex items-center justify-center p-6 sm:p-8">
         <div className="w-full max-w-[420px]">
-          <div className="text-center mb-8 xl:hidden">
+          <div className="text-center mb-8 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold">R</span>

@@ -228,7 +228,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden xl:flex items-center gap-0">
+          <nav className="hidden lg:flex items-center">
             {navItems.map((item) => (
               <div
                 key={item.label}
@@ -237,13 +237,13 @@ export function Header() {
               >
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-1 px-3 py-2 text-[14px] font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-1 px-2 xl:px-3 py-2 text-[13px] xl:text-[14px] font-medium whitespace-nowrap transition-colors ${
                     openDropdown === item.label ? 'text-primary' : 'text-neutral-70 hover:text-neutral-90'
                   }`}
                 >
                   {item.label}
                   {item.hasMega && (
-                    <svg className="w-3.5 h-3.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
@@ -253,7 +253,7 @@ export function Header() {
           </nav>
 
           {/* CTA — right side */}
-          <div className="hidden xl:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             {user ? (
               <>
                 <button
@@ -263,27 +263,27 @@ export function Header() {
                     router.push('/');
                     router.refresh();
                   }}
-                  className="px-3 py-2 text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors"
+                  className="px-2 xl:px-3 py-2 text-[13px] xl:text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors"
                 >
                   Sign out
                 </button>
                 <span className="w-px h-5 bg-neutral-20 mx-1" />
                 <Link
                   href="/dashboard"
-                  className="ml-2 px-4 py-2 text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
+                  className="ml-1 px-3 xl:px-4 py-2 text-[13px] xl:text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
                 >
                   My Account
                 </Link>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="px-3 py-2 text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors">
+                <Link href="/auth/login" className="px-2 xl:px-3 py-2 text-[13px] xl:text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors">
                   Sign in
                 </Link>
                 <span className="w-px h-5 bg-neutral-20 mx-1" />
                 <Link
                   href="/auth/signup"
-                  className="ml-2 px-4 py-2 text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
+                  className="ml-1 px-3 xl:px-4 py-2 text-[13px] xl:text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
                 >
                   My Account
                 </Link>
@@ -293,7 +293,7 @@ export function Header() {
 
           {/* Mobile menu button */}
           <button
-            className="xl:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
+            className="lg:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -325,7 +325,7 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="xl:hidden border-t border-neutral-20 py-4 px-6 space-y-1 bg-white">
+        <div className="lg:hidden border-t border-neutral-20 py-4 px-6 space-y-1 bg-white">
           {navItems.map((item) => (
             <Link
               key={item.href}
