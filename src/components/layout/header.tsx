@@ -181,7 +181,7 @@ function MegaResources() {
   );
 }
 
-const megaMenus: Record<string, () => JSX.Element> = {
+const megaMenus: Record<string, () => React.ReactNode> = {
   'Resume Templates': MegaTemplates,
   'Resume Examples': MegaExamples,
   'Cover Letter': MegaCoverLetter,
