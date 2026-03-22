@@ -10,11 +10,12 @@ const getBaseUrl = (req: NextRequest) => {
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL('/', getBaseUrl(req)));
+  // Use 303 to force browser to GET the redirect target (not POST)
+  return NextResponse.redirect(new URL('/', getBaseUrl(req)), 303);
 }
 
 export async function GET(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL('/', getBaseUrl(req)));
+  return NextResponse.redirect(new URL('/', getBaseUrl(req)), 303);
 }

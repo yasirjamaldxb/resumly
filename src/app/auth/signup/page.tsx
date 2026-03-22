@@ -12,7 +12,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel - product preview */}
-      <div className="hidden lg:flex lg:w-[480px] xl:w-[540px] bg-[#0f172a] relative flex-col justify-between p-12 overflow-hidden flex-shrink-0">
+      <div className="hidden lg:flex lg:w-[480px] xl:w-[540px] bg-primary relative flex-col justify-between p-12 overflow-hidden flex-shrink-0">
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-3 mb-12">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
