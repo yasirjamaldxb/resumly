@@ -66,9 +66,9 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 bg-[#3d3b4a]">
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="flex items-center justify-between h-[72px]">
+        <div className="flex items-center justify-between h-[64px]">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -76,7 +76,7 @@ export function Header() {
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
               </svg>
             </div>
-            <span className="text-[22px] font-bold text-neutral-90 tracking-tight">
+            <span className="text-[22px] font-bold text-white tracking-tight">
               resumly<span className="text-primary">.app</span>
             </span>
           </Link>
@@ -92,7 +92,7 @@ export function Header() {
               >
                 <Link
                   href={link.href}
-                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-neutral-70 hover:text-neutral-90 transition-colors"
+                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-white/80 hover:text-white transition-colors"
                 >
                   {link.label}
                   {link.dropdown && (
@@ -119,12 +119,9 @@ export function Header() {
           </nav>
 
           {/* CTA */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <>
-                <Button size="md" variant="outline" asChild>
-                  <Link href="/dashboard">My Account</Link>
-                </Button>
                 <button
                   onClick={async () => {
                     const supabase = createClient();
@@ -132,26 +129,35 @@ export function Header() {
                     router.push('/');
                     router.refresh();
                   }}
-                  className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors"
+                  className="text-[14px] font-medium text-white/70 hover:text-white transition-colors"
                 >
                   Sign out
                 </button>
+                <Link
+                  href="/dashboard"
+                  className="px-5 py-2 text-[14px] font-semibold text-white border border-white/40 rounded-md hover:bg-white/10 transition-colors"
+                >
+                  My Account
+                </Link>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors">
+                <Link href="/auth/login" className="text-[14px] font-medium text-white/70 hover:text-white transition-colors">
                   Sign in
                 </Link>
-                <Button size="md" variant="outline" asChild>
-                  <Link href="/auth/signup">Get Started</Link>
-                </Button>
+                <Link
+                  href="/auth/signup"
+                  className="px-5 py-2 text-[14px] font-semibold text-white border border-white/40 rounded-md hover:bg-white/10 transition-colors"
+                >
+                  My Account
+                </Link>
               </>
             )}
           </div>
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
+            className="lg:hidden p-2 rounded-lg text-white/70 hover:bg-white/10"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -169,12 +175,12 @@ export function Header() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-neutral-20 py-4 space-y-1">
+          <div className="lg:hidden border-t border-white/10 py-4 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-3 py-2.5 text-[15px] font-medium text-neutral-70 hover:text-primary rounded-lg"
+                className="block px-3 py-2.5 text-[15px] font-medium text-white/80 hover:text-white rounded-lg"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -183,7 +189,7 @@ export function Header() {
             <div className="pt-4 flex flex-col gap-2 px-3">
               {user ? (
                 <>
-                  <Link href="/dashboard" className="block py-2 text-[15px] font-medium text-neutral-70" onClick={() => setMobileOpen(false)}>
+                  <Link href="/dashboard" className="block py-2 text-[15px] font-medium text-white/80" onClick={() => setMobileOpen(false)}>
                     My Account
                   </Link>
                   <button
@@ -194,19 +200,23 @@ export function Header() {
                       router.push('/');
                       router.refresh();
                     }}
-                    className="block py-2 text-[15px] font-medium text-neutral-70 text-left"
+                    className="block py-2 text-[15px] font-medium text-white/80 text-left"
                   >
                     Sign out
                   </button>
                 </>
               ) : (
                 <>
-                  <Link href="/auth/login" className="block py-2 text-[15px] font-medium text-neutral-70" onClick={() => setMobileOpen(false)}>
+                  <Link href="/auth/login" className="block py-2 text-[15px] font-medium text-white/80" onClick={() => setMobileOpen(false)}>
                     Sign in
                   </Link>
-                  <Button size="lg" asChild>
-                    <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>Get Started</Link>
-                  </Button>
+                  <Link
+                    href="/auth/signup"
+                    className="block py-2.5 text-center text-[15px] font-semibold text-white border border-white/40 rounded-md"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    My Account
+                  </Link>
                 </>
               )}
             </div>
