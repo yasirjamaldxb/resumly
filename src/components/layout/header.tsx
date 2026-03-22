@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 const navLinks = [
   {
@@ -50,6 +53,17 @@ const navLinks = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm">
@@ -106,12 +120,33 @@ export function Header() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link href="/auth/login" className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors">
-              Sign in
-            </Link>
-            <Button size="md" variant="outline" asChild>
-              <Link href="/dashboard">My Account</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button size="md" variant="outline" asChild>
+                  <Link href="/dashboard">My Account</Link>
+                </Button>
+                <button
+                  onClick={async () => {
+                    const supabase = createClient();
+                    await supabase.auth.signOut();
+                    router.push('/');
+                    router.refresh();
+                  }}
+                  className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors">
+                  Sign in
+                </Link>
+                <Button size="md" variant="outline" asChild>
+                  <Link href="/auth/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -146,12 +181,34 @@ export function Header() {
               </Link>
             ))}
             <div className="pt-4 flex flex-col gap-2 px-3">
-              <Link href="/auth/login" className="block py-2 text-[15px] font-medium text-neutral-70">
-                Sign in
-              </Link>
-              <Button size="lg" asChild>
-                <Link href="/builder/new">Create my resume</Link>
-              </Button>
+              {user ? (
+                <>
+                  <Link href="/dashboard" className="block py-2 text-[15px] font-medium text-neutral-70" onClick={() => setMobileOpen(false)}>
+                    My Account
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      const supabase = createClient();
+                      await supabase.auth.signOut();
+                      setMobileOpen(false);
+                      router.push('/');
+                      router.refresh();
+                    }}
+                    className="block py-2 text-[15px] font-medium text-neutral-70 text-left"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login" className="block py-2 text-[15px] font-medium text-neutral-70" onClick={() => setMobileOpen(false)}>
+                    Sign in
+                  </Link>
+                  <Button size="lg" asChild>
+                    <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>Get Started</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}
