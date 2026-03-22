@@ -228,7 +228,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-0.5">
+          <nav className="hidden xl:flex items-center gap-0">
             {navItems.map((item) => (
               <div
                 key={item.label}
@@ -237,7 +237,7 @@ export function Header() {
               >
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-1 px-4 py-2 text-[15px] font-medium transition-colors ${
+                  className={`flex items-center gap-1 px-3 py-2 text-[14px] font-medium whitespace-nowrap transition-colors ${
                     openDropdown === item.label ? 'text-primary' : 'text-neutral-70 hover:text-neutral-90'
                   }`}
                 >
@@ -253,7 +253,7 @@ export function Header() {
           </nav>
 
           {/* CTA — right side */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden xl:flex items-center gap-1">
             {user ? (
               <>
                 <button
@@ -263,27 +263,27 @@ export function Header() {
                     router.push('/');
                     router.refresh();
                   }}
-                  className="px-4 py-2 text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors"
+                  className="px-3 py-2 text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors"
                 >
                   Sign out
                 </button>
                 <span className="w-px h-5 bg-neutral-20 mx-1" />
                 <Link
                   href="/dashboard"
-                  className="ml-2 px-5 py-2 text-[15px] font-semibold text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
+                  className="ml-2 px-4 py-2 text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
                 >
                   My Account
                 </Link>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="px-4 py-2 text-[15px] font-medium text-neutral-70 hover:text-primary transition-colors">
+                <Link href="/auth/login" className="px-3 py-2 text-[14px] font-medium whitespace-nowrap text-neutral-70 hover:text-primary transition-colors">
                   Sign in
                 </Link>
                 <span className="w-px h-5 bg-neutral-20 mx-1" />
                 <Link
                   href="/auth/signup"
-                  className="ml-2 px-5 py-2 text-[15px] font-semibold text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
+                  className="ml-2 px-4 py-2 text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
                 >
                   My Account
                 </Link>
@@ -293,7 +293,7 @@ export function Header() {
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
+            className="xl:hidden p-2 rounded-lg text-neutral-60 hover:bg-neutral-10"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -325,7 +325,7 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-neutral-20 py-4 px-6 space-y-1 bg-white">
+        <div className="xl:hidden border-t border-neutral-20 py-4 px-6 space-y-1 bg-white">
           {navItems.map((item) => (
             <Link
               key={item.href}
