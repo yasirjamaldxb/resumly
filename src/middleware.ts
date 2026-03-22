@@ -2,6 +2,18 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  // If Supabase redirects to homepage with ?code= instead of /auth/callback,
+  // forward to the callback route so the code can be exchanged for a session.
+  if (
+    request.nextUrl.pathname === '/' &&
+    request.nextUrl.searchParams.has('code')
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/auth/callback';
+    // Preserve all query params (code, next, type, etc.)
+    return NextResponse.redirect(url);
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
