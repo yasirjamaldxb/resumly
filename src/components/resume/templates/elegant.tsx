@@ -1,14 +1,16 @@
 import { ResumeData } from '@/types/resume';
+import { TemplateStyles } from '@/lib/template-utils';
 import { formatDate } from '@/lib/utils';
 
 interface Props {
   data: ResumeData;
-  scale?: number;
+  styles: TemplateStyles;
 }
 
-export function ElegantTemplate({ data, scale = 1 }: Props) {
+export function ElegantTemplate({ data, styles }: Props) {
   const { personalDetails: p, workExperience, education, skills, certifications, languages, projects } = data;
   const fullName = `${p.firstName} ${p.lastName}`.trim();
+  const s = styles;
 
   const contactItems = [p.email, p.phone, p.location, p.linkedIn, p.website].filter(Boolean);
 
@@ -21,18 +23,18 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  const subtleBg = hexToRgba(data.colorScheme, 0.05);
+  const subtleBg = hexToRgba(s.colorScheme, 0.05);
 
   return (
     <div
       style={{
-        fontFamily: 'Georgia, "Times New Roman", serif',
-        fontSize: `${10.5 * scale}px`,
-        lineHeight: 1.6,
+        fontFamily: s.fontFamily,
+        fontSize: `${s.bodyFontSize}px`,
+        lineHeight: s.lineHeight,
         color: '#1a1a1a',
         backgroundColor: '#ffffff',
-        maxWidth: `${794 * scale}px`,
-        minHeight: `${1123 * scale}px`,
+        maxWidth: `${s.pageWidth}px`,
+        minHeight: `${s.pageHeight}px`,
         margin: '0 auto',
         boxSizing: 'border-box',
       }}
@@ -41,21 +43,21 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
       <div
         style={{
           backgroundColor: subtleBg,
-          padding: `${32 * scale}px ${40 * scale}px ${24 * scale}px`,
-          textAlign: 'center',
+          padding: `${s.paddingTop}px ${s.paddingLeft}px ${s.paddingTop * 0.75}px`,
+          textAlign: s.headerAlignment,
         }}
       >
         {p.photo && (
-          <div style={{ marginBottom: `${10 * scale}px` }}>
+          <div style={{ marginBottom: `${10 * s.scale}px` }}>
             <img
               src={p.photo}
               alt=""
               style={{
-                width: `${80 * scale}px`,
-                height: `${80 * scale}px`,
+                width: `${80 * s.scale}px`,
+                height: `${80 * s.scale}px`,
                 borderRadius: '50%',
                 objectFit: 'cover',
-                border: `${3 * scale}px solid ${data.colorScheme}`,
+                border: `${3 * s.scale}px solid ${s.colorScheme}`,
               }}
             />
           </div>
@@ -63,11 +65,11 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
         {fullName && (
           <h1
             style={{
-              fontSize: `${24 * scale}px`,
+              fontSize: `${s.headingFontSize * 1.09}px`,
               fontWeight: 600,
               margin: 0,
               color: '#1a1a1a',
-              letterSpacing: `${2 * scale}px`,
+              letterSpacing: `${2 * s.scale}px`,
             }}
           >
             {fullName}
@@ -76,12 +78,11 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
         {p.jobTitle && (
           <p
             style={{
-              fontSize: `${12 * scale}px`,
+              fontSize: `${s.subHeadingFontSize * 0.92}px`,
               textTransform: 'uppercase',
-              letterSpacing: `${3 * scale}px`,
+              letterSpacing: `${3 * s.scale}px`,
               color: '#666',
-              margin: `${6 * scale}px 0 0`,
-              fontFamily: 'Arial, sans-serif',
+              margin: `${6 * s.scale}px 0 0`,
             }}
           >
             {p.jobTitle}
@@ -90,16 +91,15 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
         {contactItems.length > 0 && (
           <p
             style={{
-              fontSize: `${10 * scale}px`,
+              fontSize: `${s.smallFontSize}px`,
               color: '#666',
-              margin: `${12 * scale}px 0 0`,
-              fontFamily: 'Arial, sans-serif',
+              margin: `${12 * s.scale}px 0 0`,
             }}
           >
             {contactItems.map((item, idx) => (
               <span key={idx}>
                 {idx > 0 && (
-                  <span style={{ margin: `0 ${8 * scale}px`, color: '#bbb' }}>&bull;</span>
+                  <span style={{ margin: `0 ${8 * s.scale}px`, color: '#bbb' }}>&bull;</span>
                 )}
                 {item}
               </span>
@@ -109,17 +109,17 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
       </div>
 
       {/* Content */}
-      <div style={{ padding: `${24 * scale}px ${40 * scale}px ${32 * scale}px` }}>
+      <div style={{ padding: `${s.paddingTop * 0.75}px ${s.paddingLeft}px ${s.paddingBottom}px` }}>
         {/* Summary */}
         {p.summary && (
-          <ElegantSection title="Summary" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Summary" color={s.colorScheme} styles={s}>
             <p
               style={{
                 margin: 0,
-                fontSize: `${10.5 * scale}px`,
+                fontSize: `${s.bodyFontSize}px`,
                 color: '#444',
                 textAlign: 'center',
-                lineHeight: 1.7,
+                lineHeight: s.lineHeight,
                 fontStyle: 'italic',
               }}
             >
@@ -130,12 +130,12 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Work Experience */}
         {workExperience.length > 0 && (
-          <ElegantSection title="Experience" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Experience" color={s.colorScheme} styles={s}>
             {workExperience.map((job, i) => (
               <div
                 key={job.id}
                 style={{
-                  marginBottom: i < workExperience.length - 1 ? `${14 * scale}px` : 0,
+                  marginBottom: i < workExperience.length - 1 ? `${14 * s.scale}px` : 0,
                   textAlign: 'center',
                 }}
               >
@@ -143,7 +143,7 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
                   style={{
                     fontWeight: 700,
                     margin: 0,
-                    fontSize: `${11 * scale}px`,
+                    fontSize: `${s.baseFontSize}px`,
                     color: '#1a1a1a',
                   }}
                 >
@@ -151,21 +151,20 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
                 </p>
                 <p
                   style={{
-                    margin: `${2 * scale}px 0 0`,
-                    fontSize: `${10 * scale}px`,
+                    margin: `${2 * s.scale}px 0 0`,
+                    fontSize: `${s.smallFontSize}px`,
                     color: '#666',
-                    fontFamily: 'Arial, sans-serif',
                   }}
                 >
-                  {job.company}{job.location ? ` — ${job.location}` : ''}
-                  <span style={{ margin: `0 ${6 * scale}px`, color: '#ccc' }}>|</span>
+                  {job.company}{job.location ? ` \u2014 ${job.location}` : ''}
+                  <span style={{ margin: `0 ${6 * s.scale}px`, color: '#ccc' }}>|</span>
                   {formatDate(job.startDate)} – {job.current ? 'Present' : formatDate(job.endDate)}
                 </p>
                 {job.description && (
                   <p
                     style={{
-                      margin: `${6 * scale}px 0 0`,
-                      fontSize: `${10.5 * scale}px`,
+                      margin: `${6 * s.scale}px 0 0`,
+                      fontSize: `${s.bodyFontSize}px`,
                       color: '#444',
                       textAlign: 'left',
                     }}
@@ -176,8 +175,8 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
                 {job.bullets.filter(Boolean).length > 0 && (
                   <ul
                     style={{
-                      margin: `${4 * scale}px 0 0`,
-                      paddingLeft: `${18 * scale}px`,
+                      margin: `${4 * s.scale}px 0 0`,
+                      paddingLeft: `${18 * s.scale}px`,
                       textAlign: 'left',
                     }}
                   >
@@ -185,9 +184,9 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
                       <li
                         key={idx}
                         style={{
-                          fontSize: `${10.5 * scale}px`,
+                          fontSize: `${s.bodyFontSize}px`,
                           color: '#444',
-                          marginBottom: `${2 * scale}px`,
+                          marginBottom: `${2 * s.scale}px`,
                         }}
                       >
                         {bullet}
@@ -202,28 +201,27 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Education */}
         {education.length > 0 && (
-          <ElegantSection title="Education" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Education" color={s.colorScheme} styles={s}>
             {education.map((edu, i) => (
               <div
                 key={edu.id}
                 style={{
-                  marginBottom: i < education.length - 1 ? `${10 * scale}px` : 0,
+                  marginBottom: i < education.length - 1 ? `${10 * s.scale}px` : 0,
                   textAlign: 'center',
                 }}
               >
-                <p style={{ fontWeight: 700, margin: 0, fontSize: `${11 * scale}px` }}>
+                <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.baseFontSize}px` }}>
                   {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
                 </p>
                 <p
                   style={{
-                    margin: `${2 * scale}px 0 0`,
-                    fontSize: `${10 * scale}px`,
+                    margin: `${2 * s.scale}px 0 0`,
+                    fontSize: `${s.smallFontSize}px`,
                     color: '#666',
-                    fontFamily: 'Arial, sans-serif',
                   }}
                 >
-                  {edu.institution}{edu.location ? ` — ${edu.location}` : ''}
-                  <span style={{ margin: `0 ${6 * scale}px`, color: '#ccc' }}>|</span>
+                  {edu.institution}{edu.location ? ` \u2014 ${edu.location}` : ''}
+                  <span style={{ margin: `0 ${6 * s.scale}px`, color: '#ccc' }}>|</span>
                   {formatDate(edu.startDate)} – {edu.current ? 'Present' : formatDate(edu.endDate)}
                   {edu.gpa && <span> | GPA: {edu.gpa}</span>}
                 </p>
@@ -234,25 +232,24 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Skills as centered tags with thin borders */}
         {skills.length > 0 && (
-          <ElegantSection title="Skills" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Skills" color={s.colorScheme} styles={s}>
             <div
               style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
-                gap: `${6 * scale}px`,
+                gap: `${6 * s.scale}px`,
               }}
             >
               {skills.map((skill) => (
                 <span
                   key={skill.id}
                   style={{
-                    fontSize: `${9.5 * scale}px`,
-                    padding: `${3 * scale}px ${10 * scale}px`,
-                    border: `1px solid ${data.colorScheme}`,
-                    borderRadius: `${12 * scale}px`,
+                    fontSize: `${s.smallFontSize * 0.95}px`,
+                    padding: `${3 * s.scale}px ${10 * s.scale}px`,
+                    border: `1px solid ${s.colorScheme}`,
+                    borderRadius: `${12 * s.scale}px`,
                     color: '#444',
-                    fontFamily: 'Arial, sans-serif',
                   }}
                 >
                   {skill.name}
@@ -264,12 +261,12 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Certifications */}
         {certifications.length > 0 && (
-          <ElegantSection title="Certifications" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Certifications" color={s.colorScheme} styles={s}>
             {certifications.map((cert) => (
-              <div key={cert.id} style={{ textAlign: 'center', marginBottom: `${6 * scale}px` }}>
-                <p style={{ margin: 0, fontSize: `${10.5 * scale}px` }}>
+              <div key={cert.id} style={{ textAlign: 'center', marginBottom: `${6 * s.scale}px` }}>
+                <p style={{ margin: 0, fontSize: `${s.bodyFontSize}px` }}>
                   <span style={{ fontWeight: 600 }}>{cert.name}</span>
-                  <span style={{ color: '#666' }}> — {cert.issuer}</span>
+                  <span style={{ color: '#666' }}> &mdash; {cert.issuer}</span>
                   {cert.date && <span style={{ color: '#888' }}> ({formatDate(cert.date)})</span>}
                 </p>
               </div>
@@ -279,24 +276,24 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Projects */}
         {projects.length > 0 && (
-          <ElegantSection title="Projects" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Projects" color={s.colorScheme} styles={s}>
             {projects.map((proj, i) => (
               <div
                 key={proj.id}
                 style={{
-                  marginBottom: i < projects.length - 1 ? `${10 * scale}px` : 0,
+                  marginBottom: i < projects.length - 1 ? `${10 * s.scale}px` : 0,
                   textAlign: 'center',
                 }}
               >
-                <p style={{ fontWeight: 700, margin: 0, fontSize: `${11 * scale}px` }}>
+                <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.baseFontSize}px` }}>
                   {proj.name}
                   {proj.url && (
                     <span
                       style={{
                         fontWeight: 400,
-                        fontSize: `${9.5 * scale}px`,
-                        color: data.colorScheme,
-                        marginLeft: `${6 * scale}px`,
+                        fontSize: `${s.smallFontSize * 0.95}px`,
+                        color: s.colorScheme,
+                        marginLeft: `${6 * s.scale}px`,
                       }}
                     >
                       {proj.url}
@@ -304,7 +301,7 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
                   )}
                 </p>
                 {proj.description && (
-                  <p style={{ margin: `${4 * scale}px 0 0`, fontSize: `${10.5 * scale}px`, color: '#444', textAlign: 'left' }}>
+                  <p style={{ margin: `${4 * s.scale}px 0 0`, fontSize: `${s.bodyFontSize}px`, color: '#444', textAlign: 'left' }}>
                     {proj.description}
                   </p>
                 )}
@@ -315,20 +312,19 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 
         {/* Languages */}
         {languages.length > 0 && (
-          <ElegantSection title="Languages" color={data.colorScheme} scale={scale}>
+          <ElegantSection title="Languages" color={s.colorScheme} styles={s}>
             <p
               style={{
                 margin: 0,
-                fontSize: `${10.5 * scale}px`,
+                fontSize: `${s.bodyFontSize}px`,
                 textAlign: 'center',
                 color: '#444',
-                fontFamily: 'Arial, sans-serif',
               }}
             >
               {languages.map((lang, i) => (
                 <span key={lang.id}>
                   {i > 0 && (
-                    <span style={{ margin: `0 ${8 * scale}px`, color: '#ccc' }}>&bull;</span>
+                    <span style={{ margin: `0 ${8 * s.scale}px`, color: '#ccc' }}>&bull;</span>
                   )}
                   <span style={{ fontWeight: 600 }}>{lang.name}</span>
                   <span style={{ color: '#666', textTransform: 'capitalize' }}> ({lang.proficiency})</span>
@@ -345,44 +341,43 @@ export function ElegantTemplate({ data, scale = 1 }: Props) {
 function ElegantSection({
   title,
   color,
-  scale,
+  styles,
   children,
 }: {
   title: string;
   color: string;
-  scale: number;
+  styles: TemplateStyles;
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: `${18 * scale}px` }}>
-      {/* Decorative section header: ——— TITLE ——— */}
+    <div style={{ marginBottom: `${styles.sectionGap * 1.1}px` }}>
+      {/* Decorative section header */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: `${10 * scale}px`,
-          gap: `${10 * scale}px`,
+          marginBottom: `${10 * styles.scale}px`,
+          gap: `${10 * styles.scale}px`,
         }}
       >
         <div
           style={{
             flex: 1,
-            maxWidth: `${80 * scale}px`,
-            height: `${1 * scale}px`,
+            maxWidth: `${80 * styles.scale}px`,
+            height: `${1 * styles.scale}px`,
             backgroundColor: color,
             opacity: 0.4,
           }}
         />
         <h2
           style={{
-            fontSize: `${11 * scale}px`,
+            fontSize: `${styles.sectionTitleFontSize}px`,
             fontWeight: 600,
             textTransform: 'uppercase',
-            letterSpacing: `${2 * scale}px`,
+            letterSpacing: `${2 * styles.scale}px`,
             margin: 0,
             color: '#1a1a1a',
-            fontFamily: 'Arial, sans-serif',
             whiteSpace: 'nowrap',
           }}
         >
@@ -391,8 +386,8 @@ function ElegantSection({
         <div
           style={{
             flex: 1,
-            maxWidth: `${80 * scale}px`,
-            height: `${1 * scale}px`,
+            maxWidth: `${80 * styles.scale}px`,
+            height: `${1 * styles.scale}px`,
             backgroundColor: color,
             opacity: 0.4,
           }}

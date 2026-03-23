@@ -1,16 +1,18 @@
 import { ResumeData } from '@/types/resume';
+import { TemplateStyles } from '@/lib/template-utils';
 import { formatDate } from '@/lib/utils';
 
 interface Props {
   data: ResumeData;
-  scale?: number;
+  styles: TemplateStyles;
 }
 
-export function TechnicalTemplate({ data, scale = 1 }: Props) {
+export function TechnicalTemplate({ data, styles }: Props) {
   const { personalDetails: p, workExperience, education, skills, certifications, languages, projects } = data;
   const fullName = `${p.firstName} ${p.lastName}`.trim();
+  const s = styles;
 
-  const sidebarWidth = 210 * scale;
+  const sidebarWidth = 210 * s.scale;
   const sidebarBg = '#2d3748';
 
   const contactItems = [
@@ -24,14 +26,14 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
   return (
     <div
       style={{
-        fontFamily: 'Arial, sans-serif',
-        fontSize: `${10 * scale}px`,
-        lineHeight: 1.5,
+        fontFamily: s.fontFamily,
+        fontSize: `${s.smallFontSize}px`,
+        lineHeight: s.lineHeight,
         color: '#1a1a1a',
         backgroundColor: '#ffffff',
         display: 'flex',
-        maxWidth: `${794 * scale}px`,
-        minHeight: `${1123 * scale}px`,
+        maxWidth: `${s.pageWidth}px`,
+        minHeight: `${s.pageHeight}px`,
         margin: '0 auto',
         boxSizing: 'border-box',
       }}
@@ -43,22 +45,22 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
           flexShrink: 0,
           backgroundColor: sidebarBg,
           color: '#ffffff',
-          padding: `${24 * scale}px ${16 * scale}px`,
+          padding: `${s.paddingTop}px ${s.paddingLeft * 0.5}px`,
           boxSizing: 'border-box',
         }}
       >
         {/* Photo */}
         {p.photo && (
-          <div style={{ textAlign: 'center', marginBottom: `${12 * scale}px` }}>
+          <div style={{ textAlign: 'center', marginBottom: `${12 * s.scale}px` }}>
             <img
               src={p.photo}
               alt=""
               style={{
-                width: `${80 * scale}px`,
-                height: `${80 * scale}px`,
+                width: `${80 * s.scale}px`,
+                height: `${80 * s.scale}px`,
                 borderRadius: '50%',
                 objectFit: 'cover',
-                border: `${3 * scale}px solid white`,
+                border: `${3 * s.scale}px solid white`,
               }}
             />
           </div>
@@ -68,9 +70,9 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
         {fullName && (
           <h1
             style={{
-              fontSize: `${18 * scale}px`,
+              fontSize: `${(s.baseFontSize + 7)}px`,
               fontWeight: 700,
-              margin: `0 0 ${4 * scale}px`,
+              margin: `0 0 ${4 * s.scale}px`,
               lineHeight: 1.2,
               color: '#ffffff',
             }}
@@ -81,9 +83,9 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
         {p.jobTitle && (
           <p
             style={{
-              fontSize: `${10 * scale}px`,
-              color: data.colorScheme,
-              margin: `0 0 ${16 * scale}px`,
+              fontSize: `${s.smallFontSize}px`,
+              color: s.colorScheme,
+              margin: `0 0 ${s.sectionGap}px`,
               fontWeight: 600,
             }}
           >
@@ -93,13 +95,13 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Contact */}
         {contactItems.length > 0 && (
-          <SidebarSection title="Contact" scale={scale} color={data.colorScheme}>
+          <SidebarSection title="Contact" styles={s} color={s.colorScheme}>
             {contactItems.map((item, idx) => (
-              <div key={idx} style={{ marginBottom: `${4 * scale}px` }}>
+              <div key={idx} style={{ marginBottom: `${4 * s.scale}px` }}>
                 <p
                   style={{
                     margin: 0,
-                    fontSize: `${8 * scale}px`,
+                    fontSize: `${s.smallFontSize * 0.8}px`,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     color: 'rgba(255,255,255,0.5)',
@@ -110,7 +112,7 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
                 <p
                   style={{
                     margin: 0,
-                    fontSize: `${9.5 * scale}px`,
+                    fontSize: `${s.smallFontSize * 0.95}px`,
                     color: 'rgba(255,255,255,0.9)',
                     wordBreak: 'break-word',
                   }}
@@ -124,13 +126,13 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Technical Skills */}
         {skills.length > 0 && (
-          <SidebarSection title="Technical Skills" scale={scale} color={data.colorScheme}>
+          <SidebarSection title="Technical Skills" styles={s} color={s.colorScheme}>
             {skills.map((skill) => (
               <p
                 key={skill.id}
                 style={{
-                  margin: `0 0 ${3 * scale}px`,
-                  fontSize: `${9.5 * scale}px`,
+                  margin: `0 0 ${3 * s.scale}px`,
+                  fontSize: `${s.smallFontSize * 0.95}px`,
                   color: 'rgba(255,255,255,0.9)',
                 }}
               >
@@ -142,18 +144,18 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Languages */}
         {languages.length > 0 && (
-          <SidebarSection title="Languages" scale={scale} color={data.colorScheme}>
+          <SidebarSection title="Languages" styles={s} color={s.colorScheme}>
             {languages.map((lang) => (
               <p
                 key={lang.id}
                 style={{
-                  margin: `0 0 ${4 * scale}px`,
-                  fontSize: `${9.5 * scale}px`,
+                  margin: `0 0 ${4 * s.scale}px`,
+                  fontSize: `${s.smallFontSize * 0.95}px`,
                   color: 'rgba(255,255,255,0.9)',
                 }}
               >
                 <span style={{ fontWeight: 600 }}>{lang.name}</span>
-                <span style={{ opacity: 0.6, textTransform: 'capitalize' }}> — {lang.proficiency}</span>
+                <span style={{ opacity: 0.6, textTransform: 'capitalize' }}> &mdash; {lang.proficiency}</span>
               </p>
             ))}
           </SidebarSection>
@@ -164,14 +166,14 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
       <div
         style={{
           flex: 1,
-          padding: `${24 * scale}px ${24 * scale}px`,
+          padding: `${s.paddingTop}px ${s.paddingRight}px`,
           boxSizing: 'border-box',
         }}
       >
         {/* Summary */}
         {p.summary && (
-          <MainSection title="Summary" color={data.colorScheme} scale={scale}>
-            <p style={{ margin: 0, fontSize: `${10 * scale}px`, color: '#444', lineHeight: 1.6 }}>
+          <MainSection title="Summary" color={s.colorScheme} styles={s}>
+            <p style={{ margin: 0, fontSize: `${s.smallFontSize}px`, color: '#444', lineHeight: s.lineHeight }}>
               {p.summary}
             </p>
           </MainSection>
@@ -179,26 +181,26 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Experience */}
         {workExperience.length > 0 && (
-          <MainSection title="Experience" color={data.colorScheme} scale={scale}>
+          <MainSection title="Experience" color={s.colorScheme} styles={s}>
             {workExperience.map((job, i) => (
               <div
                 key={job.id}
                 style={{
-                  marginBottom: i < workExperience.length - 1 ? `${12 * scale}px` : 0,
+                  marginBottom: i < workExperience.length - 1 ? `${12 * s.scale}px` : 0,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${10.5 * scale}px` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexDirection: s.dateAlignment === 'left' ? 'row-reverse' : 'row' }}>
+                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.bodyFontSize}px` }}>
                     {job.position}
                   </p>
                   <p
                     style={{
                       margin: 0,
-                      fontSize: `${9 * scale}px`,
+                      fontSize: `${s.smallFontSize * 0.9}px`,
                       color: '#888',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
-                      marginLeft: `${8 * scale}px`,
+                      marginLeft: `${8 * s.scale}px`,
                     }}
                   >
                     {formatDate(job.startDate)} – {job.current ? 'Present' : formatDate(job.endDate)}
@@ -206,28 +208,28 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
                 </div>
                 <p
                   style={{
-                    margin: `${1 * scale}px 0 ${4 * scale}px`,
-                    fontSize: `${9.5 * scale}px`,
-                    color: data.colorScheme,
+                    margin: `${1 * s.scale}px 0 ${4 * s.scale}px`,
+                    fontSize: `${s.smallFontSize * 0.95}px`,
+                    color: s.colorScheme,
                     fontWeight: 600,
                   }}
                 >
                   {job.company}{job.location ? ` | ${job.location}` : ''}
                 </p>
                 {job.description && (
-                  <p style={{ margin: `0 0 ${3 * scale}px`, fontSize: `${10 * scale}px`, color: '#444' }}>
+                  <p style={{ margin: `0 0 ${3 * s.scale}px`, fontSize: `${s.smallFontSize}px`, color: '#444' }}>
                     {job.description}
                   </p>
                 )}
                 {job.bullets.filter(Boolean).length > 0 && (
-                  <ul style={{ margin: `${2 * scale}px 0 0`, paddingLeft: `${14 * scale}px` }}>
+                  <ul style={{ margin: `${2 * s.scale}px 0 0`, paddingLeft: `${14 * s.scale}px` }}>
                     {job.bullets.filter(Boolean).map((bullet, idx) => (
                       <li
                         key={idx}
                         style={{
-                          fontSize: `${10 * scale}px`,
+                          fontSize: `${s.smallFontSize}px`,
                           color: '#444',
-                          marginBottom: `${2 * scale}px`,
+                          marginBottom: `${2 * s.scale}px`,
                         }}
                       >
                         {bullet}
@@ -242,22 +244,22 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Education */}
         {education.length > 0 && (
-          <MainSection title="Education" color={data.colorScheme} scale={scale}>
+          <MainSection title="Education" color={s.colorScheme} styles={s}>
             {education.map((edu, i) => (
               <div
                 key={edu.id}
                 style={{
-                  marginBottom: i < education.length - 1 ? `${10 * scale}px` : 0,
+                  marginBottom: i < education.length - 1 ? `${10 * s.scale}px` : 0,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${10.5 * scale}px` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: s.dateAlignment === 'left' ? 'row-reverse' : 'row' }}>
+                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.bodyFontSize}px` }}>
                     {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
                   </p>
                   <p
                     style={{
                       margin: 0,
-                      fontSize: `${9 * scale}px`,
+                      fontSize: `${s.smallFontSize * 0.9}px`,
                       color: '#888',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
@@ -268,15 +270,15 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
                 </div>
                 <p
                   style={{
-                    margin: `${2 * scale}px 0 0`,
-                    fontSize: `${9.5 * scale}px`,
-                    color: data.colorScheme,
+                    margin: `${2 * s.scale}px 0 0`,
+                    fontSize: `${s.smallFontSize * 0.95}px`,
+                    color: s.colorScheme,
                   }}
                 >
                   {edu.institution}{edu.location ? ` | ${edu.location}` : ''}
                 </p>
                 {edu.gpa && (
-                  <p style={{ margin: `${2 * scale}px 0 0`, fontSize: `${9 * scale}px`, color: '#666' }}>
+                  <p style={{ margin: `${2 * s.scale}px 0 0`, fontSize: `${s.smallFontSize * 0.9}px`, color: '#666' }}>
                     GPA: {edu.gpa}
                   </p>
                 )}
@@ -287,26 +289,26 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Projects - prominent for tech roles */}
         {projects.length > 0 && (
-          <MainSection title="Projects" color={data.colorScheme} scale={scale}>
+          <MainSection title="Projects" color={s.colorScheme} styles={s}>
             {projects.map((proj, i) => (
               <div
                 key={proj.id}
                 style={{
-                  marginBottom: i < projects.length - 1 ? `${10 * scale}px` : 0,
+                  marginBottom: i < projects.length - 1 ? `${10 * s.scale}px` : 0,
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${10.5 * scale}px` }}>
+                  <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.bodyFontSize}px` }}>
                     {proj.name}
                   </p>
                   {proj.url && (
                     <p
                       style={{
                         margin: 0,
-                        fontSize: `${9 * scale}px`,
-                        color: data.colorScheme,
+                        fontSize: `${s.smallFontSize * 0.9}px`,
+                        color: s.colorScheme,
                         flexShrink: 0,
-                        marginLeft: `${8 * scale}px`,
+                        marginLeft: `${8 * s.scale}px`,
                       }}
                     >
                       {proj.url}
@@ -314,14 +316,14 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
                   )}
                 </div>
                 {(proj.startDate || proj.endDate) && (
-                  <p style={{ margin: `${1 * scale}px 0 0`, fontSize: `${9 * scale}px`, color: '#888' }}>
+                  <p style={{ margin: `${1 * s.scale}px 0 0`, fontSize: `${s.smallFontSize * 0.9}px`, color: '#888' }}>
                     {proj.startDate ? formatDate(proj.startDate) : ''}
                     {proj.startDate && proj.endDate ? ' – ' : ''}
                     {proj.endDate ? formatDate(proj.endDate) : ''}
                   </p>
                 )}
                 {proj.description && (
-                  <p style={{ margin: `${3 * scale}px 0 0`, fontSize: `${10 * scale}px`, color: '#444' }}>
+                  <p style={{ margin: `${3 * s.scale}px 0 0`, fontSize: `${s.smallFontSize}px`, color: '#444' }}>
                     {proj.description}
                   </p>
                 )}
@@ -332,20 +334,20 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
         {/* Certifications */}
         {certifications.length > 0 && (
-          <MainSection title="Certifications" color={data.colorScheme} scale={scale}>
+          <MainSection title="Certifications" color={s.colorScheme} styles={s}>
             {certifications.map((cert) => (
-              <div key={cert.id} style={{ marginBottom: `${6 * scale}px` }}>
+              <div key={cert.id} style={{ marginBottom: `${6 * s.scale}px` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <p style={{ fontWeight: 600, margin: 0, fontSize: `${10 * scale}px` }}>
+                  <p style={{ fontWeight: 600, margin: 0, fontSize: `${s.smallFontSize}px` }}>
                     {cert.name}
                   </p>
                   {cert.date && (
-                    <p style={{ margin: 0, fontSize: `${9 * scale}px`, color: '#888' }}>
+                    <p style={{ margin: 0, fontSize: `${s.smallFontSize * 0.9}px`, color: '#888' }}>
                       {formatDate(cert.date)}
                     </p>
                   )}
                 </div>
-                <p style={{ margin: 0, fontSize: `${9.5 * scale}px`, color: '#666' }}>{cert.issuer}</p>
+                <p style={{ margin: 0, fontSize: `${s.smallFontSize * 0.95}px`, color: '#666' }}>{cert.issuer}</p>
               </div>
             ))}
           </MainSection>
@@ -357,27 +359,27 @@ export function TechnicalTemplate({ data, scale = 1 }: Props) {
 
 function SidebarSection({
   title,
-  scale,
+  styles,
   color,
   children,
 }: {
   title: string;
-  scale: number;
+  styles: TemplateStyles;
   color: string;
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: `${18 * scale}px` }}>
+    <div style={{ marginBottom: `${styles.sectionGap * 1.1}px` }}>
       <h2
         style={{
-          fontSize: `${9 * scale}px`,
+          fontSize: `${styles.smallFontSize * 0.9}px`,
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
-          margin: `0 0 ${8 * scale}px`,
+          margin: `0 0 ${8 * styles.scale}px`,
           color: 'rgba(255,255,255,0.6)',
-          paddingBottom: `${4 * scale}px`,
-          borderBottom: `1px solid rgba(255,255,255,0.15)`,
+          paddingBottom: `${4 * styles.scale}px`,
+          borderBottom: '1px solid rgba(255,255,255,0.15)',
         }}
       >
         {title}
@@ -390,23 +392,23 @@ function SidebarSection({
 function MainSection({
   title,
   color,
-  scale,
+  styles,
   children,
 }: {
   title: string;
   color: string;
-  scale: number;
+  styles: TemplateStyles;
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: `${16 * scale}px` }}>
+    <div style={{ marginBottom: `${styles.sectionGap}px` }}>
       <h2
         style={{
-          fontSize: `${10.5 * scale}px`,
+          fontSize: `${styles.bodyFontSize}px`,
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
-          margin: `0 0 ${8 * scale}px`,
+          margin: `0 0 ${8 * styles.scale}px`,
           color: '#1a1a1a',
           fontFamily: '"Courier New", Courier, monospace',
         }}
@@ -414,10 +416,10 @@ function MainSection({
         {title}
         <div
           style={{
-            width: `${40 * scale}px`,
-            height: `${2 * scale}px`,
+            width: `${40 * styles.scale}px`,
+            height: `${2 * styles.scale}px`,
             backgroundColor: color,
-            marginTop: `${4 * scale}px`,
+            marginTop: `${4 * styles.scale}px`,
           }}
         />
       </h2>

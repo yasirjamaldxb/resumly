@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackEvent, logError } from '@/lib/analytics';
 import { createElement } from 'react';
+import { getTemplateStyles } from '@/lib/template-utils';
 
 export const maxDuration = 60;
-
-// Font map — must match the one in templates/index.tsx (browser version)
-const FONT_CSS_MAP: Record<string, string> = {
-  inter: 'Inter, sans-serif',
-  georgia: 'Georgia, serif',
-  times: '"Times New Roman", serif',
-  arial: 'Arial, Helvetica, sans-serif',
-  garamond: 'Garamond, Georgia, serif',
-  calibri: 'Calibri, Candara, sans-serif',
-};
 
 // PDF-specific font map — prepends metric-compatible Google web fonts
 // Lambda Chromium lacks system fonts (Arial, Helvetica, Times, Georgia, etc.)
@@ -25,10 +16,6 @@ const PDF_FONT_CSS_MAP: Record<string, string> = {
   garamond: '"EB Garamond", Garamond, Georgia, serif',
   calibri: 'Carlito, Calibri, Candara, sans-serif',
 };
-
-// A4 at 96 DPI — same values Reactive Resume uses
-const PAGE_WIDTH = 794;
-const PAGE_HEIGHT = 1123;
 
 export async function POST(req: NextRequest) {
   let browser: any = null;
@@ -72,14 +59,14 @@ export async function POST(req: NextRequest) {
     };
 
     const TemplateComponent = templateMap[resumeData.templateId] || ATSProTemplate;
-    const fontCss = FONT_CSS_MAP[resumeData.fontFamily] || FONT_CSS_MAP['inter'];
+    const styles = getTemplateStyles(resumeData, 1);
     const pdfFontCss = PDF_FONT_CSS_MAP[resumeData.fontFamily] || PDF_FONT_CSS_MAP['inter'];
 
     console.log('[PDF] Using template component for:', resumeData.templateId, '| pdfFont:', pdfFontCss);
 
     // Server-render the SAME React template the browser preview uses (scale=1 for A4)
-    const templateElement = createElement(TemplateComponent, { data: resumeData, scale: 1 });
-    const wrapperElement = createElement('div', { style: { fontFamily: fontCss } }, templateElement);
+    const templateElement = createElement(TemplateComponent, { data: resumeData, styles });
+    const wrapperElement = createElement('div', { style: { fontFamily: styles.fontFamily } }, templateElement);
     const templateHtml = renderToStaticMarkup(wrapperElement);
 
     console.log('[PDF] HTML rendered, length:', templateHtml.length);
@@ -91,14 +78,14 @@ export async function POST(req: NextRequest) {
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=${PAGE_WIDTH}" />
+  <meta name="viewport" content="width=${styles.pageWidth}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Carlito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: ${PAGE_WIDTH}px;
+      width: ${styles.pageWidth}px;
       margin: 0;
       padding: 0;
       background: #ffffff;
@@ -146,7 +133,7 @@ export async function POST(req: NextRequest) {
           '--font-render-hinting=none',
           '--disable-font-subpixel-positioning',
         ],
-        defaultViewport: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+        defaultViewport: { width: styles.pageWidth, height: styles.pageHeight },
         executablePath: await chromium.executablePath(),
         headless: true,
       });
@@ -175,7 +162,7 @@ export async function POST(req: NextRequest) {
         executablePath,
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-        defaultViewport: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+        defaultViewport: { width: styles.pageWidth, height: styles.pageHeight },
       });
     }
 
@@ -363,8 +350,8 @@ export async function POST(req: NextRequest) {
     // Sidebar backgrounds use position:fixed overlays that render on every page
     // edge-to-edge, so the colored sidebar is seamless despite the margins.
     const pdfBuffer = await page.pdf({
-      width: `${PAGE_WIDTH}px`,
-      height: `${PAGE_HEIGHT}px`,
+      width: `${styles.pageWidth}px`,
+      height: `${styles.pageHeight}px`,
       printBackground: true,
       margin: { top: '0.25in', right: 0, bottom: '0.25in', left: 0 },
     });

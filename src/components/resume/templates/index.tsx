@@ -1,6 +1,7 @@
 'use client';
 
 import { ResumeData } from '@/types/resume';
+import { getTemplateStyles } from '@/lib/template-utils';
 import { ATSProTemplate } from './ats-pro';
 import { ModernTemplate } from './modern';
 import { ProfessionalTemplate } from './professional';
@@ -12,48 +13,39 @@ import { ElegantTemplate } from './elegant';
 import { TechnicalTemplate } from './technical';
 import { ClassicTemplate } from './classic';
 
-const FONT_CSS_MAP: Record<string, string> = {
-  inter: 'Inter, sans-serif',
-  georgia: 'Georgia, serif',
-  times: '"Times New Roman", serif',
-  arial: 'Arial, Helvetica, sans-serif',
-  garamond: 'Garamond, Georgia, serif',
-  calibri: 'Calibri, Candara, sans-serif',
-};
-
 interface Props {
   data: ResumeData;
   scale?: number;
 }
 
 export function ResumeTemplate({ data, scale = 1 }: Props) {
-  const fontCss = FONT_CSS_MAP[data.fontFamily] || FONT_CSS_MAP['inter'];
+  const styles = getTemplateStyles(data, scale);
 
   const template = (() => { switch (data.templateId) {
     case 'modern':
-      return <ModernTemplate data={data} scale={scale} />;
+      return <ModernTemplate data={data} styles={styles} />;
     case 'professional':
-      return <ProfessionalTemplate data={data} scale={scale} />;
+      return <ProfessionalTemplate data={data} styles={styles} />;
     case 'minimal':
-      return <MinimalTemplate data={data} scale={scale} />;
+      return <MinimalTemplate data={data} styles={styles} />;
     case 'executive':
-      return <ExecutiveTemplate data={data} scale={scale} />;
+      return <ExecutiveTemplate data={data} styles={styles} />;
     case 'creative':
-      return <CreativeTemplate data={data} scale={scale} />;
+      return <CreativeTemplate data={data} styles={styles} />;
     case 'compact':
-      return <CompactTemplate data={data} scale={scale} />;
+      return <CompactTemplate data={data} styles={styles} />;
     case 'elegant':
-      return <ElegantTemplate data={data} scale={scale} />;
+      return <ElegantTemplate data={data} styles={styles} />;
     case 'technical':
-      return <TechnicalTemplate data={data} scale={scale} />;
+      return <TechnicalTemplate data={data} styles={styles} />;
     case 'classic':
-      return <ClassicTemplate data={data} scale={scale} />;
+      return <ClassicTemplate data={data} styles={styles} />;
     case 'ats-pro':
     default:
-      return <ATSProTemplate data={data} scale={scale} />;
+      return <ATSProTemplate data={data} styles={styles} />;
   } })();
 
-  return <div style={{ fontFamily: fontCss }}>{template}</div>;
+  return <div style={{ fontFamily: styles.fontFamily }}>{template}</div>;
 }
 
 export { ATSProTemplate, ModernTemplate, ProfessionalTemplate, MinimalTemplate, ExecutiveTemplate, CreativeTemplate, CompactTemplate, ElegantTemplate, TechnicalTemplate, ClassicTemplate };
