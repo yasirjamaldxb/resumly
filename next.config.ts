@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
   // serverless function. Without this, Next.js output file tracing misses
   // the .br (brotli) files needed to bootstrap Chromium on Lambda.
   outputFileTracingIncludes: {
-    '/api/resume/generate-pdf': ['./node_modules/@sparticuz/chromium/**/*'],
+    '/api/resume/generate-pdf': [
+      './node_modules/@sparticuz/chromium/**/*',
+      './node_modules/@sparticuz/chromium/bin/**',
+    ],
   },
 
   // Image optimization

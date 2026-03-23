@@ -4,6 +4,12 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
+  "functions": {
+    "app/api/resume/generate-pdf/route.ts": {
+      "memory": 3009,
+      "maxDuration": 60
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
