@@ -1,6 +1,18 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // CRITICAL: Keep @sparticuz/chromium as an external package so its binary
+  // files (chromium.br, fonts.tar.br etc.) are included in the Lambda bundle
+  // instead of being tree-shaken by the bundler.
+  serverExternalPackages: ['@sparticuz/chromium', 'puppeteer-core'],
+
+  // Explicitly include @sparticuz/chromium binary files in the PDF generation
+  // serverless function. Without this, Next.js output file tracing misses
+  // the .br (brotli) files needed to bootstrap Chromium on Lambda.
+  outputFileTracingIncludes: {
+    '/api/resume/generate-pdf': ['./node_modules/@sparticuz/chromium/**/*'],
+  },
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],

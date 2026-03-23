@@ -245,50 +245,27 @@ export default function BuilderPage() {
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] flex flex-col">
-      {/* Top bar */}
+      {/* Minimal top bar — no site header */}
       <header className="bg-white border-b border-neutral-20 sticky top-0 z-40">
-        <div className="max-w-full px-3 sm:px-5 h-[56px] flex items-center justify-between gap-2">
-          {/* Logo + Back */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">R</span>
-              </div>
-              <span className="font-semibold text-neutral-90 hidden sm:block text-[15px] tracking-tight">resumly<span className="text-primary">.app</span></span>
-            </Link>
-            <div className="hidden sm:block w-px h-6 bg-neutral-20" />
-            <Link href="/dashboard" className="hidden sm:block text-[13px] text-neutral-50 hover:text-neutral-70 transition-colors">
-              Dashboard
-            </Link>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Save status */}
-            <div className="hidden sm:flex items-center gap-1.5 text-[12px]">
-              {saveStatus === 'saving' && (
-                <span className="text-neutral-40 flex items-center gap-1">
-                  <div className="w-3 h-3 border-2 border-neutral-30 border-t-transparent rounded-full animate-spin" />
-                  Saving...
-                </span>
-              )}
-              {saveStatus === 'saved' && (
-                <span className="text-green-600 flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Saved
-                </span>
-              )}
+        <div className="max-w-full px-3 sm:px-5 h-[52px] flex items-center justify-between gap-2">
+          {/* Logo only */}
+          <Link href="/dashboard" className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xs">R</span>
             </div>
+            <span className="font-semibold text-neutral-90 text-[15px] tracking-tight">resumly<span className="text-primary">.app</span></span>
+          </Link>
 
-            {/* ATS Score */}
-            <div className="hidden md:flex items-center gap-2 rounded-lg px-2.5 py-1.5 border border-neutral-20">
-              <div className="relative w-6 h-6">
-                <svg className="w-6 h-6 -rotate-90" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" fill="none" stroke="#e5e7eb" strokeWidth="3" />
-                  <circle cx="12" cy="12" r="10" fill="none" stroke={scoreColor} strokeWidth="3" strokeDasharray={`${atsScore * 0.628} 100`} strokeLinecap="round" />
-                </svg>
-              </div>
-              <span className="text-[12px] font-semibold" style={{ color: scoreColor }}>ATS {atsScore}%</span>
+          {/* Right actions */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {/* ATS Score badge */}
+            <div className="hidden sm:flex items-center gap-1.5">
+              <span
+                className="text-[12px] font-bold px-2 py-0.5 rounded"
+                style={{ backgroundColor: scoreColor, color: '#fff' }}
+              >
+                ATS {atsScore}%
+              </span>
             </div>
 
             <button
@@ -354,7 +331,7 @@ export default function BuilderPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Form Panel */}
         <div ref={formPanelRef} className={cn(
-          'w-full lg:w-[420px] xl:w-[440px] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
+          'w-full lg:w-[55%] xl:w-[57%] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
           previewVisible ? 'hidden lg:block' : 'block'
         )}>
           {/* Edit / Customize Tabs */}
@@ -386,30 +363,30 @@ export default function BuilderPage() {
               </div>
             </div>
 
-            {/* Resume Score Bar — only show in Edit tab */}
+            {/* Resume Score Bar — resume.io style horizontal bar */}
             {activeTab === 'edit' && (
               <div className="px-5 pt-3 pb-3">
                 <div className="flex items-center gap-3">
-                  {/* Score badge */}
-                  <div
-                    className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold text-white"
+                  {/* Percentage badge */}
+                  <span
+                    className="flex-shrink-0 text-[12px] font-bold text-white px-2 py-0.5 rounded"
                     style={{ backgroundColor: scoreColor }}
                   >
-                    {atsScore}
-                  </div>
-                  {/* Label + bar */}
+                    {atsScore}%
+                  </span>
+                  {/* Label + progress bar + hint */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[12px] font-semibold text-neutral-70">Your resume score</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[12px] font-medium text-neutral-60 whitespace-nowrap">Your resume score</span>
+                      <div className="flex-1 h-[4px] bg-neutral-15 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${atsScore}%`, backgroundColor: scoreColor }}
+                        />
+                      </div>
                       {currentHint && (
-                        <span className="text-[11px] font-medium text-primary truncate ml-2">{currentHint}</span>
+                        <span className="text-[11px] font-medium text-primary whitespace-nowrap flex-shrink-0">{currentHint}</span>
                       )}
-                    </div>
-                    <div className="w-full h-[5px] bg-neutral-10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500 ease-out"
-                        style={{ width: `${atsScore}%`, backgroundColor: scoreColor }}
-                      />
                     </div>
                   </div>
                 </div>
@@ -434,18 +411,21 @@ export default function BuilderPage() {
 
           {/* Bottom navigation bar — only show in Edit tab */}
           {activeTab === 'edit' && (
-            <div className="fixed bottom-0 left-0 w-full lg:w-[420px] xl:w-[440px] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3.5 z-30">
+            <div className="fixed bottom-0 left-0 w-full lg:w-[55%] xl:w-[57%] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3 z-30">
               <div className="flex items-center justify-between gap-3">
-                {/* Back button */}
-                <Button
-                  variant="outline"
-                  size="sm"
+                {/* Back button — text style with border */}
+                <button
                   onClick={() => { setStep(Math.max(0, step - 1)); formPanelRef.current?.scrollTo({ top: 0 }); }}
                   disabled={step === 0}
-                  className="flex-shrink-0"
+                  className={cn(
+                    'flex-shrink-0 text-[13px] font-semibold px-4 py-2 rounded-lg border transition-colors',
+                    step === 0
+                      ? 'text-neutral-30 border-neutral-15 cursor-not-allowed'
+                      : 'text-primary border-primary/30 hover:bg-primary/5'
+                  )}
                 >
                   Back
-                </Button>
+                </button>
 
                 {/* Step dot indicators */}
                 <div className="flex items-center gap-2">
@@ -458,7 +438,7 @@ export default function BuilderPage() {
                     >
                       <div
                         className={cn(
-                          'w-2.5 h-2.5 rounded-full transition-all',
+                          'w-2 h-2 rounded-full transition-all',
                           i === step
                             ? 'bg-primary scale-125'
                             : i < step
@@ -470,24 +450,42 @@ export default function BuilderPage() {
                   ))}
                 </div>
 
-                {/* Next / Download button */}
-                {step < STEPS.length - 1 ? (
-                  <Button
-                    size="sm"
-                    onClick={() => { setStep(step + 1); formPanelRef.current?.scrollTo({ top: 0 }); }}
-                    className="flex-shrink-0 gap-1"
-                  >
-                    Next: {STEPS[step + 1]?.label}
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                  </Button>
-                ) : (
-                  <Button size="sm" onClick={downloadPDF} loading={downloading} className="flex-shrink-0 gap-1.5">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download PDF
-                  </Button>
-                )}
+                {/* Next / Download button + Saved indicator */}
+                <div className="flex items-center gap-2.5 flex-shrink-0">
+                  {/* Saved status */}
+                  <div className="hidden sm:flex items-center gap-1 text-[12px]">
+                    {saveStatus === 'saving' && (
+                      <span className="text-neutral-40 flex items-center gap-1">
+                        <div className="w-3 h-3 border-[1.5px] border-neutral-30 border-t-transparent rounded-full animate-spin" />
+                        Saving...
+                      </span>
+                    )}
+                    {saveStatus === 'saved' && (
+                      <span className="text-green-600 flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        Saved
+                      </span>
+                    )}
+                  </div>
+
+                  {step < STEPS.length - 1 ? (
+                    <Button
+                      size="sm"
+                      onClick={() => { setStep(step + 1); formPanelRef.current?.scrollTo({ top: 0 }); }}
+                      className="gap-1 px-5"
+                    >
+                      Next: {STEPS[step + 1]?.label}
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={downloadPDF} loading={downloading} className="gap-1.5 px-5">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Download PDF
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -516,9 +514,16 @@ export default function BuilderPage() {
             <ResumeTemplate data={resumeData} />
           </div>
 
-          <div className="flex items-center justify-center mt-4">
-            <div className="bg-neutral-90/80 text-white text-[13px] font-medium px-4 py-1.5 rounded-full">
-              1 / 1
+          {/* Page count dark pill — bottom right */}
+          <div className="flex justify-end mt-4 pr-2">
+            <div className="inline-flex items-center gap-1.5 bg-neutral-90 text-white text-[12px] font-medium px-3 py-1.5 rounded-full shadow-lg">
+              <button className="hover:text-neutral-30 transition-colors" aria-label="Previous page">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <span>1 / 1</span>
+              <button className="hover:text-neutral-30 transition-colors" aria-label="Next page">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+              </button>
             </div>
           </div>
         </div>

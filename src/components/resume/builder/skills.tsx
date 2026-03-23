@@ -276,7 +276,7 @@ export function SkillsForm({ data, onChange }: Props) {
 
         <div className="flex gap-2">
           <input
-            className="flex-1 text-sm border border-neutral-30 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 text-sm bg-[#f3f4f6] border-0 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
             placeholder="Type a skill and press Enter..."
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
@@ -482,6 +482,7 @@ export function SkillsForm({ data, onChange }: Props) {
                         placeholder="Spanish"
                         value={lang.name}
                         onChange={(e) => updateLang(lang.id, 'name', e.target.value)}
+                        className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                       />
                       <LanguageLevelSlider
                         proficiency={lang.proficiency}
@@ -514,7 +515,7 @@ export function SkillsForm({ data, onChange }: Props) {
                 placeholder="AWS Solutions Architect"
                 value={cert.name}
                 onChange={(e) => updateCert(cert.id, 'name', e.target.value)}
-                className="flex-1 mr-2"
+                className="flex-1 mr-2 bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               />
               <button onClick={() => removeCert(cert.id)} className="text-neutral-40 hover:text-red-500 mt-6">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -528,12 +529,14 @@ export function SkillsForm({ data, onChange }: Props) {
                 placeholder="Amazon Web Services"
                 value={cert.issuer}
                 onChange={(e) => updateCert(cert.id, 'issuer', e.target.value)}
+                className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               />
               <Input
                 label="Date"
                 type="month"
                 value={cert.date}
                 onChange={(e) => updateCert(cert.id, 'date', e.target.value)}
+                className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               />
             </div>
           </div>

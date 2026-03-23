@@ -203,6 +203,7 @@ export function EducationForm({ data, onChange }: Props) {
                   placeholder="MIT"
                   value={edu.institution}
                   onChange={(e) => updateEdu(edu.id, 'institution', e.target.value)}
+                  className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 />
 
                 <div className="grid grid-cols-2 gap-3">
@@ -211,12 +212,14 @@ export function EducationForm({ data, onChange }: Props) {
                     placeholder="Bachelor of Science"
                     value={edu.degree}
                     onChange={(e) => updateEdu(edu.id, 'degree', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <Input
                     label="Field of Study"
                     placeholder="Computer Science"
                     value={edu.field}
                     onChange={(e) => updateEdu(edu.id, 'field', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -225,6 +228,7 @@ export function EducationForm({ data, onChange }: Props) {
                   placeholder="Cambridge, MA"
                   value={edu.location}
                   onChange={(e) => updateEdu(edu.id, 'location', e.target.value)}
+                  className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 />
 
                 <div className="grid grid-cols-2 gap-3">
@@ -233,6 +237,7 @@ export function EducationForm({ data, onChange }: Props) {
                     type="month"
                     value={edu.startDate}
                     onChange={(e) => updateEdu(edu.id, 'startDate', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <div className="flex flex-col gap-1.5">
                     {!edu.current && (
@@ -241,6 +246,7 @@ export function EducationForm({ data, onChange }: Props) {
                         type="month"
                         value={edu.endDate}
                         onChange={(e) => updateEdu(edu.id, 'endDate', e.target.value)}
+                        className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                       />
                     )}
                     <label className="flex items-center gap-2 cursor-pointer mt-1">
@@ -261,6 +267,7 @@ export function EducationForm({ data, onChange }: Props) {
                   value={edu.gpa}
                   onChange={(e) => updateEdu(edu.id, 'gpa', e.target.value)}
                   hint="Include if 3.5 or higher"
+                  className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 />
               </div>
             )}

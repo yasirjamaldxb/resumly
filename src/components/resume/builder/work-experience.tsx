@@ -308,12 +308,14 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                     placeholder="e.g. Product Designer"
                     value={job.position}
                     onChange={(e) => updateJob(job.id, 'position', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <Input
                     label="Employer"
                     placeholder="e.g. Amazon"
                     value={job.company}
                     onChange={(e) => updateJob(job.id, 'company', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
 
@@ -322,6 +324,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                   placeholder="e.g. New York, NY"
                   value={job.location}
                   onChange={(e) => updateJob(job.id, 'location', e.target.value)}
+                  className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 />
 
                 <div className="grid grid-cols-2 gap-3">
@@ -330,6 +333,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                     type="month"
                     value={job.startDate}
                     onChange={(e) => updateJob(job.id, 'startDate', e.target.value)}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <div className="flex flex-col gap-1.5">
                     {!job.current && (
@@ -338,6 +342,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                         type="month"
                         value={job.endDate}
                         onChange={(e) => updateJob(job.id, 'endDate', e.target.value)}
+                        className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                       />
                     )}
                     <label className="flex items-center gap-2 cursor-pointer mt-1">
@@ -375,7 +380,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
                     <div key={idx} className="flex gap-2 items-start">
                       <span className="text-neutral-40 mt-2 flex-shrink-0 text-sm">•</span>
                       <input
-                        className="flex-1 text-sm border border-neutral-20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                        className="flex-1 text-sm bg-[#f3f4f6] border-0 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-colors"
                         placeholder="e.g. Created and implemented lesson plans based on child-led interests"
                         value={bullet}
                         onChange={(e) => updateBullet(job.id, idx, e.target.value)}

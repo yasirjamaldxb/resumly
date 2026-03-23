@@ -90,7 +90,7 @@ export function ModernTemplate({ data, scale = 1 }: Props) {
                       height: '100%',
                       backgroundColor: 'rgba(255,255,255,0.85)',
                       borderRadius: `${3 * scale}px`,
-                      width: skill.level === 'expert' ? '100%' : skill.level === 'advanced' ? '80%' : skill.level === 'intermediate' ? '60%' : '40%',
+                      width: skill.level === 'expert' ? '100%' : skill.level === 'advanced' ? '80%' : skill.level === 'intermediate' ? '60%' : skill.level === 'beginner' ? '40%' : '20%',
                     }}
                   />
                 </div>

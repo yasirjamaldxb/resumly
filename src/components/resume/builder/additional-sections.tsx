@@ -233,6 +233,7 @@ export function AdditionalSections({ data, onChange }: Props) {
                       updated[idx] = { ...ref, name: e.target.value };
                       onChange({ ...data, references: updated });
                     }}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <Input
                     label="Company"
@@ -243,6 +244,7 @@ export function AdditionalSections({ data, onChange }: Props) {
                       updated[idx] = { ...ref, company: e.target.value };
                       onChange({ ...data, references: updated });
                     }}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <Input
                     label="Phone"
@@ -253,6 +255,7 @@ export function AdditionalSections({ data, onChange }: Props) {
                       updated[idx] = { ...ref, phone: e.target.value };
                       onChange({ ...data, references: updated });
                     }}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                   <Input
                     label="Email"
@@ -264,6 +267,7 @@ export function AdditionalSections({ data, onChange }: Props) {
                       updated[idx] = { ...ref, email: e.target.value };
                       onChange({ ...data, references: updated });
                     }}
+                    className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                   />
                 </div>
               </div>

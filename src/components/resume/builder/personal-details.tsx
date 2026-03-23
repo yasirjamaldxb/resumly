@@ -132,57 +132,59 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         </div>
       )}
 
-      {/* Job Title — top position with gamification badge */}
-      <div className="space-y-1.5">
-        <div className="flex items-center">
-          <label htmlFor="job-title" className="text-sm font-medium text-neutral-70">
-            Job Title / Target Role *
-          </label>
-          {!p.jobTitle && <GamificationBadge label="+10%" />}
-        </div>
-        <Input
-          id="job-title"
-          placeholder="Senior Software Engineer"
-          value={p.jobTitle}
-          onChange={(e) => update('jobTitle', e.target.value)}
-          hint="Adding a job title increases your resume score by 10%"
-        />
-      </div>
-
-      {/* Photo Upload */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-70">Profile Photo <span className="text-neutral-40 font-normal">(optional)</span></label>
-        <div className="flex items-center gap-4">
-          <div
-            className="w-20 h-20 rounded-full border-2 border-dashed border-neutral-30 flex items-center justify-center overflow-hidden bg-neutral-10 flex-shrink-0 cursor-pointer hover:border-primary transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {p.photo ? (
-              <img src={p.photo} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <svg className="w-8 h-8 text-neutral-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            )}
+      {/* Job Title + Photo — same row */}
+      <div className="flex gap-4 items-start">
+        {/* Job Title — takes more space */}
+        <div className="flex-1 space-y-1.5">
+          <div className="flex items-center">
+            <label htmlFor="job-title" className="text-sm font-medium text-neutral-70">
+              Job Title / Target Role *
+            </label>
+            {!p.jobTitle && <GamificationBadge label="+10%" />}
           </div>
-          <div className="flex flex-col gap-1.5">
-            <button
-              type="button"
+          <Input
+            id="job-title"
+            placeholder="Senior Software Engineer"
+            value={p.jobTitle}
+            onChange={(e) => update('jobTitle', e.target.value)}
+            className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+            hint="Adding a job title increases your resume score by 10%"
+          />
+        </div>
+
+        {/* Compact Photo Upload */}
+        <div className="flex-shrink-0 pt-6">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-10 h-10 rounded-full bg-neutral-10 flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-neutral-15 transition-colors"
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium text-primary hover:text-primary-dark text-left"
             >
-              {p.photo ? 'Change photo' : 'Upload photo'}
-            </button>
-            {p.photo && (
+              {p.photo ? (
+                <img src={p.photo} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <svg className="w-5 h-5 text-neutral-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              )}
+            </div>
+            <div className="flex flex-col">
               <button
                 type="button"
-                onClick={removePhoto}
-                className="text-sm text-red-500 hover:text-red-600 text-left"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-medium text-primary hover:text-primary-dark text-left whitespace-nowrap"
               >
-                Remove
+                {p.photo ? 'Change' : 'Upload photo'}
               </button>
-            )}
-            <p className="text-xs text-neutral-40">JPG, PNG. Max 5MB. Shows on supported templates.</p>
+              {p.photo && (
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="text-xs text-red-500 hover:text-red-600 text-left"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
           </div>
           <input
             ref={fileInputRef}
@@ -201,12 +203,14 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
           placeholder="John"
           value={p.firstName}
           onChange={(e) => update('firstName', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
         <Input
           label="Last Name *"
           placeholder="Smith"
           value={p.lastName}
           onChange={(e) => update('lastName', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
       </div>
 
@@ -218,6 +222,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
           placeholder="john@example.com"
           value={p.email}
           onChange={(e) => update('email', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
         <Input
           label="Phone Number"
@@ -225,6 +230,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
           placeholder="+1 (555) 000-0000"
           value={p.phone}
           onChange={(e) => update('phone', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
       </div>
 
@@ -235,12 +241,14 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
           placeholder="linkedin.com/in/johnsmith"
           value={p.linkedIn}
           onChange={(e) => update('linkedIn', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
         <Input
           label="City, State / Location"
           placeholder="New York, NY"
           value={p.location}
           onChange={(e) => update('location', e.target.value)}
+          className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
         />
       </div>
 
@@ -275,6 +283,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
               placeholder="johnsmith.dev"
               value={p.website}
               onChange={(e) => update('website', e.target.value)}
+              className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
             />
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -283,6 +292,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
                 value=""
                 disabled
                 hint="Coming soon"
+                className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               />
               <Input
                 label="Nationality"
@@ -290,6 +300,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
                 value=""
                 disabled
                 hint="Coming soon"
+                className="bg-[#f3f4f6] border-0 focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               />
             </div>
           </div>
