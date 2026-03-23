@@ -329,11 +329,13 @@ export default function BuilderPage() {
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Form Panel */}
-        <div ref={formPanelRef} className={cn(
-          'w-full lg:w-[55%] xl:w-[57%] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
-          previewVisible ? 'hidden lg:block' : 'block'
+        {/* Form Panel — flex column: header + scrollable content + fixed bottom nav */}
+        <div className={cn(
+          'w-full lg:w-[55%] xl:w-[57%] flex-shrink-0 flex flex-col bg-white border-r border-neutral-20',
+          previewVisible ? 'hidden lg:block lg:flex' : 'flex'
         )}>
+          {/* Scrollable area */}
+          <div ref={formPanelRef} className="flex-1 overflow-y-auto">
           {/* Edit / Customize Tabs */}
           <div className="sticky top-0 z-20 bg-white border-b border-neutral-20">
             <div className="flex justify-center pt-3 pb-0">
@@ -394,8 +396,8 @@ export default function BuilderPage() {
             )}
           </div>
 
-          {/* Form content — pb-28 ensures content isn't hidden behind sticky bottom nav */}
-          <div className="px-5 pt-5 pb-28 sm:px-6 sm:pt-6 sm:pb-28">
+          {/* Form content */}
+          <div className="px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-8">
             {activeTab === 'customize' ? (
               <TemplatePicker data={resumeData} onChange={handleDataChange} />
             ) : (
@@ -409,9 +411,11 @@ export default function BuilderPage() {
             )}
           </div>
 
-          {/* Bottom navigation bar — only show in Edit tab */}
+          </div>{/* end scrollable area */}
+
+          {/* Bottom navigation bar — OUTSIDE scroll area, always visible */}
           {activeTab === 'edit' && (
-            <div className="sticky bottom-0 bg-white border-t border-neutral-20 px-5 sm:px-6 py-3 z-30">
+            <div className="flex-shrink-0 bg-white border-t border-neutral-20 px-5 sm:px-6 py-3 z-30">
               <div className="flex items-center justify-between gap-3">
                 {/* Back button — text style with border */}
                 <button
