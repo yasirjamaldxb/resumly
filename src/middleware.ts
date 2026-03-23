@@ -2,6 +2,15 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  // Force canonical domain: redirect www → non-www, http → https
+  const host = request.headers.get('host') || '';
+  if (host.startsWith('www.')) {
+    const url = request.nextUrl.clone();
+    url.host = host.replace('www.', '');
+    url.protocol = 'https';
+    return NextResponse.redirect(url, 301);
+  }
+
   // If Supabase redirects to homepage with ?code= instead of /auth/callback,
   // forward to the callback route so the code can be exchanged for a session.
   if (
