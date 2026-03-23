@@ -395,7 +395,7 @@ export default function BuilderPage() {
           </div>
 
           {/* Form content */}
-          <div className="p-5 sm:p-6 pb-[120px]">
+          <div className="p-5 sm:p-6 pb-4">
             {activeTab === 'customize' ? (
               <TemplatePicker data={resumeData} onChange={handleDataChange} />
             ) : (
@@ -411,7 +411,7 @@ export default function BuilderPage() {
 
           {/* Bottom navigation bar — only show in Edit tab */}
           {activeTab === 'edit' && (
-            <div className="fixed bottom-0 left-0 w-full lg:w-[55%] xl:w-[57%] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3 z-30">
+            <div className="sticky bottom-0 bg-white border-t border-neutral-20 px-5 sm:px-6 py-3 z-30">
               <div className="flex items-center justify-between gap-3">
                 {/* Back button — text style with border */}
                 <button
