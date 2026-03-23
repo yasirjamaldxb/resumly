@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { generateId, cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface Props {
   data: ResumeData;
@@ -72,6 +72,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Track expanded entries by id. Initialize: first entry expanded if it exists.
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
@@ -99,6 +100,8 @@ export function WorkExperienceForm({ data, onChange }: Props) {
     onChange({ ...data, workExperience: [...data.workExperience, newJob] });
     // Auto-expand the newly added entry
     setExpandedIds((prev) => new Set(prev).add(newJob.id));
+    // Scroll to bottom after render so the new entry + "Add more" button is visible
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
   };
 
   const removeJob = (id: string) => {
@@ -432,6 +435,7 @@ export function WorkExperienceForm({ data, onChange }: Props) {
           + Add one more employment
         </button>
       )}
+      <div ref={bottomRef} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ResumeData, Education } from '@/types/resume';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ const emptyEdu = (): Education => ({
 
 export function EducationForm({ data, onChange }: Props) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
     const initial = new Set<string>();
     if (data.education.length > 0) {
@@ -49,6 +50,7 @@ export function EducationForm({ data, onChange }: Props) {
     const newEdu = emptyEdu();
     onChange({ ...data, education: [...data.education, newEdu] });
     setExpandedIds((prev) => new Set(prev).add(newEdu.id));
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
   };
 
   const removeEdu = (id: string) => {
@@ -283,6 +285,7 @@ export function EducationForm({ data, onChange }: Props) {
           + Add one more education
         </button>
       )}
+      <div ref={bottomRef} />
     </div>
   );
 }
