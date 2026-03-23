@@ -397,7 +397,7 @@ export default function BuilderPage() {
           </div>
 
           {/* Form content */}
-          <div className="px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-8">
+          <div className="px-5 pt-5 pb-32 sm:px-6 sm:pt-6 sm:pb-32">
             {activeTab === 'customize' ? (
               <TemplatePicker data={resumeData} onChange={handleDataChange} />
             ) : (
