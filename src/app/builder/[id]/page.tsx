@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { PersonalDetailsForm } from '@/components/resume/builder/personal-detail
 import { WorkExperienceForm } from '@/components/resume/builder/work-experience';
 import { EducationForm } from '@/components/resume/builder/education';
 import { SkillsForm } from '@/components/resume/builder/skills';
+import { AdditionalSections } from '@/components/resume/builder/additional-sections';
 import { TemplatePicker } from '@/components/resume/builder/template-picker';
 import { ResumeTemplate } from '@/components/resume/templates';
 import { ResumeData, emptyResume } from '@/types/resume';
@@ -15,17 +16,56 @@ import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 
 const STEPS = [
-  { id: 'template', label: 'Template' },
-  { id: 'personal', label: 'Personal' },
-  { id: 'experience', label: 'Experience' },
+  { id: 'personal', label: 'Personal Details' },
+  { id: 'experience', label: 'Professional Experience' },
   { id: 'education', label: 'Education' },
   { id: 'skills', label: 'Skills & More' },
+  { id: 'additional', label: 'Additional Sections' },
 ];
+
+function getScoreHints(data: ResumeData): { hint: string; weight: number }[] {
+  const hints: { hint: string; weight: number }[] = [];
+  const p = data.personalDetails;
+  if (!p.jobTitle) hints.push({ hint: '+10% Add job title', weight: 10 });
+  if (!p.firstName || !p.lastName) hints.push({ hint: '+10% Add your name', weight: 10 });
+  if (!p.email) hints.push({ hint: '+10% Add email address', weight: 10 });
+  if (!p.phone) hints.push({ hint: '+5% Add phone number', weight: 5 });
+  if (!p.location) hints.push({ hint: '+5% Add location', weight: 5 });
+  if (!p.summary || p.summary.length <= 50) hints.push({ hint: '+15% Add profile summary', weight: 15 });
+  if (data.workExperience.length === 0) hints.push({ hint: '+20% Add employment history', weight: 20 });
+  if (data.education.length === 0) hints.push({ hint: '+10% Add education', weight: 10 });
+  if (data.skills.length < 5) hints.push({ hint: '+15% Add skills', weight: 15 });
+  if (!data.languages || data.languages.length === 0) hints.push({ hint: '+3% Add languages', weight: 3 });
+  return hints;
+}
+
+function getStepHint(stepIndex: number, data: ResumeData): string | null {
+  const hints = getScoreHints(data);
+  if (hints.length === 0) return null;
+
+  const stepId = STEPS[stepIndex]?.id;
+  // Return the most relevant hint for the current step
+  const stepHintMap: Record<string, string[]> = {
+    personal: ['+10% Add job title', '+10% Add your name', '+10% Add email address', '+5% Add phone number', '+5% Add location', '+15% Add profile summary'],
+    experience: ['+20% Add employment history'],
+    education: ['+10% Add education'],
+    skills: ['+15% Add skills'],
+    additional: ['+3% Add languages'],
+  };
+
+  const relevantPhrases = stepHintMap[stepId || ''] || [];
+  const match = hints.find((h) => relevantPhrases.includes(h.hint));
+  if (match) return match.hint;
+
+  // Fallback: return the highest-weight hint
+  return hints.sort((a, b) => b.weight - a.weight)[0]?.hint || null;
+}
 
 export default function BuilderPage() {
   const params = useParams();
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // 0-indexed now (0-3)
+  const [activeTab, setActiveTab] = useState<'edit' | 'customize'>('edit');
   const [resumeData, setResumeData] = useState<ResumeData>(emptyResume());
   const [previewVisible, setPreviewVisible] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -152,26 +192,45 @@ export default function BuilderPage() {
         return;
       }
 
-      // If server fails, show the error
+      // Server failed — log the error and retry once
       const errBody = await res.json().catch(() => ({ error: 'Unknown error' }));
       console.error('Server PDF error:', errBody);
 
-      // Fallback: @react-pdf/renderer (still real text, close layout match)
-      console.warn('Using @react-pdf/renderer fallback');
-      const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
-      await downloadResumePDF(resumeData);
+      // One retry — cold starts on Lambda can cause first attempt to timeout
+      console.log('Retrying PDF generation...');
+      const retryRes = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeData }),
+      });
+
+      if (retryRes.ok) {
+        const blob = await retryRes.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      // Both attempts failed — show error
+      const retryErr = await retryRes.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('Retry also failed:', retryErr);
+      alert('PDF generation is temporarily unavailable. Please try again in a moment.');
     } catch (err) {
       console.error('PDF generation failed:', err);
-      try {
-        const { downloadResumePDF } = await import('@/components/resume/pdf/generate-pdf');
-        await downloadResumePDF(resumeData);
-      } catch {
-        alert('PDF generation failed. Please try again.');
-      }
+      alert('PDF generation failed. Please try again.');
     } finally {
       setDownloading(false);
     }
   };
+
+  const scoreColor = atsScore >= 80 ? '#22a861' : atsScore >= 50 ? '#f59e0b' : '#ef4444';
+  const currentHint = useMemo(() => getStepHint(step, resumeData), [step, resumeData]);
 
   if (loading) {
     return (
@@ -183,8 +242,6 @@ export default function BuilderPage() {
       </div>
     );
   }
-
-  const scoreColor = atsScore >= 80 ? '#22a861' : atsScore >= 50 ? '#f59e0b' : '#ef4444';
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] flex flex-col">
@@ -203,36 +260,6 @@ export default function BuilderPage() {
             <Link href="/dashboard" className="hidden sm:block text-[13px] text-neutral-50 hover:text-neutral-70 transition-colors">
               Dashboard
             </Link>
-          </div>
-
-          {/* Step progress */}
-          <div className="flex items-center gap-0.5 overflow-x-auto no-scrollbar">
-            {STEPS.map((s, i) => (
-              <button
-                key={s.id}
-                onClick={() => { setStep(i + 1); formPanelRef.current?.scrollTo({ top: 0 }); }}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all whitespace-nowrap',
-                  step === i + 1
-                    ? 'bg-primary text-white'
-                    : step > i + 1
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-neutral-40 hover:text-neutral-60 hover:bg-neutral-10'
-                )}
-              >
-                <span className={cn(
-                  'w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0',
-                  step === i + 1 ? 'bg-white/20' : step > i + 1 ? 'bg-primary/20' : 'bg-neutral-20'
-                )}>
-                  {step > i + 1 ? (
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                  ) : (
-                    i + 1
-                  )}
-                </span>
-                <span className="hidden sm:inline">{s.label}</span>
-              </button>
-            ))}
           </div>
 
           {/* Actions */}
@@ -330,35 +357,140 @@ export default function BuilderPage() {
           'w-full lg:w-[420px] xl:w-[440px] flex-shrink-0 overflow-y-auto bg-white border-r border-neutral-20',
           previewVisible ? 'hidden lg:block' : 'block'
         )}>
-          <div className="p-5 sm:p-6 pb-[120px]">
-            {step === 1 && <TemplatePicker data={resumeData} onChange={handleDataChange} />}
-            {step === 2 && <PersonalDetailsForm data={resumeData} onChange={handleDataChange} />}
-            {step === 3 && <WorkExperienceForm data={resumeData} onChange={handleDataChange} />}
-            {step === 4 && <EducationForm data={resumeData} onChange={handleDataChange} />}
-            {step === 5 && <SkillsForm data={resumeData} onChange={handleDataChange} />}
-          </div>
+          {/* Edit / Customize Tabs */}
+          <div className="sticky top-0 z-20 bg-white border-b border-neutral-20">
+            <div className="flex justify-center pt-3 pb-0">
+              <div className="flex gap-0 bg-neutral-10 rounded-full p-[3px]">
+                <button
+                  onClick={() => setActiveTab('edit')}
+                  className={cn(
+                    'px-5 py-[7px] rounded-full text-[13px] font-semibold transition-all',
+                    activeTab === 'edit'
+                      ? 'bg-white text-neutral-90 shadow-sm'
+                      : 'text-neutral-50 hover:text-neutral-70'
+                  )}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => setActiveTab('customize')}
+                  className={cn(
+                    'px-5 py-[7px] rounded-full text-[13px] font-semibold transition-all',
+                    activeTab === 'customize'
+                      ? 'bg-white text-neutral-90 shadow-sm'
+                      : 'text-neutral-50 hover:text-neutral-70'
+                  )}
+                >
+                  Customize
+                </button>
+              </div>
+            </div>
 
-          {/* Navigation buttons — sticky at bottom, scoped to form panel width */}
-          <div className="fixed bottom-0 left-0 w-full lg:w-[420px] xl:w-[440px] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3.5 flex justify-between gap-3 z-30">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => { setStep(Math.max(1, step - 1)); formPanelRef.current?.scrollTo({ top: 0 }); }}
-              disabled={step === 1}
-              className="flex-1"
-            >
-              Back
-            </Button>
-            {step < STEPS.length ? (
-              <Button size="sm" onClick={() => { setStep(step + 1); formPanelRef.current?.scrollTo({ top: 0 }); }} className="flex-1">
-                Next: {STEPS[step]?.label || ''}
-              </Button>
-            ) : (
-              <Button size="sm" onClick={downloadPDF} loading={downloading} className="flex-1">
-                Download PDF
-              </Button>
+            {/* Resume Score Bar — only show in Edit tab */}
+            {activeTab === 'edit' && (
+              <div className="px-5 pt-3 pb-3">
+                <div className="flex items-center gap-3">
+                  {/* Score badge */}
+                  <div
+                    className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold text-white"
+                    style={{ backgroundColor: scoreColor }}
+                  >
+                    {atsScore}
+                  </div>
+                  {/* Label + bar */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[12px] font-semibold text-neutral-70">Your resume score</span>
+                      {currentHint && (
+                        <span className="text-[11px] font-medium text-primary truncate ml-2">{currentHint}</span>
+                      )}
+                    </div>
+                    <div className="w-full h-[5px] bg-neutral-10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${atsScore}%`, backgroundColor: scoreColor }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
+
+          {/* Form content */}
+          <div className="p-5 sm:p-6 pb-[120px]">
+            {activeTab === 'customize' ? (
+              <TemplatePicker data={resumeData} onChange={handleDataChange} />
+            ) : (
+              <>
+                {step === 0 && <PersonalDetailsForm data={resumeData} onChange={handleDataChange} />}
+                {step === 1 && <WorkExperienceForm data={resumeData} onChange={handleDataChange} />}
+                {step === 2 && <EducationForm data={resumeData} onChange={handleDataChange} />}
+                {step === 3 && <SkillsForm data={resumeData} onChange={handleDataChange} />}
+                {step === 4 && <AdditionalSections data={resumeData} onChange={handleDataChange} />}
+              </>
+            )}
+          </div>
+
+          {/* Bottom navigation bar — only show in Edit tab */}
+          {activeTab === 'edit' && (
+            <div className="fixed bottom-0 left-0 w-full lg:w-[420px] xl:w-[440px] bg-white border-t border-neutral-20 px-5 sm:px-6 py-3.5 z-30">
+              <div className="flex items-center justify-between gap-3">
+                {/* Back button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setStep(Math.max(0, step - 1)); formPanelRef.current?.scrollTo({ top: 0 }); }}
+                  disabled={step === 0}
+                  className="flex-shrink-0"
+                >
+                  Back
+                </Button>
+
+                {/* Step dot indicators */}
+                <div className="flex items-center gap-2">
+                  {STEPS.map((s, i) => (
+                    <button
+                      key={s.id}
+                      onClick={() => { setStep(i); formPanelRef.current?.scrollTo({ top: 0 }); }}
+                      className="group p-1"
+                      aria-label={`Go to ${s.label}`}
+                    >
+                      <div
+                        className={cn(
+                          'w-2.5 h-2.5 rounded-full transition-all',
+                          i === step
+                            ? 'bg-primary scale-125'
+                            : i < step
+                            ? 'bg-primary/40'
+                            : 'bg-neutral-20 group-hover:bg-neutral-30'
+                        )}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Next / Download button */}
+                {step < STEPS.length - 1 ? (
+                  <Button
+                    size="sm"
+                    onClick={() => { setStep(step + 1); formPanelRef.current?.scrollTo({ top: 0 }); }}
+                    className="flex-shrink-0 gap-1"
+                  >
+                    Next: {STEPS[step + 1]?.label}
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                  </Button>
+                ) : (
+                  <Button size="sm" onClick={downloadPDF} loading={downloading} className="flex-shrink-0 gap-1.5">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download PDF
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Preview Panel */}
@@ -382,6 +514,12 @@ export default function BuilderPage() {
             id="resume-preview"
           >
             <ResumeTemplate data={resumeData} />
+          </div>
+
+          <div className="flex items-center justify-center mt-4">
+            <div className="bg-neutral-90/80 text-white text-[13px] font-medium px-4 py-1.5 rounded-full">
+              1 / 1
+            </div>
           </div>
         </div>
       </div>

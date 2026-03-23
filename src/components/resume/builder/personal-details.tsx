@@ -1,8 +1,9 @@
 'use client';
 
 import { ResumeData } from '@/types/resume';
-import { Input, Textarea } from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { useState, useRef } from 'react';
 
 interface Props {
@@ -10,9 +11,21 @@ interface Props {
   onChange: (data: ResumeData) => void;
 }
 
+function GamificationBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center ml-1.5 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200 leading-none">
+      {label}
+    </span>
+  );
+}
+
 export function PersonalDetailsForm({ data, onChange }: Props) {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [showMoreDetails, setShowMoreDetails] = useState(() => {
+    // Auto-expand if user already has data in the expandable fields
+    return !!(data.personalDetails.website);
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const update = (field: string, value: string) => {
@@ -102,9 +115,12 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Section Header */}
       <div>
         <h2 className="text-lg font-semibold text-neutral-90 mb-1">Personal Details</h2>
-        <p className="text-sm text-neutral-50">This information appears at the top of your resume.</p>
+        <p className="text-sm text-neutral-50">
+          Users who added phone number and email received 64% more positive feedback from recruiters.
+        </p>
       </div>
 
       {showWarning && (
@@ -115,6 +131,23 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
           <span>Missing required fields: <strong>{missing.join(', ')}</strong></span>
         </div>
       )}
+
+      {/* Job Title — top position with gamification badge */}
+      <div className="space-y-1.5">
+        <div className="flex items-center">
+          <label htmlFor="job-title" className="text-sm font-medium text-neutral-70">
+            Job Title / Target Role *
+          </label>
+          {!p.jobTitle && <GamificationBadge label="+10%" />}
+        </div>
+        <Input
+          id="job-title"
+          placeholder="Senior Software Engineer"
+          value={p.jobTitle}
+          onChange={(e) => update('jobTitle', e.target.value)}
+          hint="Adding a job title increases your resume score by 10%"
+        />
+      </div>
 
       {/* Photo Upload */}
       <div className="space-y-2">
@@ -161,6 +194,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         </div>
       </div>
 
+      {/* First Name / Last Name */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           label="First Name *"
@@ -176,14 +210,7 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         />
       </div>
 
-      <Input
-        label="Job Title / Target Role *"
-        placeholder="Senior Software Engineer"
-        value={p.jobTitle}
-        onChange={(e) => update('jobTitle', e.target.value)}
-        hint="Adding a job title increases your resume score by 10%"
-      />
-
+      {/* Email / Phone */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           label="Email Address *"
@@ -201,28 +228,75 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
         />
       </div>
 
+      {/* LinkedIn / Location */}
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          label="City, State / Location"
-          placeholder="New York, NY"
-          value={p.location}
-          onChange={(e) => update('location', e.target.value)}
-        />
         <Input
           label="LinkedIn Profile"
           placeholder="linkedin.com/in/johnsmith"
           value={p.linkedIn}
           onChange={(e) => update('linkedIn', e.target.value)}
         />
+        <Input
+          label="City, State / Location"
+          placeholder="New York, NY"
+          value={p.location}
+          onChange={(e) => update('location', e.target.value)}
+        />
       </div>
 
-      <Input
-        label="Website / Portfolio"
-        placeholder="johnsmith.dev"
-        value={p.website}
-        onChange={(e) => update('website', e.target.value)}
-      />
+      {/* Expandable "Add more details" section */}
+      <div className="border-t border-neutral-15 pt-2">
+        <button
+          type="button"
+          onClick={() => setShowMoreDetails((prev) => !prev)}
+          className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-dark transition-colors py-1"
+        >
+          {showMoreDetails ? (
+            <>
+              <span>Hide additional details</span>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            </>
+          ) : (
+            <>
+              <span>Add more details</span>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </>
+          )}
+        </button>
 
+        {showMoreDetails && (
+          <div className="space-y-4 pt-3 animate-in fade-in slide-in-from-top-1 duration-200">
+            <Input
+              label="Website / Portfolio"
+              placeholder="johnsmith.dev"
+              value={p.website}
+              onChange={(e) => update('website', e.target.value)}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Address"
+                placeholder="123 Main St, Apt 4B"
+                value=""
+                disabled
+                hint="Coming soon"
+              />
+              <Input
+                label="Nationality"
+                placeholder="United States"
+                value=""
+                disabled
+                hint="Coming soon"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Professional Summary */}
       {aiError && (
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-amber-700">
           <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -232,7 +306,10 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-neutral-70">Professional Summary</label>
+          <div className="flex items-center">
+            <label className="text-sm font-medium text-neutral-70">Professional Summary</label>
+            {!p.summary && <GamificationBadge label="+15%" />}
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -247,12 +324,14 @@ export function PersonalDetailsForm({ data, onChange }: Props) {
             AI Write
           </Button>
         </div>
-        <Textarea
-          placeholder="A results-driven software engineer with 5+ years of experience building scalable web applications..."
+        <RichTextEditor
           value={p.summary}
-          onChange={(e) => update('summary', e.target.value)}
-          className="min-h-[120px]"
-          hint="3-5 sentences highlighting your key strengths and career goals. Recruiters spend 7 seconds on a resume."
+          onChange={(html) => update('summary', html)}
+          placeholder="A results-driven software engineer with 5+ years of experience building scalable web applications..."
+          charTarget={400}
+          charLabel="Recruiter tip: write 400-600 characters to increase interview chances"
+          showPrewrittenPhrases={true}
+          phraseCategory="summary"
         />
       </div>
     </div>

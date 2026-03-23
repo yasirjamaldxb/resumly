@@ -39,7 +39,7 @@ export interface Education {
 export interface Skill {
   id: string;
   name: string;
-  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  level: 'novice' | 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 
 export interface Certification {
@@ -65,6 +65,33 @@ export interface Project {
   endDate?: string;
 }
 
+export interface ResumeLayoutSettings {
+  fontSize: 'small' | 'medium' | 'large';
+  lineHeight: number; // 1.0 – 2.0
+  pageFormat: 'a4' | 'letter';
+  headerAlignment: 'left' | 'center' | 'right';
+  dateAlignment: 'left' | 'right';
+  dateFormat: string; // 'MM/YYYY', 'MMM YYYY', 'MMMM YYYY'
+  margins: {
+    topBottom: number;   // pt
+    leftRight: number;   // pt
+    betweenSections: number;
+  };
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  items: {
+    id: string;
+    title: string;
+    subtitle?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+  }[];
+}
+
 export interface ResumeData {
   id?: string;
   userId?: string;
@@ -72,6 +99,7 @@ export interface ResumeData {
   templateId: string;
   colorScheme: string;
   fontFamily: string;
+  layoutSettings?: ResumeLayoutSettings;
   personalDetails: PersonalDetails;
   workExperience: WorkExperience[];
   education: Education[];
@@ -79,6 +107,9 @@ export interface ResumeData {
   certifications: Certification[];
   languages: Language[];
   projects: Project[];
+  customSections?: CustomSection[];
+  hobbies?: string;
+  references?: { id: string; name: string; company: string; phone: string; email: string }[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -179,11 +210,26 @@ export const TEMPLATE_LIST: Template[] = [
   },
 ];
 
+export const DEFAULT_LAYOUT_SETTINGS: ResumeLayoutSettings = {
+  fontSize: 'medium',
+  lineHeight: 1.35,
+  pageFormat: 'a4',
+  headerAlignment: 'left',
+  dateAlignment: 'right',
+  dateFormat: 'MM/YYYY',
+  margins: {
+    topBottom: 40,
+    leftRight: 40,
+    betweenSections: 16,
+  },
+};
+
 export const emptyResume = (): ResumeData => ({
   title: 'My Resume',
   templateId: 'ats-pro',
   colorScheme: '#2563eb',
   fontFamily: 'inter',
+  layoutSettings: { ...DEFAULT_LAYOUT_SETTINGS },
   personalDetails: {
     firstName: '',
     lastName: '',
@@ -202,4 +248,7 @@ export const emptyResume = (): ResumeData => ({
   certifications: [],
   languages: [],
   projects: [],
+  customSections: [],
+  hobbies: '',
+  references: [],
 });
