@@ -98,10 +98,10 @@ export function WorkExperienceForm({ data, onChange }: Props) {
   const addJob = () => {
     const newJob = emptyJob();
     onChange({ ...data, workExperience: [...data.workExperience, newJob] });
-    // Auto-expand the newly added entry
-    setExpandedIds((prev) => new Set(prev).add(newJob.id));
+    // Collapse all previous entries, only expand the new one
+    setExpandedIds(new Set([newJob.id]));
     // Scroll to bottom after render so the new entry + "Add more" button is visible
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 200);
   };
 
   const removeJob = (id: string) => {

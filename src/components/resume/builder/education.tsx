@@ -49,8 +49,9 @@ export function EducationForm({ data, onChange }: Props) {
   const addEdu = () => {
     const newEdu = emptyEdu();
     onChange({ ...data, education: [...data.education, newEdu] });
-    setExpandedIds((prev) => new Set(prev).add(newEdu.id));
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+    // Collapse all previous entries, only expand the new one
+    setExpandedIds(new Set([newEdu.id]));
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 200);
   };
 
   const removeEdu = (id: string) => {
