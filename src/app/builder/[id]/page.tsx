@@ -394,8 +394,8 @@ export default function BuilderPage() {
             )}
           </div>
 
-          {/* Form content */}
-          <div className="p-5 sm:p-6 pb-4">
+          {/* Form content — pb-24 ensures content isn't hidden behind sticky bottom nav */}
+          <div className="p-5 sm:p-6 pb-24">
             {activeTab === 'customize' ? (
               <TemplatePicker data={resumeData} onChange={handleDataChange} />
             ) : (
