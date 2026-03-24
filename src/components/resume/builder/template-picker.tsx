@@ -102,7 +102,7 @@ export function TemplatePicker({ data, onChange }: Props) {
             <p className="text-sm text-neutral-50">All templates are ATS-optimized. Your content, beautifully presented.</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
             {TEMPLATE_LIST.map((template) => {
               const isSelected = data.templateId === template.id;
               return (
@@ -110,27 +110,31 @@ export function TemplatePicker({ data, onChange }: Props) {
                   key={template.id}
                   onClick={() => onChange({ ...data, templateId: template.id })}
                   className={cn(
-                    'relative rounded-xl border-2 p-2.5 text-left transition-all',
+                    'group relative rounded-lg border-2 p-1.5 text-left transition-all',
                     isSelected
                       ? 'border-primary bg-primary-light shadow-md'
                       : 'border-neutral-20 hover:border-primary bg-white'
                   )}
                 >
-                  {template.popular && (
-                    <span className="absolute top-1.5 right-1.5 bg-primary text-white text-[10px] font-medium px-1.5 py-0.5 rounded-full z-10">
+                  {isSelected && (
+                    <span className="absolute top-2 left-1/2 -translate-x-1/2 z-10 w-5 h-5 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                  )}
+                  {template.popular && !isSelected && (
+                    <span className="absolute top-1 right-1 bg-primary text-white text-[8px] font-medium px-1 py-0.5 rounded z-10 leading-none">
                       Popular
                     </span>
                   )}
-                  <div className="w-full aspect-[0.75] bg-white rounded-lg border border-neutral-20 overflow-hidden mb-2">
+                  <div className="w-full aspect-[0.77] bg-white rounded border border-neutral-15 overflow-hidden mb-1.5">
                     <TemplatePreview templateId={template.id} color={isSelected ? data.colorScheme : '#9ca3af'} className="w-full h-full" />
                   </div>
-                  <div>
-                    <p className="font-semibold text-xs text-neutral-90">{template.name}</p>
-                    <p className="text-[10px] text-neutral-50 mt-0.5 line-clamp-1">{template.description}</p>
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-1">
-                    <div className={cn('w-1.5 h-1.5 rounded-full', template.atsScore >= 95 ? 'bg-green-500' : template.atsScore >= 85 ? 'bg-green-400' : 'bg-yellow-500')} />
-                    <span className="text-[10px] text-neutral-60">{template.atsScore}% ATS</span>
+                  <p className="font-medium text-[10px] text-neutral-80 text-center truncate">{template.name}</p>
+                  <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                    <div className={cn('w-1 h-1 rounded-full', template.atsScore >= 95 ? 'bg-green-500' : template.atsScore >= 85 ? 'bg-green-400' : 'bg-yellow-500')} />
+                    <span className="text-[8px] text-neutral-50">{template.atsScore}% ATS</span>
                   </div>
                 </button>
               );
