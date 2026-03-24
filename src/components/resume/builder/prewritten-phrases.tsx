@@ -48,7 +48,7 @@ export function PrewrittenPhrases({ category, onSelect, onClose }: PrewrittenPhr
   }, [phrases, filter]);
 
   return (
-    <div className="absolute right-0 top-0 z-50 w-80 bg-white border border-neutral-20 rounded-xl shadow-lg overflow-hidden animate-in slide-in-from-right-2 duration-200">
+    <div className="mt-2 w-full bg-white border border-neutral-20 rounded-xl shadow-lg overflow-hidden animate-in fade-in duration-200">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-15">
         <h3 className="text-sm font-semibold text-neutral-80">Pre-written Phrases</h3>

@@ -2,7 +2,7 @@
 
 -- Track each user's position in the drip sequence
 CREATE TABLE IF NOT EXISTS public.email_drip_state (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   email TEXT NOT NULL,
   current_email_number INTEGER DEFAULT 0, -- 0 = not started, 1-7 = email number

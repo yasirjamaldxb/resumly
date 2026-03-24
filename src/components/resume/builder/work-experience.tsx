@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { generateId, cn } from '@/lib/utils';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface Props {
   data: ResumeData;
@@ -82,6 +82,19 @@ export function WorkExperienceForm({ data, onChange }: Props) {
     }
     return initial;
   });
+
+  const prevCountRef = useRef(data.workExperience.length);
+
+  // When a new entry is added, collapse all previous and expand only the last (newest)
+  useEffect(() => {
+    const count = data.workExperience.length;
+    if (count > prevCountRef.current && count > 0) {
+      const lastEntry = data.workExperience[count - 1];
+      setExpandedIds(new Set([lastEntry.id]));
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 200);
+    }
+    prevCountRef.current = count;
+  }, [data.workExperience.length]);
 
   const toggleExpand = (id: string) => {
     setExpandedIds((prev) => {

@@ -132,7 +132,7 @@ export function RichTextEditor({
   if (!editor) return null;
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn(className)}>
       <div className="border border-neutral-20 rounded-lg overflow-hidden bg-white">
         {/* Toolbar */}
         <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-neutral-15 bg-neutral-5">

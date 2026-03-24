@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ResumeData, Education } from '@/types/resume';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,18 @@ export function EducationForm({ data, onChange }: Props) {
     }
     return initial;
   });
+
+  const prevCountRef = useRef(data.education.length);
+
+  useEffect(() => {
+    const count = data.education.length;
+    if (count > prevCountRef.current && count > 0) {
+      const lastEntry = data.education[count - 1];
+      setExpandedIds(new Set([lastEntry.id]));
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 200);
+    }
+    prevCountRef.current = count;
+  }, [data.education.length]);
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((prev) => {
