@@ -3,14 +3,16 @@ import OpenAI from 'openai';
 import { trackEvent, logError } from '@/lib/analytics';
 
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.GEMINI_API_KEY;
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'placeholder',
+    apiKey: apiKey || 'placeholder',
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
   });
   try {
     const body = await req.json();
     const { type, jobTitle, position, company, description, experience } = body;
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!apiKey) {
       return NextResponse.json({ error: 'AI not configured' }, { status: 503 });
     }
 
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gemini-2.0-flash',
       messages: [
         {
           role: 'system',

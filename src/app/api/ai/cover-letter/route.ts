@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.GEMINI_API_KEY;
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'placeholder',
+    apiKey: apiKey || 'placeholder',
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
   });
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
+    if (!apiKey) {
       return NextResponse.json({ error: 'AI not configured' }, { status: 503 });
     }
 
@@ -37,7 +39,7 @@ Requirements:
 - Return only the cover letter body text`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gemini-2.0-flash',
       messages: [
         {
           role: 'system',
