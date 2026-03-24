@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { JobLinkInput } from '@/components/landing/job-link-input';
 
 export function HeroSection() {
   return (
@@ -20,13 +21,21 @@ export function HeroSection() {
               Only 2% of resumes win. Yours will be one of them.
             </p>
 
-            <div className="flex flex-wrap gap-3 mb-8">
-              <Button size="lg" asChild>
-                <Link href="/builder/new">Create my resume</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/resume-templates">Browse templates</Link>
-              </Button>
+            {/* Primary action: paste job link */}
+            <div className="mb-5">
+              <JobLinkInput />
+            </div>
+
+            {/* Secondary actions */}
+            <div className="flex items-center gap-3 mb-8">
+              <span className="text-[13px] text-neutral-40">or</span>
+              <Link href="/builder/new" className="text-[13px] text-primary hover:text-primary-dark font-semibold transition-colors">
+                Start from scratch
+              </Link>
+              <span className="text-neutral-20">|</span>
+              <Link href="/resume-templates" className="text-[13px] text-primary hover:text-primary-dark font-semibold transition-colors">
+                Browse templates
+              </Link>
             </div>
 
             {/* Trust signals */}
