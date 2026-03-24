@@ -70,6 +70,7 @@ export function RichTextEditor({
   const [showLinkInput, setShowLinkInput] = useState(false);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         orderedList: { HTMLAttributes: { class: 'list-decimal pl-4' } },
