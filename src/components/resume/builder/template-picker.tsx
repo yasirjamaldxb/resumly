@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ResumeData, ResumeLayoutSettings, TEMPLATE_LIST, DEFAULT_LAYOUT_SETTINGS } from '@/types/resume';
 import { cn } from '@/lib/utils';
-import { TemplatePreview } from '@/components/resume/template-preview';
+import Image from 'next/image';
 
 interface Props {
   data: ResumeData;
@@ -128,8 +128,14 @@ export function TemplatePicker({ data, onChange }: Props) {
                       Popular
                     </span>
                   )}
-                  <div className="w-full aspect-[0.77] bg-white rounded border border-neutral-15 overflow-hidden mb-1.5">
-                    <TemplatePreview templateId={template.id} color={isSelected ? data.colorScheme : '#9ca3af'} className="w-full h-full" />
+                  <div className="w-full aspect-[0.77] bg-white rounded border border-neutral-15 overflow-hidden mb-1.5 relative">
+                    <Image
+                      src={template.preview}
+                      alt={`${template.name} template`}
+                      fill
+                      sizes="(max-width: 640px) 33vw, 25vw"
+                      className="object-cover object-top"
+                    />
                   </div>
                   <p className="font-medium text-[10px] text-neutral-80 text-center truncate">{template.name}</p>
                   <div className="flex items-center justify-center gap-0.5 mt-0.5">
