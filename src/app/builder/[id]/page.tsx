@@ -189,6 +189,12 @@ export default function BuilderPage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        // Track PDF download for email drip campaign
+        fetch('/api/email/track-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'downloaded_pdf' }),
+        }).catch(() => {});
         return;
       }
 

@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { initDripForUser } from '@/lib/email/init-drip';
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -30,8 +31,13 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error, data: sessionData } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Initialize drip campaign for new users (idempotent)
+      if (sessionData?.user) {
+        const user = sessionData.user;
+        initDripForUser(user.id, user.email || '').catch(() => {});
+      }
       return response;
     }
   }
