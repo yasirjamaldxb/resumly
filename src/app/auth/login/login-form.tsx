@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,8 +14,21 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [jobContext, setJobContext] = useState<{ title: string; company: string | null } | null>(null);
 
   const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+  const jobParam = searchParams.get('job'); // job URL passed via query param
+
+  // Read job context from localStorage (set by job-preview page)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('resumly_job_context');
+      if (stored) {
+        const ctx = JSON.parse(stored);
+        if (ctx?.title) setJobContext(ctx);
+      }
+    } catch {}
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +40,11 @@ export function LoginForm() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push(redirectTo);
+      // Preserve job param through email login
+      const finalRedirect = jobParam
+        ? `${redirectTo}?job=${encodeURIComponent(jobParam)}`
+        : redirectTo;
+      router.push(finalRedirect);
       router.refresh();
     }
   };
@@ -36,14 +53,30 @@ export function LoginForm() {
     setGoogleLoading(true);
     const supabase = createClient();
     const origin = window.location.origin;
+    // Pass job URL and redirect destination through the OAuth callback
+    let callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+    if (jobParam) callbackUrl += `&job=${encodeURIComponent(jobParam)}`;
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${origin}/auth/callback` },
+      options: { redirectTo: callbackUrl },
     });
   };
 
   return (
     <div>
+      {/* Contextual job banner — shown when coming from job-preview */}
+      {jobContext && (
+        <div className="flex items-center gap-2.5 bg-primary/5 border border-primary/15 rounded-xl px-4 py-3 mb-6">
+          <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <p className="text-[13px] text-neutral-70">
+            Creating your tailored resume for{' '}
+            <span className="font-semibold text-neutral-90">{jobContext.title}</span>
+            {jobContext.company ? <span className="text-neutral-50"> at {jobContext.company}</span> : ''}
+          </p>
+        </div>
+      )}
       <Button
         variant="outline"
         size="lg"

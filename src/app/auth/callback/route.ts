@@ -6,12 +6,15 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/dashboard';
+  const job = searchParams.get('job');
   const type = searchParams.get('type');
 
   if (code) {
+    // If a job URL was passed through OAuth, send user to builder with it
+    const redirectPath = job ? `/builder/new?job=${encodeURIComponent(job)}` : next;
     const redirectUrl = type === 'recovery'
       ? `${origin}/auth/reset-password`
-      : `${origin}${next}`;
+      : `${origin}${redirectPath}`;
     const response = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(

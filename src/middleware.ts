@@ -58,10 +58,14 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isProtected && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/auth/login';
-    url.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/auth/login';
+    // Only put the pathname in redirectTo (avoids nested ?-in-? query string bugs)
+    loginUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
+    // Preserve job URL as its own param so it survives the OAuth flow
+    const jobParam = request.nextUrl.searchParams.get('job');
+    if (jobParam) loginUrl.searchParams.set('job', jobParam);
+    return NextResponse.redirect(loginUrl);
   }
 
   return supabaseResponse;

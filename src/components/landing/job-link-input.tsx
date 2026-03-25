@@ -16,9 +16,9 @@ export function JobLinkInput() {
       return;
     }
     setLoading(true);
-    // Pass job URL as query param — builder will parse it
+    // Send to job preview page first (shows value before asking for login)
     const encoded = encodeURIComponent(url.trim());
-    router.push(`/builder/new?job=${encoded}`);
+    router.push(`/job-preview?url=${encoded}`);
   };
 
   return (
