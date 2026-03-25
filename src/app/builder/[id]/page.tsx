@@ -106,6 +106,9 @@ function BuilderPageInner() {
   const [jobLoading, setJobLoading] = useState(false);
   const [jobError, setJobError] = useState<string | null>(null);
   const [jobPanelOpen, setJobPanelOpen] = useState(true);
+  const [showGetStarted, setShowGetStarted] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const prevAtsScore = useRef(0);
   const previewRef = useRef<HTMLDivElement>(null);
   const formPanelRef = useRef<HTMLDivElement>(null);
@@ -142,10 +145,53 @@ function BuilderPageInner() {
     loadResume();
   }, [params.id]);
 
-  // Parse job URL from query param
+  // Show "Let's get started" modal for new resumes
+  useEffect(() => {
+    const resumeId = params.id as string;
+    if (resumeId === 'new' && !loading) {
+      setShowGetStarted(true);
+    }
+  }, [params.id, loading]);
+
+  // Parse job URL from query param (with localStorage fallback for blocked sites)
   useEffect(() => {
     const jobUrl = searchParams.get('job');
     if (!jobUrl) return;
+
+    // Check if job context was already parsed (saved by job-preview page)
+    try {
+      const stored = localStorage.getItem('resumly_job_context');
+      if (stored) {
+        const ctx = JSON.parse(stored);
+        if (ctx?.url === jobUrl && ctx?.title) {
+          // We already have parsed data from job-preview — use it directly
+          setJobData({
+            title: ctx.title,
+            company: ctx.company || null,
+            location: null,
+            description: null,
+            requirements: [],
+            skills: ctx.skills || [],
+            keywords: ctx.keywords || [],
+            experience: null,
+            salary: null,
+          });
+          if (ctx.title) {
+            setResumeData(prev => {
+              if (!prev.personalDetails.jobTitle) {
+                return { ...prev, personalDetails: { ...prev.personalDetails, jobTitle: ctx.title } };
+              }
+              return prev;
+            });
+          }
+          return;
+        }
+      }
+    } catch {}
+
+    // Blocked sites — don't try to re-fetch
+    const isBlocked = /linkedin\.com|indeed\.com|glassdoor\.com|monster\.com|ziprecruiter\.com/i.test(jobUrl);
+    if (isBlocked) return;
 
     const parseJob = async () => {
       setJobLoading(true);
@@ -398,6 +444,120 @@ function BuilderPageInner() {
               </Link>
               <button onClick={() => setShowAtsBanner(false)} className="w-full text-[13px] text-neutral-40 hover:text-neutral-60 py-1 transition-colors">
                 Continue editing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* "Let's get started" modal — Step 2 of funnel */}
+      {showGetStarted && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-[480px] w-full p-7 relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowGetStarted(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-10 text-neutral-40 hover:text-neutral-60 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+
+            <div className="text-center mb-6">
+              <h2 className="text-[22px] font-bold text-neutral-90 tracking-tight mb-1.5">Let&apos;s get started</h2>
+              <p className="text-[14px] text-neutral-50">How do you want to create your resume?</p>
+            </div>
+
+            {/* Job context — if we have it */}
+            {jobData?.title && (
+              <div className="flex items-center gap-2.5 bg-primary/5 border border-primary/15 rounded-xl px-4 py-3 mb-5">
+                <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <p className="text-[13px] text-neutral-70">
+                  Tailoring for{' '}
+                  <span className="font-semibold text-neutral-90">{jobData.title}</span>
+                  {jobData.company ? <span className="text-neutral-50"> at {jobData.company}</span> : ''}
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2.5">
+              {/* Create new resume */}
+              <button
+                onClick={() => setShowGetStarted(false)}
+                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+              >
+                <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
+                  <svg className="w-5 h-5 text-neutral-60 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                </div>
+                <div className="text-left flex-1">
+                  <span className="text-[15px] font-semibold text-neutral-90 block">Create new resume</span>
+                  <span className="text-[12px] text-neutral-50">Start from scratch, step by step</span>
+                </div>
+                <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+
+              {/* Upload resume */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingResume}
+                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+              >
+                <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
+                  <svg className="w-5 h-5 text-neutral-60 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                </div>
+                <div className="text-left flex-1">
+                  <span className="text-[15px] font-semibold text-neutral-90 block">Upload resume</span>
+                  <span className="text-[12px] text-neutral-50">Import from PDF or Word document</span>
+                </div>
+                <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                onChange={() => {
+                  // For now, close modal and start fresh — file parsing can be added later
+                  setShowGetStarted(false);
+                }}
+              />
+
+              {/* Create with LinkedIn profile */}
+              <button
+                onClick={() => setShowGetStarted(false)}
+                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+              >
+                <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
+                  <svg className="w-5 h-5 text-neutral-60 group-hover:text-[#0077B5] transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+                <div className="text-left flex-1">
+                  <span className="text-[15px] font-semibold text-neutral-90 block">Create with LinkedIn profile</span>
+                  <span className="text-[12px] text-neutral-50">Import your work history automatically</span>
+                </div>
+                <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+
+              {/* Create from example */}
+              <button
+                onClick={() => { setShowGetStarted(false); router.push('/resume-examples'); }}
+                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+              >
+                <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
+                  <svg className="w-5 h-5 text-neutral-60 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                </div>
+                <div className="text-left flex-1">
+                  <span className="text-[15px] font-semibold text-neutral-90 block">Create from example</span>
+                  <span className="text-[12px] text-neutral-50">Browse resume examples for your industry</span>
+                </div>
+                <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
               </button>
             </div>
           </div>

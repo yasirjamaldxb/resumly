@@ -81,6 +81,8 @@ function JobPreviewContent() {
             title: data.job.title,
             company: data.job.company,
             url: jobUrl,
+            keywords: data.job.keywords || [],
+            skills: data.job.skills || [],
           }));
         }
       } catch {
@@ -116,6 +118,8 @@ function JobPreviewContent() {
           title: data.job.title,
           company: data.job.company,
           url: jobUrl,
+          keywords: data.job.keywords || [],
+          skills: data.job.skills || [],
         }));
       }
     } catch {
