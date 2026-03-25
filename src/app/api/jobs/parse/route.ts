@@ -175,12 +175,26 @@ function extractTitle(text: string): string | null {
   // Try to find job title from common patterns
   const patterns = [
     /(?:job title|position|role)[:\s]+([^\n.]{5,60})/i,
-    /^([A-Z][A-Za-z\s/&,()-]{5,60})$/m,
   ];
   for (const p of patterns) {
     const m = text.match(p);
     if (m) return m[1].trim();
   }
+
+  // Check the first non-empty line — if it's short and title-like, use it
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const firstLine = lines[0] || '';
+  if (firstLine.length >= 5 && firstLine.length <= 80 && /[A-Z]/.test(firstLine[0])) {
+    // Looks like a title if it doesn't start with common paragraph words
+    const skipPrefixes = /^(we|our|about|the|this|a |an |i |you|are|is|at |in |on |to |for )/i;
+    if (!skipPrefixes.test(firstLine)) {
+      return firstLine.replace(/[-–—|]+$/, '').trim();
+    }
+  }
+
+  // Fallback: first standalone capitalized line
+  const m = text.match(/^([A-Z][A-Za-z\s/&,()-]{5,60})$/m);
+  if (m) return m[1].trim();
   return null;
 }
 

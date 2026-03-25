@@ -160,10 +160,10 @@ function JobPreviewContent() {
         </Link>
       </header>
 
-      <div className="max-w-[540px] mx-auto px-5 py-10 sm:py-14">
+      <div className="max-w-[540px] mx-auto px-5 py-6 sm:py-14">
 
         {/* Progress steps */}
-        <div className="flex items-center gap-2 mb-10">
+        <div className="flex items-center gap-2 mb-5 sm:mb-10">
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${status === 'loading' ? 'border-2 border-primary bg-primary/10' : status === 'paste' ? 'border-2 border-primary bg-primary/10' : 'bg-green-500'}`}>
               {status === 'loading' || status === 'paste'
@@ -211,34 +211,34 @@ function JobPreviewContent() {
         {/* Paste — blocked site, show polished paste-first UI */}
         {status === 'paste' && (
           <div>
-            <div className="mb-5">
-              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="mb-3 sm:mb-5">
+              <div className="hidden sm:flex w-14 h-14 bg-primary/10 rounded-2xl items-center justify-center mx-auto mb-4">
                 <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
                 </svg>
               </div>
-              <h2 className="text-[22px] font-semibold text-neutral-90 text-center mb-1.5">
+              <h2 className="text-[20px] sm:text-[22px] font-semibold text-neutral-90 text-center mb-1">
                 Paste the job description
               </h2>
-              <p className="text-[14px] text-neutral-50 text-center">
-                Copy the full job posting and paste it below — we'll extract the keywords instantly.
+              <p className="text-[13px] sm:text-[14px] text-neutral-50 text-center">
+                Copy the full job posting and paste it below — we&apos;ll extract the keywords instantly.
               </p>
             </div>
 
-            {/* Step-by-step instructions */}
-            <div className="bg-white rounded-xl border border-neutral-15 p-4 mb-4">
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <p className="text-[13px] text-neutral-70">Open the job listing in another tab</p>
+            {/* Step-by-step instructions — compact on mobile */}
+            <div className="bg-white rounded-xl border border-neutral-15 p-3 sm:p-4 mb-3 sm:mb-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 sm:flex-col sm:gap-y-3 sm:gap-x-0">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0">1</span>
+                  <p className="text-[12px] sm:text-[13px] text-neutral-70">Open the job listing</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <p className="text-[13px] text-neutral-70">Select all the text (<span className="font-medium text-neutral-90">Ctrl+A</span>) and copy (<span className="font-medium text-neutral-90">Ctrl+C</span>)</p>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0">2</span>
+                  <p className="text-[12px] sm:text-[13px] text-neutral-70">Copy all text (<span className="font-medium text-neutral-90">Ctrl+C</span>)</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <p className="text-[13px] text-neutral-70">Paste it below and hit <span className="font-medium text-neutral-90">Analyze</span></p>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0">3</span>
+                  <p className="text-[12px] sm:text-[13px] text-neutral-70">Paste below &amp; hit <span className="font-medium text-neutral-90">Analyze</span></p>
                 </div>
               </div>
             </div>
