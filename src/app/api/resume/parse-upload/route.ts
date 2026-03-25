@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Extract text from PDF using pdf-parse
+// Extract text from PDF using pdf-parse (import lib directly to avoid test-file loading issue)
 async function extractPdfText(buffer: Buffer): Promise<string> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require('pdf-parse');
+  const pdfParse = require('pdf-parse/lib/pdf-parse');
   const data = await pdfParse(buffer);
   return data.text;
 }
