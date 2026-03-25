@@ -566,9 +566,13 @@ function BuilderPageInner() {
                 }}
               />
 
-              {/* Create with LinkedIn profile */}
+              {/* Create with LinkedIn — paste profile text */}
               <button
-                onClick={() => setShowGetStarted(false)}
+                onClick={() => {
+                  setShowGetStarted(false);
+                  // Open LinkedIn in new tab so user can copy their profile
+                  window.open('https://www.linkedin.com/in/', '_blank');
+                }}
                 className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
               >
                 <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
@@ -577,8 +581,8 @@ function BuilderPageInner() {
                   </svg>
                 </div>
                 <div className="text-left flex-1">
-                  <span className="text-[15px] font-semibold text-neutral-90 block">Create with LinkedIn profile</span>
-                  <span className="text-[12px] text-neutral-50">Import your work history automatically</span>
+                  <span className="text-[15px] font-semibold text-neutral-90 block">Import from LinkedIn</span>
+                  <span className="text-[12px] text-neutral-50">Copy your profile, then fill in the form</span>
                 </div>
                 <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
               </button>
