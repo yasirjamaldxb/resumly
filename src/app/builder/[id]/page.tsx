@@ -502,27 +502,67 @@ function BuilderPageInner() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingResume}
-                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+                className="w-full flex items-center gap-4 bg-neutral-5 hover:bg-primary/5 border border-neutral-15 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group disabled:opacity-60"
               >
                 <div className="w-10 h-10 bg-white rounded-lg border border-neutral-15 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30">
-                  <svg className="w-5 h-5 text-neutral-60 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                  </svg>
+                  {uploadingResume ? (
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-5 h-5 text-neutral-60 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                  )}
                 </div>
                 <div className="text-left flex-1">
-                  <span className="text-[15px] font-semibold text-neutral-90 block">Upload resume</span>
-                  <span className="text-[12px] text-neutral-50">Import from PDF or Word document</span>
+                  <span className="text-[15px] font-semibold text-neutral-90 block">{uploadingResume ? 'Parsing your resume...' : 'Upload resume'}</span>
+                  <span className="text-[12px] text-neutral-50">{uploadingResume ? 'Extracting your details' : 'Import from PDF or Word document'}</span>
                 </div>
-                <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                {!uploadingResume && <svg className="w-4 h-4 text-neutral-30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
               </button>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept=".pdf,.doc,.docx"
                 className="hidden"
-                onChange={() => {
-                  // For now, close modal and start fresh — file parsing can be added later
-                  setShowGetStarted(false);
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploadingResume(true);
+                  try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    const res = await fetch('/api/resume/parse-upload', { method: 'POST', body: formData });
+                    const json = await res.json();
+                    if (res.ok && json.data) {
+                      const d = json.data;
+                      setResumeData(prev => ({
+                        ...prev,
+                        personalDetails: {
+                          ...prev.personalDetails,
+                          firstName: d.personalDetails.firstName || prev.personalDetails.firstName,
+                          lastName: d.personalDetails.lastName || prev.personalDetails.lastName,
+                          jobTitle: d.personalDetails.jobTitle || prev.personalDetails.jobTitle,
+                          email: d.personalDetails.email || prev.personalDetails.email,
+                          phone: d.personalDetails.phone || prev.personalDetails.phone,
+                          location: d.personalDetails.location || prev.personalDetails.location,
+                          linkedIn: d.personalDetails.linkedIn || prev.personalDetails.linkedIn,
+                          website: d.personalDetails.website || prev.personalDetails.website,
+                          summary: d.personalDetails.summary || prev.personalDetails.summary,
+                        },
+                        workExperience: d.workExperience?.length ? d.workExperience : prev.workExperience,
+                        education: d.education?.length ? d.education : prev.education,
+                        skills: d.skills?.length ? d.skills : prev.skills,
+                      }));
+                      setShowGetStarted(false);
+                    } else {
+                      alert(json.error || 'Could not parse the resume file');
+                    }
+                  } catch {
+                    alert('Failed to upload resume. Please try again.');
+                  } finally {
+                    setUploadingResume(false);
+                    e.target.value = '';
+                  }
                 }}
               />
 
