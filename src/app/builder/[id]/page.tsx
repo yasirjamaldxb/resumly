@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PersonalDetailsForm } from '@/components/resume/builder/personal-details';
@@ -14,6 +14,18 @@ import { ResumeTemplate } from '@/components/resume/templates';
 import { ResumeData, emptyResume } from '@/types/resume';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
+
+interface ParsedJobData {
+  title: string | null;
+  company: string | null;
+  location: string | null;
+  description: string | null;
+  requirements: string[];
+  skills: string[];
+  keywords: string[];
+  experience: string | null;
+  salary: string | null;
+}
 
 const STEPS = [
   { id: 'personal', label: 'Personal Details' },
@@ -62,8 +74,24 @@ function getStepHint(stepIndex: number, data: ResumeData): string | null {
 }
 
 export default function BuilderPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-[3px] border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-neutral-50 font-medium text-[15px]">Loading your resume...</p>
+        </div>
+      </div>
+    }>
+      <BuilderPageInner />
+    </Suspense>
+  );
+}
+
+function BuilderPageInner() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0); // 0-indexed now (0-3)
   const [activeTab, setActiveTab] = useState<'edit' | 'customize'>('edit');
   const [resumeData, setResumeData] = useState<ResumeData>(emptyResume());
@@ -74,6 +102,10 @@ export default function BuilderPage() {
   const [atsScore, setAtsScore] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [showAtsBanner, setShowAtsBanner] = useState(false);
+  const [jobData, setJobData] = useState<ParsedJobData | null>(null);
+  const [jobLoading, setJobLoading] = useState(false);
+  const [jobError, setJobError] = useState<string | null>(null);
+  const [jobPanelOpen, setJobPanelOpen] = useState(true);
   const prevAtsScore = useRef(0);
   const previewRef = useRef<HTMLDivElement>(null);
   const formPanelRef = useRef<HTMLDivElement>(null);
@@ -109,6 +141,45 @@ export default function BuilderPage() {
     };
     loadResume();
   }, [params.id]);
+
+  // Parse job URL from query param
+  useEffect(() => {
+    const jobUrl = searchParams.get('job');
+    if (!jobUrl) return;
+
+    const parseJob = async () => {
+      setJobLoading(true);
+      setJobError(null);
+      try {
+        const res = await fetch('/api/jobs/parse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: jobUrl }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setJobError(data.error || 'Failed to parse job listing');
+          return;
+        }
+        setJobData(data.job);
+        // Pre-fill job title if empty
+        setResumeData(prev => {
+          if (!prev.personalDetails.jobTitle && data.job?.title) {
+            return {
+              ...prev,
+              personalDetails: { ...prev.personalDetails, jobTitle: data.job.title },
+            };
+          }
+          return prev;
+        });
+      } catch {
+        setJobError('Failed to connect to job parser');
+      } finally {
+        setJobLoading(false);
+      }
+    };
+    parseJob();
+  }, [searchParams]);
 
   // Auto-calculate ATS score
   useEffect(() => {
@@ -401,6 +472,88 @@ export default function BuilderPage() {
               </div>
             )}
           </div>
+
+          {/* Collapsed job indicator */}
+          {activeTab === 'edit' && jobData && !jobPanelOpen && !jobLoading && (
+            <div className="px-5 pt-2 sm:px-6">
+              <button
+                onClick={() => setJobPanelOpen(true)}
+                className="flex items-center gap-2 text-[12px] text-primary hover:text-primary-dark font-medium transition-colors"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Tailoring for: {jobData.title} at {jobData.company} — Show keywords
+              </button>
+            </div>
+          )}
+
+          {/* Job context banner */}
+          {activeTab === 'edit' && (jobLoading || jobError || (jobData && jobPanelOpen)) && (
+            <div className="px-5 pt-3 sm:px-6">
+              {jobLoading && (
+                <div className="flex items-center gap-3 bg-primary/5 border border-primary/15 rounded-lg px-4 py-3">
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  <span className="text-[13px] text-neutral-60">Analyzing job listing...</span>
+                </div>
+              )}
+              {jobError && (
+                <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                  <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <span className="text-[13px] text-red-700">{jobError}</span>
+                </div>
+              )}
+              {jobData && jobPanelOpen && !jobLoading && (
+                <div className="bg-primary/5 border border-primary/15 rounded-lg p-4">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-[13px] font-semibold text-neutral-90">Tailoring for: {jobData.title}</span>
+                    </div>
+                    <button
+                      onClick={() => setJobPanelOpen(false)}
+                      className="text-neutral-40 hover:text-neutral-60 transition-colors flex-shrink-0"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </div>
+                  {jobData.company && (
+                    <p className="text-[12px] text-neutral-60 mb-2">
+                      {jobData.company}{jobData.location ? ` — ${jobData.location}` : ''}
+                    </p>
+                  )}
+                  {jobData.keywords && jobData.keywords.length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-medium text-neutral-50 mb-1.5">Include these keywords in your resume:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {jobData.keywords.slice(0, 12).map((keyword, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-white border border-primary/20 rounded text-[10px] text-primary font-medium">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {jobData.skills && jobData.skills.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-[11px] font-medium text-neutral-50 mb-1.5">Key skills to highlight:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {jobData.skills.slice(0, 8).map((skill, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-white border border-neutral-20 rounded text-[10px] text-neutral-70 font-medium">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Form content */}
           <div className="px-5 pt-5 pb-32 sm:px-6 sm:pt-6 sm:pb-32">
