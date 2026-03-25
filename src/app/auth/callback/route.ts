@@ -43,6 +43,12 @@ export async function GET(request: NextRequest) {
       }
       return response;
     }
+    // If code exchange failed, redirect to login with error but preserve job context
+    const errorUrl = new URL('/auth/login', origin);
+    errorUrl.searchParams.set('error', 'Could not authenticate. Please try again.');
+    if (job) errorUrl.searchParams.set('job', job);
+    if (next && next !== '/dashboard') errorUrl.searchParams.set('redirectTo', next);
+    return NextResponse.redirect(errorUrl.toString());
   }
 
   return NextResponse.redirect(`${origin}/auth/login?error=Could not authenticate`);

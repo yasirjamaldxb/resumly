@@ -48,9 +48,14 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data?.user ?? null;
+  } catch {
+    // If auth check fails (network error), let the request through
+    // rather than redirecting to login and creating a loop
+  }
 
   const protectedPaths = ['/dashboard', '/builder', '/z9k-panel'];
   const isProtected = protectedPaths.some((path) =>
