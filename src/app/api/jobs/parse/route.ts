@@ -8,42 +8,59 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { url } = await req.json();
-    if (!url || typeof url !== 'string') {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 });
-    }
+    const body = await req.json();
+    const { url, text } = body;
 
-    // Fetch the job page
+    // Accept either a URL to fetch or raw job description text
     let pageText = '';
-    try {
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml',
-          'Accept-Language': 'en-US,en;q=0.9',
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      const html = await res.text();
-      // Strip HTML tags, scripts, styles to get text content
-      pageText = html
-        .replace(/<script[\s\S]*?<\/script>/gi, '')
-        .replace(/<style[\s\S]*?<\/style>/gi, '')
-        .replace(/<[^>]+>/g, ' ')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#\d+;/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 8000); // Limit to ~8k chars for the AI prompt
-    } catch {
-      return NextResponse.json({ error: 'Could not fetch the job page. Try pasting the job description text instead.' }, { status: 422 });
-    }
 
-    if (pageText.length < 100) {
-      return NextResponse.json({ error: 'Could not extract enough content from that URL. The page may require login.' }, { status: 422 });
+    if (text && typeof text === 'string' && text.trim().length > 50) {
+      // Raw text pasted by user — use directly
+      pageText = text.trim().slice(0, 8000);
+    } else if (url && typeof url === 'string') {
+      // Fetch the job page HTML
+      try {
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'identity',
+            'Cache-Control': 'no-cache',
+          },
+          redirect: 'follow',
+          signal: AbortSignal.timeout(15000),
+        });
+        const html = await res.text();
+        // Strip HTML tags, scripts, styles to get text content
+        pageText = html
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&#\d+;/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 8000);
+      } catch {
+        return NextResponse.json({ error: 'fetch_failed', message: 'Could not fetch that page. Paste the job description instead.' }, { status: 422 });
+      }
+
+      if (pageText.length < 100) {
+        return NextResponse.json({ error: 'insufficient_content', message: 'The page returned too little content — it may require login. Paste the job description instead.' }, { status: 422 });
+      }
+
+      // Detect login walls — if the text is mostly about signing in, reject it
+      const lower = pageText.toLowerCase();
+      const loginSignals = ['sign in', 'log in', 'create an account', 'join now'].filter(s => lower.includes(s));
+      if (loginSignals.length >= 2 && pageText.length < 2000) {
+        return NextResponse.json({ error: 'login_wall', message: 'This site requires login to see job details. Paste the job description instead.' }, { status: 422 });
+      }
+    } else {
+      return NextResponse.json({ error: 'URL or job description text is required' }, { status: 400 });
     }
 
     // Use Gemini to extract structured job data
