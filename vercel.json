@@ -4,12 +4,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "crons": [
-    {
-      "path": "/api/cron/send-drip",
-      "schedule": "0 * * * *"
-    }
-  ],
+  "crons": [],
   "functions": {
     "app/api/resume/generate-pdf/route.ts": {
       "memory": 2048,
