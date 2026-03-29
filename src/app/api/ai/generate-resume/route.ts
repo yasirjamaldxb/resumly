@@ -97,7 +97,7 @@ Rules:
 - Education should match the typical requirements for this role`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       messages: [
         { role: 'system', content: 'You are a resume generation expert. Return only valid JSON.' },
         { role: 'user', content: prompt },

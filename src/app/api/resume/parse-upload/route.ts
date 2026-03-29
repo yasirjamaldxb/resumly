@@ -118,7 +118,7 @@ ${text.slice(0, 8000)}`;
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       messages: [
         { role: 'system', content: 'You are a resume parser. Return only valid JSON, no markdown formatting.' },
         { role: 'user', content: prompt },

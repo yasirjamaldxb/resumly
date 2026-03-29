@@ -39,7 +39,7 @@ Requirements:
 - Return only the cover letter body text`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       messages: [
         {
           role: 'system',

@@ -105,8 +105,10 @@ function parseLinkedInHtml(html: string): { title: string; company: string; loca
     || html.match(/<h1[^>]*>([^<]+)/i)
     || html.match(/<h2[^>]*class="[^"]*title[^"]*"[^>]*>([^<]+)/i);
 
-  const companyMatch = html.match(/class="[^"]*topcard__org-name[^"]*"[^>]*>[^<]*<[^>]*>([^<]+)/i)
+  const companyMatch = html.match(/class="[^"]*topcard__org-name-link[^"]*"[^>]*>\s*([^<]+)/i)
+    || html.match(/class="[^"]*topcard__org-name[^"]*"[^>]*>[^<]*<[^>]*>([^<]+)/i)
     || html.match(/class="[^"]*company-name[^"]*"[^>]*>([^<]+)/i)
+    || html.match(/data-tracking-control-name="public_jobs_topcard-org-name"[^>]*>\s*([^<]+)/i)
     || html.match(/data-tracking-control-name="[^"]*company[^"]*"[^>]*>([^<]+)/i);
 
   const locationMatch = html.match(/class="[^"]*topcard__flavor--bullet[^"]*"[^>]*>([^<]+)/i)
@@ -290,13 +292,22 @@ export async function POST(req: NextRequest) {
     let experience: string | null = null;
     let plainText = '';
 
-    if (text && typeof text === 'string' && text.trim().length > 50) {
+    if (text && typeof text === 'string' && text.trim().length > 20) {
       // ── Raw pasted text ──
       plainText = text.trim();
       description = plainText.slice(0, 500);
-      jobTitle = extractTitle(plainText);
-      company = extractCompany(plainText);
-      location = extractLocation(plainText);
+
+      // Try pipe-separated format first: "Title | Company | Location | Salary"
+      const pipeSegments = plainText.split('|').map(s => s.trim());
+      if (pipeSegments.length >= 2 && pipeSegments[0].length < 80) {
+        jobTitle = pipeSegments[0];
+        company = pipeSegments.length >= 3 ? pipeSegments[1] : null;
+        location = pipeSegments.length >= 4 ? pipeSegments[2] : (pipeSegments.length === 3 ? pipeSegments[2] : null);
+      }
+
+      if (!jobTitle) jobTitle = extractTitle(plainText);
+      if (!company) company = extractCompany(plainText);
+      if (!location) location = extractLocation(plainText);
 
     } else if (url && typeof url === 'string') {
       // ── Fetch and parse HTML ──
