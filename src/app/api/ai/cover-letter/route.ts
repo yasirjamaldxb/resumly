@@ -48,7 +48,7 @@ Requirements:
         { role: 'user', content: prompt },
       ],
       temperature: 0.75,
-      max_tokens: 800,
+      max_tokens: 8000,
     });
 
     const text = completion.choices[0]?.message?.content || '';

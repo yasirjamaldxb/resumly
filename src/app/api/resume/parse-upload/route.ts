@@ -124,7 +124,7 @@ ${text.slice(0, 8000)}`;
         { role: 'user', content: prompt },
       ],
       temperature: 0.1,
-      max_tokens: 4000,
+      max_tokens: 16000,
     });
 
     const content = completion.choices[0]?.message?.content || '';

@@ -103,7 +103,7 @@ Rules:
         { role: 'user', content: prompt },
       ],
       temperature: 0.5,
-      max_tokens: 3000,
+      max_tokens: 16000,
     });
 
     const content = completion.choices[0]?.message?.content || '';

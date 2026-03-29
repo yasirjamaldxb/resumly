@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         { role: 'user', content: prompt },
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 8000,
     });
 
     const content = completion.choices[0]?.message?.content || '';
