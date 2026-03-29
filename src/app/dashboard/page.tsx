@@ -38,7 +38,7 @@ export default async function DashboardPage() {
         id, status, applied_at, created_at,
         job:jobs(id, title, company, location, salary, url),
         resume:resumes(id, title, ats_score),
-        cover_letter:cover_letters(id)
+        cover_letter:cover_letters(id, content, tone)
       `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
             </div>
 
             <div className="bg-white rounded-2xl border border-neutral-20 overflow-hidden">
-              <div className="hidden sm:grid sm:grid-cols-[1fr_120px_100px_120px_100px] gap-4 px-5 py-3 bg-neutral-5 border-b border-neutral-10 text-[12px] font-semibold text-neutral-50 uppercase tracking-wide">
+              <div className="hidden sm:grid sm:grid-cols-[1fr_160px_160px_100px_80px] gap-4 px-5 py-3 bg-neutral-5 border-b border-neutral-10 text-[12px] font-semibold text-neutral-50 uppercase tracking-wide">
                 <div>Position</div>
                 <div>Resume</div>
                 <div>Cover Letter</div>
@@ -146,27 +146,41 @@ export default async function DashboardPage() {
                 const job = Array.isArray(jobArr) ? jobArr[0] : jobArr;
                 const resumeArr = app.resume as unknown as { id: string; title: string; ats_score: number }[] | null;
                 const resume = Array.isArray(resumeArr) ? resumeArr[0] : resumeArr;
-                const clArr = app.cover_letter as unknown as { id: string }[] | null;
+                const clArr = app.cover_letter as unknown as { id: string; content: string; tone: string }[] | null;
                 const coverLetter = Array.isArray(clArr) ? clArr[0] : clArr;
 
                 return (
-                  <div key={app.id} className="grid sm:grid-cols-[1fr_120px_100px_120px_100px] gap-2 sm:gap-4 px-5 py-4 border-b border-neutral-10 last:border-0 hover:bg-neutral-5/50 transition-colors items-center">
+                  <div key={app.id} className="grid sm:grid-cols-[1fr_160px_160px_100px_80px] gap-2 sm:gap-4 px-5 py-4 border-b border-neutral-10 last:border-0 hover:bg-neutral-5/50 transition-colors items-center">
                     <div>
                       <div className="font-medium text-[14px] text-neutral-90">{job?.title || 'Untitled'}</div>
                       <div className="text-[12px] text-neutral-50">{job?.company}{job?.location ? ` · ${job.location}` : ''}</div>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
                       {resume ? (
-                        <Link href={`/builder/${resume.id}`} className="text-[13px] text-primary hover:underline font-medium">
-                          Edit
-                        </Link>
+                        <>
+                          <Link href={`/builder/${resume.id}`} className="text-[12px] text-primary hover:underline font-medium">
+                            Edit
+                          </Link>
+                          <span className="text-neutral-20">·</span>
+                          <Link href={`/builder/${resume.id}?download=true`} className="text-[12px] text-neutral-50 hover:text-primary font-medium">
+                            Download
+                          </Link>
+                        </>
                       ) : (
                         <span className="text-[12px] text-neutral-40">—</span>
                       )}
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
                       {coverLetter ? (
-                        <span className="text-[12px] text-green-600 font-medium">Created</span>
+                        <>
+                          <Link href={`/dashboard/cover-letter/${coverLetter.id}`} className="text-[12px] text-green-600 hover:underline font-medium">
+                            View
+                          </Link>
+                          <span className="text-neutral-20">·</span>
+                          <Link href={`/dashboard/cover-letter/${coverLetter.id}?download=true`} className="text-[12px] text-neutral-50 hover:text-green-600 font-medium">
+                            Download
+                          </Link>
+                        </>
                       ) : job ? (
                         <Link href={`/funnel/${job.id}/cover-letter${resume ? `?resumeId=${resume.id}` : ''}`} className="text-[12px] text-primary hover:underline font-medium">
                           Create
