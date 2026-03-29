@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type');
 
   if (code) {
-    // If a job URL was passed through OAuth, send user to builder with it
-    const redirectPath = job ? `/builder/new?job=${encodeURIComponent(job)}` : next;
+    // If a job URL was passed through OAuth, redirect to funnel (job will be saved client-side)
+    const redirectPath = job ? `/job-preview?url=${encodeURIComponent(job)}&from=auth` : next;
     const redirectUrl = type === 'recovery'
       ? `${origin}/auth/reset-password`
       : `${origin}${redirectPath}`;

@@ -37,13 +37,34 @@ function JobPreviewContent() {
   const [pastedText, setPastedText] = useState('');
   const [pasteLoading, setPasteLoading] = useState(false);
 
-  // If already logged in, skip straight to builder
+  // If already logged in, save job and redirect to funnel
   useEffect(() => {
     if (!jobUrl) { router.replace('/builder/new'); return; }
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // Parse the job first, then save and redirect to funnel
+        try {
+          const res = await fetch('/api/jobs/parse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: jobUrl }),
+          });
+          const data = await res.json();
+          if (res.ok && data.job) {
+            const saveRes = await fetch('/api/jobs/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...data.job, url: jobUrl, raw_text: data.job.description }),
+            });
+            const saveResult = await saveRes.json();
+            if (saveResult.id) {
+              router.replace(`/funnel/${saveResult.id}`);
+              return;
+            }
+          }
+        } catch { /* fall through to builder */ }
         router.replace(`/builder/new?job=${encodeURIComponent(jobUrl)}`);
       }
     };
@@ -133,10 +154,18 @@ function JobPreviewContent() {
     setAuthLoading(true);
     const supabase = createClient();
     const origin = window.location.origin;
+    // Store full parsed job data in localStorage for auth callback to save to DB
+    if (job) {
+      localStorage.setItem('resumly_pending_job', JSON.stringify({
+        ...job,
+        url: jobUrl,
+        raw_text: job.title ? `${job.title} at ${job.company}` : '',
+      }));
+    }
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=/builder/new&job=${encodeURIComponent(jobUrl)}`,
+        redirectTo: `${origin}/auth/callback?next=/dashboard&job=${encodeURIComponent(jobUrl)}`,
       },
     });
   };

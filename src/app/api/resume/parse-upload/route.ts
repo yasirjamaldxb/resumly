@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
 // Extract text from PDF using pdf-parse (import lib directly to avoid test-file loading issue)
 async function extractPdfText(buffer: Buffer): Promise<string> {
@@ -15,25 +16,190 @@ async function extractDocxText(buffer: Buffer): Promise<string> {
   return result.value;
 }
 
-// Parse structured resume data from raw text
-function parseResumeText(text: string) {
+// ══════════════════════════════════════════════
+// AI-powered resume parsing (Gemini 2.0 Flash)
+// ══════════════════════════════════════════════
+
+async function parseResumeWithAI(text: string) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  const openai = new OpenAI({
+    apiKey,
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+  });
+
+  const prompt = `You are an expert resume parser. Extract ALL information from this resume text into a structured JSON object.
+
+Return ONLY valid JSON with this exact schema (no markdown, no code blocks, no explanation):
+
+{
+  "personalDetails": {
+    "firstName": "",
+    "lastName": "",
+    "jobTitle": "",
+    "email": "",
+    "phone": "",
+    "location": "",
+    "linkedIn": "",
+    "website": "",
+    "summary": "",
+    "photo": ""
+  },
+  "workExperience": [
+    {
+      "company": "",
+      "position": "",
+      "location": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "description": "",
+      "bullets": [""]
+    }
+  ],
+  "education": [
+    {
+      "institution": "",
+      "degree": "",
+      "field": "",
+      "location": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "gpa": "",
+      "achievements": ""
+    }
+  ],
+  "skills": [
+    {
+      "name": "",
+      "level": "intermediate"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "",
+      "issuer": "",
+      "date": ""
+    }
+  ],
+  "languages": [
+    {
+      "name": "",
+      "proficiency": "professional"
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "description": "",
+      "technologies": "",
+      "url": "",
+      "startDate": "",
+      "endDate": ""
+    }
+  ]
+}
+
+Rules:
+- Extract EVERYTHING — do not skip any section
+- Infer skill levels from context ("5 years of Python" → "expert", "familiar with" → "beginner")
+- Dates should be in "MMM YYYY" format (e.g., "Jan 2023") when possible, or "YYYY" if only year is available
+- Keep original bullet point wording — do not rewrite
+- Handle any resume format: 1-column, 2-column, creative, LinkedIn PDF export
+- If a field is not found, use empty string "" or empty array []
+- For LinkedIn URLs, include the full URL starting with "https://"
+- photo should always be ""
+- Empty sections should be empty arrays []
+
+Resume text:
+${text.slice(0, 8000)}`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gemini-2.0-flash',
+      messages: [
+        { role: 'system', content: 'You are a resume parser. Return only valid JSON, no markdown formatting.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.1,
+      max_tokens: 4000,
+    });
+
+    const content = completion.choices[0]?.message?.content || '';
+    // Strip markdown code blocks if present
+    const jsonStr = content.replace(/```json\s*\n?/g, '').replace(/```\s*$/g, '').trim();
+    const parsed = JSON.parse(jsonStr);
+
+    // Add IDs to entries
+    if (parsed.workExperience) {
+      parsed.workExperience = parsed.workExperience.map((e: Record<string, unknown>) => ({
+        ...e,
+        id: crypto.randomUUID(),
+      }));
+    }
+    if (parsed.education) {
+      parsed.education = parsed.education.map((e: Record<string, unknown>) => ({
+        ...e,
+        id: crypto.randomUUID(),
+      }));
+    }
+    if (parsed.skills) {
+      parsed.skills = parsed.skills.map((s: Record<string, unknown>) => ({
+        ...s,
+        id: crypto.randomUUID(),
+      }));
+    }
+    if (parsed.certifications) {
+      parsed.certifications = parsed.certifications.map((c: Record<string, unknown>) => ({
+        ...c,
+        id: crypto.randomUUID(),
+      }));
+    }
+    if (parsed.languages) {
+      parsed.languages = parsed.languages.map((l: Record<string, unknown>) => ({
+        ...l,
+        id: crypto.randomUUID(),
+      }));
+    }
+    if (parsed.projects) {
+      parsed.projects = parsed.projects.map((p: Record<string, unknown>) => ({
+        ...p,
+        id: crypto.randomUUID(),
+      }));
+    }
+
+    // Ensure personalDetails.photo is always empty
+    if (parsed.personalDetails) {
+      parsed.personalDetails.photo = '';
+    }
+
+    return parsed;
+  } catch (err) {
+    console.error('AI resume parse failed, falling back to regex:', err);
+    return null;
+  }
+}
+
+// ══════════════════════════════════════════════
+// Regex fallback parser (original logic)
+// ══════════════════════════════════════════════
+
+function parseResumeTextFallback(text: string) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-  // --- Personal Details ---
   const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.]+/);
   const phoneMatch = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/);
   const linkedInMatch = text.match(/linkedin\.com\/in\/[\w-]+/i);
   const websiteMatch = text.match(/(?:https?:\/\/)?(?:www\.)?(?!linkedin)[a-z0-9-]+\.[a-z]{2,}(?:\/\S*)?/i);
 
-  // Try to extract name from first line(s)
   let firstName = '';
   let lastName = '';
-  // The name is usually the first non-empty line that isn't an email/phone/url
   for (const line of lines.slice(0, 5)) {
     const clean = line.replace(/[|•·,]/g, '').trim();
     if (!clean) continue;
     if (clean.includes('@') || clean.match(/^\+?\d/) || clean.includes('linkedin') || clean.includes('http')) continue;
-    // Likely a name if it's 2-4 words, all starting with uppercase
     const words = clean.split(/\s+/);
     if (words.length >= 2 && words.length <= 5 && words.every(w => /^[A-Z]/.test(w))) {
       firstName = words[0];
@@ -42,24 +208,20 @@ function parseResumeText(text: string) {
     }
   }
 
-  // Job title — often the line right after the name or a "Summary" header
   let jobTitle = '';
   const nameLineIdx = lines.findIndex(l => l.includes(firstName) && l.includes(lastName));
   if (nameLineIdx >= 0 && nameLineIdx < lines.length - 1) {
     const nextLine = lines[nameLineIdx + 1];
-    // If the next line is short and doesn't look like contact info, it's likely the title
     if (nextLine && nextLine.length < 80 && !nextLine.includes('@') && !nextLine.match(/^\+?\d/) && !nextLine.includes('linkedin')) {
       jobTitle = nextLine.replace(/[|•·]/g, '').trim();
     }
   }
 
-  // Location — look for city/state/country patterns
   let location = '';
   const locationMatch = text.match(/(?:^|\n|[|•·,])\s*([A-Z][a-zA-Z\s]+,\s*[A-Z]{2}(?:\s+\d{5})?)/m)
     || text.match(/(?:^|\n|[|•·,])\s*([A-Z][a-zA-Z\s]+,\s*[A-Z][a-zA-Z\s]+)/m);
   if (locationMatch) location = locationMatch[1].trim();
 
-  // Summary — look for summary/profile/objective section
   let summary = '';
   const summaryHeaders = /(?:summary|profile|objective|about\s*me|professional\s*summary)/i;
   const summaryIdx = lines.findIndex(l => summaryHeaders.test(l));
@@ -72,15 +234,6 @@ function parseResumeText(text: string) {
     }
     summary = summaryLines.join(' ').trim();
   }
-
-  // --- Work Experience ---
-  const workExperience = parseWorkExperience(lines);
-
-  // --- Education ---
-  const education = parseEducation(lines);
-
-  // --- Skills ---
-  const skills = parseSkills(lines);
 
   return {
     personalDetails: {
@@ -95,16 +248,15 @@ function parseResumeText(text: string) {
       summary,
       photo: '',
     },
-    workExperience,
-    education,
-    skills,
+    workExperience: parseWorkExperience(lines),
+    education: parseEducation(lines),
+    skills: parseSkills(lines),
   };
 }
 
 function isSectionHeader(line: string): boolean {
   const headers = /^(experience|work\s*experience|employment|professional\s*experience|education|skills|certifications?|languages?|projects?|summary|profile|objective|about|references|awards|honors|publications|interests|hobbies|activities|volunteer|training|courses)/i;
   const clean = line.replace(/[:\-—_#*|]/g, '').trim();
-  // Section headers are typically short, often ALL CAPS or Title Case
   return (clean.length < 40 && headers.test(clean)) || (clean === clean.toUpperCase() && clean.length > 3 && clean.length < 35);
 }
 
@@ -136,7 +288,6 @@ function parseWorkExperience(lines: string[]) {
       const parts = dates.split(/[-–—]|to/i).map(s => s.trim());
       const isCurrent = /present|current/i.test(parts[1] || '');
 
-      // The position/company is typically on this line or the line before
       let position = '';
       let company = '';
       const beforeDate = line.replace(dateMatch[0], '').replace(/[|•·,]/g, ' ').trim();
@@ -149,7 +300,6 @@ function parseWorkExperience(lines: string[]) {
           position = segments[0] || '';
         }
       }
-      // Check line above for position/company if not found
       if (!position && i > startIdx + 1) {
         const prevLine = lines[i - 1]?.trim();
         if (prevLine && !isSectionHeader(prevLine) && prevLine.length < 80) {
@@ -209,7 +359,6 @@ function parseEducation(lines: string[]) {
       let institution = '';
 
       if (degreeMatch) {
-        // Split around the degree keyword
         const fullDegree = line.match(/(?:Bachelor|Master|Ph\.?D|Doctor|Associate|MBA|B\.?S\.?|M\.?S\.?|B\.?A\.?|M\.?A\.?|B\.?Eng|M\.?Eng|Diploma|Certificate)[^,|•]*/i);
         if (fullDegree) {
           const degreeParts = fullDegree[0].split(/\s+(?:in|of)\s+/i);
@@ -218,7 +367,6 @@ function parseEducation(lines: string[]) {
         }
       }
 
-      // Look for institution on this line or adjacent lines
       const instMatch = line.match(/(?:university|college|institute|school)[^,|•]*/i);
       if (instMatch) institution = instMatch[0].trim();
       if (!institution && i < lines.length - 1) {
@@ -234,15 +382,14 @@ function parseEducation(lines: string[]) {
         }
       }
 
-      // Date
-      const dateMatch = line.match(/\b(20\d{2}|19\d{2})\b/g);
+      const dMatch = line.match(/\b(20\d{2}|19\d{2})\b/g);
       let startDate = '';
       let endDate = '';
-      if (dateMatch && dateMatch.length >= 2) {
-        startDate = dateMatch[0];
-        endDate = dateMatch[1];
-      } else if (dateMatch) {
-        endDate = dateMatch[0];
+      if (dMatch && dMatch.length >= 2) {
+        startDate = dMatch[0];
+        endDate = dMatch[1];
+      } else if (dMatch) {
+        endDate = dMatch[0];
       }
 
       currentEdu = {
@@ -274,7 +421,6 @@ function parseSkills(lines: string[]) {
     const line = lines[i];
     if (isSectionHeader(line) && !skillHeaders.test(line.replace(/[:\-—_#*|]/g, '').trim())) break;
 
-    // Skills are typically comma/pipe/bullet separated
     const items = line.split(/[,|•·▪►◆○;\n]/).map(s => s.replace(/^[-*\s]+/, '').trim()).filter(s => s.length > 1 && s.length < 40);
     for (const item of items) {
       const name = item.replace(/\s*[-–(:].*$/, '').trim();
@@ -287,6 +433,10 @@ function parseSkills(lines: string[]) {
 
   return skills.slice(0, 25);
 }
+
+// ══════════════════════════════════════════════
+// Main handler
+// ══════════════════════════════════════════════
 
 export async function POST(request: NextRequest) {
   try {
@@ -318,9 +468,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not extract text from the file. It may be image-based — try a text-based PDF.' }, { status: 400 });
     }
 
-    const parsed = parseResumeText(text);
+    // Try AI parsing first, fall back to regex
+    const aiParsed = await parseResumeWithAI(text);
+    const parsed = aiParsed || parseResumeTextFallback(text);
 
-    return NextResponse.json({ success: true, data: parsed });
+    return NextResponse.json({ success: true, data: parsed, method: aiParsed ? 'ai' : 'regex' });
   } catch (err) {
     console.error('Resume parse error:', err);
     return NextResponse.json({ error: 'Failed to parse resume file' }, { status: 500 });

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const resumeData = await req.json();
     const { id, userId, ...rest } = resumeData;
 
-    const upsertData = {
+    const upsertData: Record<string, unknown> = {
       user_id: user.id,
       title: rest.title || 'My Resume',
       template_id: rest.templateId,
@@ -22,6 +22,11 @@ export async function POST(req: NextRequest) {
       resume_data: rest,
       updated_at: new Date().toISOString(),
     };
+
+    // Link resume to a job if jobId is provided
+    if (rest.jobId) {
+      upsertData.job_id = rest.jobId;
+    }
 
     let result;
     if (id) {
