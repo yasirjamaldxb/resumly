@@ -63,6 +63,7 @@ export default function FunnelPage() {
   const [uploadingResume, setUploadingResume] = useState(false);
   const [generatingResume, setGeneratingResume] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [linkedinTip, setLinkedinTip] = useState(false);
 
   // Profile form state
   const [profileForm, setProfileForm] = useState({
@@ -205,7 +206,9 @@ export default function FunnelPage() {
   };
 
   // ── Skip to template with empty resume ──
+  const [isFromScratch, setIsFromScratch] = useState(false);
   const handleStartFromScratch = () => {
+    setIsFromScratch(true);
     setStep('template');
   };
 
@@ -215,7 +218,43 @@ export default function FunnelPage() {
     setResumeData(prev => ({ ...prev, templateId }));
   };
 
-  const handleTemplateConfirm = () => {
+  const handleTemplateConfirm = async () => {
+    if (isFromScratch) {
+      // Empty resume — skip optimize, save and redirect to editor
+      setSaving(true);
+      try {
+        const saveRes = await fetch('/api/resume/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...resumeData,
+            templateId: selectedTemplate,
+            jobId: jobId,
+            title: jobData?.title ? `Resume for ${jobData.title}` : 'My Resume',
+          }),
+        });
+        const saveResult = await saveRes.json();
+        if (!saveRes.ok) throw new Error(saveResult.error || 'Save failed');
+
+        // Create application
+        await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            job_id: jobId,
+            resume_id: saveResult.id,
+            status: 'draft',
+          }),
+        });
+
+        // Go straight to editor so user can fill in their details
+        router.push(`/builder/${saveResult.id}`);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to save');
+        setSaving(false);
+      }
+      return;
+    }
     setStep('optimize');
   };
 
@@ -507,8 +546,7 @@ export default function FunnelPage() {
               <button
                 onClick={() => {
                   window.open('https://www.linkedin.com/in/', '_blank');
-                  // Show instructions
-                  setError('Download your LinkedIn profile as PDF (More → Save to PDF), then use "Upload Resume" above.');
+                  setLinkedinTip(true);
                 }}
                 className="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-20 text-left transition-all hover:border-primary hover:bg-primary/[0.02]"
               >
@@ -520,6 +558,14 @@ export default function FunnelPage() {
                   <div className="text-[13px] text-neutral-50">Download your profile PDF, then upload it</div>
                 </div>
               </button>
+
+              {/* LinkedIn tip banner */}
+              {linkedinTip && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-[14px] flex items-start gap-2">
+                  <svg className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>On your LinkedIn profile, click <strong>More</strong> then <strong>Save to PDF</strong>. Then use <strong>Upload Resume</strong> above to import it.</span>
+                </div>
+              )}
 
               {/* Create with AI */}
               <button
@@ -601,9 +647,16 @@ export default function FunnelPage() {
 
             <button
               onClick={handleTemplateConfirm}
-              className="mt-6 w-full bg-primary text-white py-3 rounded-xl font-medium text-[15px] hover:bg-primary/90 transition-colors"
+              disabled={saving}
+              className="mt-6 w-full bg-primary text-white py-3 rounded-xl font-medium text-[15px] hover:bg-primary/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              Continue with {TEMPLATE_LIST.find(t => t.id === selectedTemplate)?.name || 'template'}
+              {saving ? (
+                <><div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> Creating...</>
+              ) : isFromScratch ? (
+                `Open Editor with ${TEMPLATE_LIST.find(t => t.id === selectedTemplate)?.name || 'template'}`
+              ) : (
+                `Continue with ${TEMPLATE_LIST.find(t => t.id === selectedTemplate)?.name || 'template'}`
+              )}
             </button>
           </div>
         )}

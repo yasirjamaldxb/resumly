@@ -72,7 +72,8 @@ function JobPreviewContent() {
   }, [jobUrl, router]);
 
   // Sites that block server-side fetching — go straight to paste UI
-  const isBlockedSite = /linkedin\.com|indeed\.com|glassdoor\.com|monster\.com|ziprecruiter\.com/i.test(jobUrl);
+  // Note: LinkedIn is NOT blocked — our guest API (jobs-guest/jobs/api/jobPosting/) works server-side
+  const isBlockedSite = /indeed\.com|glassdoor\.com|monster\.com|ziprecruiter\.com/i.test(jobUrl);
 
   // Parse the job
   useEffect(() => {
