@@ -9,7 +9,7 @@ import Image from 'next/image';
 export const metadata: Metadata = {
   title: 'Free Resume Templates 2026 [Download & Edit Instantly]',
   description:
-    'Download free, ATS-friendly resume templates for 2026. 10 professionally designed templates — modern, classic, minimal, creative. Edit online and download as text-based PDF.',
+    'Download free, ATS-friendly resume templates for 2026. 10 professionally designed templates: modern, classic, minimal, creative. Edit online and download as text-based PDF.',
   alternates: { canonical: 'https://resumly.app/resume-templates' },
   openGraph: {
     title: 'Free Resume Templates 2026 [Download & Edit] · Resumly',

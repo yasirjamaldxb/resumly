@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: #f7f9fc;
+      color: #1a1a2e;
+    }
+
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e8ecf0;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logo {
+      width: 28px;
+      height: 28px;
+      background: #2b7fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .header .brand {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a2e;
+      letter-spacing: -0.3px;
+    }
+    .header .brand span { color: #2b7fff; }
+
+    .content { padding: 16px; }
+
+    /* States */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* Extracting state */
+    .extracting {
+      text-align: center;
+      padding: 30px 16px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #e8ecf0;
+      border-top-color: #2b7fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .extracting p { font-size: 13px; color: #6b7280; }
+
+    /* Preview state */
+    .job-preview {
+      background: #fff;
+      border: 1px solid #e8ecf0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .job-preview .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #ecfdf5;
+      color: #059669;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .job-preview .badge svg {
+      width: 10px; height: 10px;
+    }
+    .job-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .job-company {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .job-company .dot { color: #d1d5db; margin: 0 4px; }
+
+    .stats {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f2f5;
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 6px;
+      background: #f7f9fc;
+      border-radius: 8px;
+    }
+    .stat .num {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2b7fff;
+    }
+    .stat .label {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 1px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: #2b7fff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1a6de6; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary svg { width: 16px; height: 16px; }
+
+    .source-info {
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+
+    /* Error state */
+    .error-box {
+      text-align: center;
+      padding: 20px 16px;
+    }
+    .error-icon {
+      width: 44px; height: 44px;
+      background: #fef3c7;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 20px;
+    }
+    .error-box h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .error-box p {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      background: #fff;
+      color: #6b7280;
+      border: 1px solid #e8ecf0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .btn-secondary:hover { background: #f7f9fc; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">R</div>
+    <div class="brand">resumly<span>.app</span></div>
+  </div>
+
+  <div class="content">
+    <!-- State: Extracting -->
+    <div id="state-extracting" class="state active">
+      <div class="extracting">
+        <div class="spinner"></div>
+        <p>Reading job listing...</p>
+      </div>
+    </div>
+
+    <!-- State: Preview -->
+    <div id="state-preview" class="state">
+      <div class="job-preview">
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+          Job Found
+        </div>
+        <div class="job-title" id="preview-title">—</div>
+        <div class="job-company">
+          <span id="preview-company">—</span>
+          <span class="dot" id="preview-dot" style="display:none">·</span>
+          <span id="preview-location"></span>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="num" id="preview-text-len">0</div>
+            <div class="label">chars extracted</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="preview-source">—</div>
+            <div class="label">source</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-import">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+        Import to Resumly
+      </button>
+      <div class="source-info" id="source-url"></div>
+    </div>
+
+    <!-- State: Error -->
+    <div id="state-error" class="state">
+      <div class="error-box">
+        <div class="error-icon">?</div>
+        <h3>No job found on this page</h3>
+        <p>Navigate to a specific job listing, then click the extension again.</p>
+        <button class="btn-primary" id="btn-paste-fallback">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08"/>
+          </svg>
+          Paste job description on Resumly
+        </button>
+        <button class="btn-secondary" id="btn-retry">Try again</button>
+      </div>
+    </div>
+
+    <!-- State: Sending -->
+    <div id="state-sending" class="state">
+      <div class="extracting">
+        <div class="spinner"></div>
+        <p>Opening Resumly...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'AI Resume Builder: Land Your Dream Job with AI Help (2026)',
   description:
-    'Let AI write your resume. Our AI resume builder generates tailored summaries, bullet points, and skills for your target job in seconds. Free — no ChatGPT prompting required.',
+    'Let AI write your resume. Our AI resume builder generates tailored summaries, bullet points, and skills for your target job in seconds. Free, no ChatGPT prompting required.',
   keywords: ['AI resume builder', 'AI resume writer', 'resume builder AI', 'ChatGPT resume', 'AI CV builder', 'best AI resume builder 2026'],
   alternates: { canonical: 'https://resumly.app/ai-resume-builder' },
   openGraph: {
@@ -54,11 +54,11 @@ export default function AIResumeBuilderPage() {
               AI-Powered
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
-              AI Resume Builder — Write Your Resume with AI
+              AI Resume Builder: Write Your Resume with AI
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Don&apos;t know what to write? Let AI do the heavy lifting.
-              Our AI generates tailored resume content in seconds — summaries, bullet points, skills — all optimized for ATS.
+              Our AI generates tailored resume content in seconds: summaries, bullet points, skills, all optimized for ATS.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="xl" asChild>
@@ -113,7 +113,7 @@ export default function AIResumeBuilderPage() {
                 {
                   step: '2',
                   title: 'Click AI Write on any section',
-                  desc: 'See the AI Write button next to every text field. Click it for your summary, or AI Suggest for bullet points and skills. The AI generates content instantly — you can edit it or regenerate.',
+                  desc: 'See the AI Write button next to every text field. Click it for your summary, or AI Suggest for bullet points and skills. The AI generates content instantly. You can edit it or regenerate.',
                 },
                 {
                   step: '3',
@@ -123,7 +123,7 @@ export default function AIResumeBuilderPage() {
                 {
                   step: '4',
                   title: 'Check your ATS score and download',
-                  desc: 'Watch your ATS score update in real time. Once you hit 80%+, download your perfectly formatted PDF — ready to send.',
+                  desc: 'Watch your ATS score update in real time. Once you hit 80%+, download your perfectly formatted PDF, ready to send.',
                 },
               ].map((item) => (
                 <div key={item.step} className="flex gap-5">
@@ -161,11 +161,11 @@ export default function AIResumeBuilderPage() {
                 },
                 {
                   q: 'Is this better than using ChatGPT for my resume?',
-                  a: 'Our AI is purpose-built for resumes — it understands job titles, industries, and recruiter expectations. It integrates directly into our builder so your content flows into a beautifully formatted, ATS-ready template automatically.',
+                  a: 'Our AI is purpose-built for resumes. It understands job titles, industries, and recruiter expectations. It integrates directly into our builder so your content flows into a beautifully formatted, ATS-ready template automatically.',
                 },
                 {
                   q: 'Can I edit the AI-generated content?',
-                  a: 'Absolutely — and you should! AI gives you a strong starting point. Always review the suggestions and personalize them with your specific achievements, numbers, and unique experiences.',
+                  a: 'Absolutely, and you should! AI gives you a strong starting point. Always review the suggestions and personalize them with your specific achievements, numbers, and unique experiences.',
                 },
               ].map((faq) => (
                 <div key={faq.q} className="border-b border-gray-100 pb-6">
@@ -197,12 +197,12 @@ export default function AIResumeBuilderPage() {
                 {
                   '@type': 'Question',
                   name: 'Is this better than using ChatGPT for my resume?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Our AI is purpose-built for resumes — it understands job titles, industries, and recruiter expectations. Unlike ChatGPT, it integrates directly into our builder so your content flows into a beautifully formatted, ATS-ready template automatically. No copy-pasting or formatting needed.' },
+                  acceptedAnswer: { '@type': 'Answer', text: 'Our AI is purpose-built for resumes. It understands job titles, industries, and recruiter expectations. Unlike ChatGPT, it integrates directly into our builder so your content flows into a beautifully formatted, ATS-ready template automatically. No copy-pasting or formatting needed.' },
                 },
                 {
                   '@type': 'Question',
                   name: 'Can I edit the AI-generated content?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Absolutely — and you should! AI gives you a strong starting point. Always review the suggestions and personalize them with your specific achievements, numbers, and unique experiences for the best results.' },
+                  acceptedAnswer: { '@type': 'Answer', text: 'Absolutely, and you should! AI gives you a strong starting point. Always review the suggestions and personalize them with your specific achievements, numbers, and unique experiences for the best results.' },
                 },
                 {
                   '@type': 'Question',

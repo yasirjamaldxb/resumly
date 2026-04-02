@@ -35,6 +35,8 @@ export async function GET(request: NextRequest) {
       dailyEventsRes,
       recentErrorsRes,
       resumeCompletionRes,
+      aiUsageRes,
+      topAiUsersRes,
     ] = await Promise.all([
       // Total users ever
       supabase.from('profiles').select('id', { count: 'exact', head: true }),
@@ -79,6 +81,15 @@ export async function GET(request: NextRequest) {
       // Resume completion analysis
       supabase.from('resumes').select('resume_data')
         .gte('created_at', sinceISO),
+      // AI usage logs for cost tracking
+      supabase.from('ai_usage_log').select('user_id, endpoint, input_tokens, output_tokens, estimated_cost, created_at')
+        .gte('created_at', sinceISO)
+        .order('created_at', { ascending: false }),
+      // Top AI users (all time)
+      supabase.from('profiles').select('id, email:id, ai_optimizations_used, subscription_tier, created_at')
+        .gt('ai_optimizations_used', 0)
+        .order('ai_optimizations_used', { ascending: false })
+        .limit(20),
     ]);
 
     // Process template stats
@@ -126,6 +137,43 @@ export async function GET(request: NextRequest) {
       emailCaptures: recentEmailLeadsRes.count || 0,
     };
 
+    // Process AI usage data
+    const aiUsageLogs = aiUsageRes.data || [];
+    const aiCostByUser: Record<string, { cost: number; calls: number; tokens: number }> = {};
+    const aiCostByEndpoint: Record<string, { cost: number; calls: number }> = {};
+    const aiDailyCost: Record<string, number> = {};
+    let totalAiCost = 0;
+    let totalAiCalls = aiUsageLogs.length;
+    let totalTokens = 0;
+
+    aiUsageLogs.forEach((log: { user_id: string; endpoint: string; input_tokens: number; output_tokens: number; estimated_cost: number; created_at: string }) => {
+      const cost = Number(log.estimated_cost) || 0;
+      const tokens = (log.input_tokens || 0) + (log.output_tokens || 0);
+      totalAiCost += cost;
+      totalTokens += tokens;
+
+      // By user
+      if (!aiCostByUser[log.user_id]) aiCostByUser[log.user_id] = { cost: 0, calls: 0, tokens: 0 };
+      aiCostByUser[log.user_id].cost += cost;
+      aiCostByUser[log.user_id].calls += 1;
+      aiCostByUser[log.user_id].tokens += tokens;
+
+      // By endpoint
+      if (!aiCostByEndpoint[log.endpoint]) aiCostByEndpoint[log.endpoint] = { cost: 0, calls: 0 };
+      aiCostByEndpoint[log.endpoint].cost += cost;
+      aiCostByEndpoint[log.endpoint].calls += 1;
+
+      // Daily
+      const day = log.created_at.split('T')[0];
+      aiDailyCost[day] = (aiDailyCost[day] || 0) + cost;
+    });
+
+    // Sort users by cost descending
+    const topCostUsers = Object.entries(aiCostByUser)
+      .sort((a, b) => b[1].cost - a[1].cost)
+      .slice(0, 15)
+      .map(([userId, data]) => ({ userId, ...data }));
+
     return NextResponse.json({
       overview: {
         totalUsers: totalUsersRes.count || 0,
@@ -158,6 +206,15 @@ export async function GET(request: NextRequest) {
       },
       completionStats,
       recentErrors: (recentErrorsRes.data || []).slice(0, 50),
+      aiCosts: {
+        totalCost: totalAiCost,
+        totalCalls: totalAiCalls,
+        totalTokens,
+        byEndpoint: aiCostByEndpoint,
+        topUsers: topCostUsers,
+        dailyCost: aiDailyCost,
+        topAiProfiles: (topAiUsersRes.data || []).slice(0, 15),
+      },
       range: days,
     });
   } catch (error) {

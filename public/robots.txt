@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /builder
+Disallow: /auth
+Disallow: /api
+Disallow: /funnel
+Disallow: /import
+Disallow: /job-preview
+Disallow: /r/
+
+# Host
+Host: https://resumly.app
+
+# Sitemaps
+Sitemap: https://resumly.app/sitemap.xml

@@ -25,7 +25,7 @@ export function MinimalTemplate({ data, styles }: Props) {
         lineHeight: s.lineHeight,
         color: '#333',
         backgroundColor: '#ffffff',
-        padding: `${s.paddingTop * 1.2}px ${s.paddingLeft * 1.3}px`,
+        padding: `${s.paddingTop * 1.2}px ${s.paddingLeft * 1.3}px ${s.paddingBottom * 1.2}px`,
         maxWidth: `${s.pageWidth}px`,
         minHeight: `${s.pageHeight}px`,
         margin: '0 auto',

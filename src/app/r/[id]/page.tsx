@@ -84,13 +84,13 @@ export default async function PublicResumePage({ params }: Props) {
       {/* Footer CTA */}
       <div className="max-w-[794px] mx-auto px-4 pb-10 text-center">
         <p className="text-sm text-neutral-50 mb-3">
-          Built with <Link href="/" className="text-primary font-medium hover:underline">Resumly</Link> — Create your ATS-optimized resume for free
+          Built with <Link href="/" className="text-primary font-medium hover:underline">Resumly</Link>. Create your ATS-optimized resume for free
         </p>
         <Link
           href="/builder/new"
           className="inline-flex items-center gap-2 bg-primary text-white font-medium px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors text-sm"
         >
-          Create My Resume — Free
+          Create My Resume, Free
         </Link>
       </div>
     </div>

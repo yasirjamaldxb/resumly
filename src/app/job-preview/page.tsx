@@ -24,6 +24,14 @@ function GoogleIcon() {
   );
 }
 
+const loadingSteps = [
+  { label: 'Connecting to job listing', icon: '🔗', delay: 0 },
+  { label: 'Extracting job title and company', icon: '🏢', delay: 1500 },
+  { label: 'Identifying required skills', icon: '🎯', delay: 3500 },
+  { label: 'Mapping ATS keywords', icon: '🔑', delay: 5500 },
+  { label: 'Preparing your tailored application', icon: '✨', delay: 7500 },
+];
+
 function JobPreviewContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -36,15 +44,27 @@ function JobPreviewContent() {
   const [showPaste, setShowPaste] = useState(false);
   const [pastedText, setPastedText] = useState('');
   const [pasteLoading, setPasteLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
 
-  // If already logged in, save job and redirect to funnel
+  // Animated loading steps
+  useEffect(() => {
+    if (status !== 'loading') return;
+    const timers = loadingSteps.map((step, i) =>
+      setTimeout(() => setActiveStep(i), step.delay)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [status]);
+
+  // Check auth first, then either redirect (logged in) or parse for preview (not logged in)
   useEffect(() => {
     if (!jobUrl) { router.replace('/builder/new'); return; }
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // Parse the job first, then save and redirect to funnel
+        setIsLoggedIn(true);
         try {
           const res = await fetch('/api/jobs/parse', {
             method: 'POST',
@@ -64,26 +84,27 @@ function JobPreviewContent() {
               return;
             }
           }
-        } catch { /* fall through to builder */ }
-        router.replace(`/builder/new?job=${encodeURIComponent(jobUrl)}`);
+          if (!res.ok && data.message) {
+            setErrorMsg(data.message);
+            setStatus('paste');
+            setAuthChecked(true);
+            return;
+          }
+        } catch { /* fall through */ }
+        setStatus('paste');
+        setAuthChecked(true);
+        return;
       }
+      setAuthChecked(true);
     };
     checkAuth();
   }, [jobUrl, router]);
 
-  // Sites that block server-side fetching — go straight to paste UI
-  // Note: LinkedIn is NOT blocked — our guest API (jobs-guest/jobs/api/jobPosting/) works server-side
-  const isBlockedSite = /indeed\.com|glassdoor\.com|monster\.com|ziprecruiter\.com/i.test(jobUrl);
-
-  // Parse the job
+  // Parse the job for non-logged-in users only (after auth check completes)
+  // Includes automatic retry: if first attempt fails with a network/server error, retry once
   useEffect(() => {
-    if (!jobUrl) return;
-    if (isBlockedSite) {
-      // Don't waste time trying to fetch — show paste UI immediately
-      setStatus('paste');
-      return;
-    }
-    const parse = async () => {
+    if (!jobUrl || !authChecked || isLoggedIn) return;
+    const parse = async (attempt = 0) => {
       try {
         const res = await fetch('/api/jobs/parse', {
           method: 'POST',
@@ -92,6 +113,18 @@ function JobPreviewContent() {
         });
         const data = await res.json();
         if (!res.ok) {
+          // These are definitive errors, don't retry
+          if (data.error === 'login_wall' || data.error === 'search_page' || data.error === 'not_job_page') {
+            setErrorMsg(data.message || 'Could not analyze that job listing');
+            setStatus('paste');
+            return;
+          }
+          // For parse_failed or server errors, retry once
+          if (attempt === 0 && (data.error === 'parse_failed' || res.status >= 500)) {
+            console.log('[job-preview] First parse attempt failed, retrying...');
+            await new Promise(r => setTimeout(r, 1500));
+            return parse(1);
+          }
           setErrorMsg(data.message || 'Could not analyze that job listing');
           setStatus('error');
           return;
@@ -108,12 +141,18 @@ function JobPreviewContent() {
           }));
         }
       } catch {
+        // Network error: retry once before giving up
+        if (attempt === 0) {
+          console.log('[job-preview] Network error, retrying...');
+          await new Promise(r => setTimeout(r, 1500));
+          return parse(1);
+        }
         setErrorMsg('Could not connect to job analyzer. Check the URL and try again.');
         setStatus('error');
       }
     };
     parse();
-  }, [jobUrl, isBlockedSite]);
+  }, [jobUrl, authChecked, isLoggedIn]);
 
   const handlePasteSubmit = async () => {
     if (pastedText.trim().length < 50) return;
@@ -128,10 +167,26 @@ function JobPreviewContent() {
       const data = await res.json();
       if (!res.ok) {
         setErrorMsg(data.message || 'Could not analyze the job description');
-        setStatus('error');
+        setStatus('paste');
         setPasteLoading(false);
         return;
       }
+
+      if (isLoggedIn && data.job) {
+        try {
+          const saveRes = await fetch('/api/jobs/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...data.job, url: jobUrl || '', raw_text: pastedText.trim().slice(0, 2000) }),
+          });
+          const saveResult = await saveRes.json();
+          if (saveResult.id) {
+            router.replace(`/funnel/${saveResult.id}`);
+            return;
+          }
+        } catch { /* fall through to normal flow */ }
+      }
+
       setJob(data.job);
       setStatus('ready');
       setShowPaste(false);
@@ -146,7 +201,7 @@ function JobPreviewContent() {
       }
     } catch {
       setErrorMsg('Could not analyze the job description');
-      setStatus('error');
+      setStatus('paste');
     }
     setPasteLoading(false);
   };
@@ -155,7 +210,6 @@ function JobPreviewContent() {
     setAuthLoading(true);
     const supabase = createClient();
     const origin = window.location.origin;
-    // Store full parsed job data in localStorage for auth callback to save to DB
     if (job) {
       localStorage.setItem('resumly_pending_job', JSON.stringify({
         ...job,
@@ -176,9 +230,23 @@ function JobPreviewContent() {
   const hiddenCount = Math.max(0, allKeywords.length - 7);
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc]">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#f0f4ff] via-[#f6f8ff] to-white">
+      {/* Decorative blobs (matching homepage) */}
+      <div className="absolute top-[-120px] right-[-80px] w-[400px] h-[400px] bg-primary/[0.07] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-60px] left-[-100px] w-[350px] h-[350px] bg-blue-400/[0.06] rounded-full blur-[90px] pointer-events-none" />
+      <div className="absolute bottom-[-100px] left-[50%] w-[300px] h-[300px] bg-cyan-400/[0.05] rounded-full blur-[80px] pointer-events-none" />
+
+      {/* Dot grid (matching homepage) */}
+      <div
+        className="absolute inset-0 opacity-[0.3] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #94a3b8 0.5px, transparent 0.5px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+
       {/* Header */}
-      <header className="bg-white border-b border-neutral-10 px-5 py-3.5 flex items-center justify-between">
+      <header className="relative bg-white/70 backdrop-blur-md border-b border-neutral-10/60 px-5 py-3.5 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xs">R</span>
@@ -190,7 +258,7 @@ function JobPreviewContent() {
         </Link>
       </header>
 
-      <div className="max-w-[540px] mx-auto px-5 py-6 sm:py-14">
+      <div className="relative max-w-[540px] mx-auto px-5 py-6 sm:py-14">
 
         {/* Progress steps */}
         <div className="flex items-center gap-2 mb-5 sm:mb-10">
@@ -207,14 +275,14 @@ function JobPreviewContent() {
           </div>
           <div className="flex-1 h-px bg-neutral-15" />
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <div className="w-5 h-5 rounded-full border-2 border-primary bg-primary/10 flex items-center justify-center">
-              <span className="text-[10px] font-bold text-primary">2</span>
+            <div className="w-5 h-5 rounded-full border-2 border-neutral-20 bg-white/60 flex items-center justify-center">
+              <span className="text-[10px] font-bold text-neutral-40">2</span>
             </div>
-            <span className="text-[12px] font-medium text-neutral-50 whitespace-nowrap">Build resume</span>
+            <span className="text-[12px] font-medium text-neutral-40 whitespace-nowrap">Build resume</span>
           </div>
           <div className="flex-1 h-px bg-neutral-15" />
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <div className="w-5 h-5 rounded-full border-2 border-neutral-20 flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full border-2 border-neutral-20 bg-white/60 flex items-center justify-center">
               <span className="text-[10px] text-neutral-40">3</span>
             </div>
             <span className="text-[12px] text-neutral-40 whitespace-nowrap">Get the job</span>
@@ -223,26 +291,104 @@ function JobPreviewContent() {
 
         {/* Loading */}
         {status === 'loading' && (
-          <div className="text-center py-16">
-            <div className="relative w-16 h-16 mx-auto mb-5">
-              <div className="w-16 h-16 border-[3px] border-primary/20 rounded-full" />
-              <div className="absolute inset-0 w-16 h-16 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="py-8 sm:py-12">
+            {/* Animated spinner with gradient ring */}
+            <div className="relative w-20 h-20 mx-auto mb-8">
+              <div className="w-20 h-20 rounded-full border-[3px] border-primary/10" />
+              <div className="absolute inset-0 w-20 h-20 rounded-full border-[3px] border-transparent border-t-primary border-r-primary/50 animate-spin" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
               </div>
             </div>
-            <p className="text-[17px] font-semibold text-neutral-90 mb-1.5">Reading the job listing...</p>
-            <p className="text-[14px] text-neutral-50">Our AI is extracting keywords and requirements</p>
+
+            {/* Headline */}
+            <div className="text-center mb-8">
+              <h2 className="text-[22px] sm:text-[26px] font-bold text-neutral-90 tracking-tight mb-2">
+                {isLoggedIn ? 'Setting up your application...' : 'Analyzing this job for you...'}
+              </h2>
+              <p className="text-[14px] text-neutral-50 max-w-[380px] mx-auto">
+                {isLoggedIn
+                  ? 'We\'re preparing everything so you can apply in minutes.'
+                  : 'Hang tight. We\'re reading the listing so you don\'t have to.'
+                }
+              </p>
+            </div>
+
+            {/* Animated step-by-step progress */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-10/60 p-5 shadow-lg shadow-neutral-900/[0.04] mb-6">
+              <div className="space-y-3">
+                {loadingSteps.map((step, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 transition-all duration-500 ${
+                      i <= activeStep ? 'opacity-100' : 'opacity-30'
+                    }`}
+                  >
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
+                      i < activeStep
+                        ? 'bg-green-500'
+                        : i === activeStep
+                          ? 'bg-primary/10 border border-primary/30'
+                          : 'bg-neutral-10'
+                    }`}>
+                      {i < activeStep ? (
+                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : i === activeStep ? (
+                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      ) : (
+                        <span className="text-[11px] text-neutral-40">{step.icon}</span>
+                      )}
+                    </div>
+                    <span className={`text-[13px] transition-colors duration-500 ${
+                      i < activeStep
+                        ? 'text-green-600 font-medium'
+                        : i === activeStep
+                          ? 'text-neutral-90 font-medium'
+                          : 'text-neutral-40'
+                    }`}>
+                      {step.label}
+                      {i < activeStep && (
+                        <span className="text-green-500 ml-1.5 text-[11px]">Done</span>
+                      )}
+                      {i === activeStep && (
+                        <span className="text-primary ml-1.5 text-[11px] animate-pulse">In progress...</span>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* What you'll get */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-10/60 p-4">
+              <p className="text-[11px] text-neutral-40 font-medium uppercase tracking-wider mb-3">What you&apos;ll get in seconds</p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { icon: '📄', label: 'Tailored Resume' },
+                  { icon: '✉️', label: 'Cover Letter' },
+                  { icon: '✅', label: 'ATS Check' },
+                ].map((item) => (
+                  <div key={item.label} className="text-center">
+                    <span className="text-[18px] block mb-1">{item.icon}</span>
+                    <span className="text-[11px] text-neutral-60 font-medium">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Paste — blocked site, show polished paste-first UI */}
+        {/* Paste state */}
         {status === 'paste' && (
           <div>
             <div className="mb-3 sm:mb-5">
-              <div className="hidden sm:flex w-14 h-14 bg-primary/10 rounded-2xl items-center justify-center mx-auto mb-4">
+              <div className="hidden sm:flex w-14 h-14 bg-gradient-to-br from-primary/10 to-blue-400/10 rounded-2xl items-center justify-center mx-auto mb-4 border border-primary/10">
                 <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
                 </svg>
@@ -250,13 +396,19 @@ function JobPreviewContent() {
               <h2 className="text-[20px] sm:text-[22px] font-semibold text-neutral-90 text-center mb-1">
                 Paste the job description
               </h2>
-              <p className="text-[13px] sm:text-[14px] text-neutral-50 text-center">
-                Copy the full job posting and paste it below — we&apos;ll extract the keywords instantly.
-              </p>
+              {errorMsg ? (
+                <p className="text-[13px] sm:text-[14px] text-amber-600 text-center bg-amber-50/80 backdrop-blur-sm border border-amber-200 rounded-lg px-3 py-2 mt-2">
+                  {errorMsg}
+                </p>
+              ) : (
+                <p className="text-[13px] sm:text-[14px] text-neutral-50 text-center">
+                  Copy the full job posting and paste it below. We&apos;ll extract the keywords instantly.
+                </p>
+              )}
             </div>
 
-            {/* Step-by-step instructions — compact on mobile */}
-            <div className="bg-white rounded-xl border border-neutral-15 p-3 sm:p-4 mb-3 sm:mb-4">
+            {/* Step-by-step instructions */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-neutral-10/60 p-3 sm:p-4 mb-3 sm:mb-4 shadow-sm">
               <div className="flex flex-wrap gap-x-4 gap-y-1.5 sm:flex-col sm:gap-y-3 sm:gap-x-0">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center flex-shrink-0">1</span>
@@ -277,13 +429,13 @@ function JobPreviewContent() {
               value={pastedText}
               onChange={(e) => setPastedText(e.target.value)}
               placeholder="Paste the full job description here...&#10;&#10;e.g. &quot;About the role: We're looking for a Senior Product Manager to lead our growth team...&quot;"
-              className="w-full h-48 px-4 py-3 text-[14px] bg-white border border-neutral-20 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-neutral-35 text-neutral-90 resize-none mb-3"
+              className="w-full h-48 px-4 py-3 text-[14px] bg-white/90 backdrop-blur-sm border border-neutral-20 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-neutral-35 text-neutral-90 resize-none mb-3 shadow-sm"
               autoFocus
             />
             <button
               onClick={handlePasteSubmit}
               disabled={pasteLoading || pastedText.trim().length < 50}
-              className="w-full flex items-center justify-center gap-2 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md disabled:opacity-50 mb-3"
+              className="w-full flex items-center justify-center gap-2 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md shadow-primary/10 disabled:opacity-50 mb-3"
             >
               {pasteLoading
                 ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
@@ -297,13 +449,13 @@ function JobPreviewContent() {
           </div>
         )}
 
-        {/* Error — show paste fallback */}
+        {/* Error state */}
         {status === 'error' && (
           <div>
             {!showPaste ? (
               <>
                 <div className="text-center mb-6">
-                  <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-orange-200/50">
                     <svg className="w-7 h-7 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                     </svg>
@@ -313,7 +465,7 @@ function JobPreviewContent() {
                 </div>
                 <button
                   onClick={() => setShowPaste(true)}
-                  className="w-full flex items-center justify-center gap-2.5 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md mb-3"
+                  className="w-full flex items-center justify-center gap-2.5 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md shadow-primary/10 mb-3"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
@@ -323,32 +475,32 @@ function JobPreviewContent() {
                 <button
                   onClick={handleGoogleSignup}
                   disabled={authLoading}
-                  className="w-full flex items-center justify-center gap-3 bg-white border border-neutral-20 text-neutral-70 rounded-xl px-6 py-3.5 text-[14px] font-medium hover:bg-neutral-5 transition-colors mb-3"
+                  className="w-full flex items-center justify-center gap-3 bg-white/80 backdrop-blur-sm border border-neutral-20 text-neutral-70 rounded-xl px-6 py-3.5 text-[14px] font-medium hover:bg-white transition-colors mb-3"
                 >
                   {authLoading
                     ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
                     : null
                   }
-                  {authLoading ? 'Redirecting...' : 'Skip — build resume without job context'}
+                  {authLoading ? 'Redirecting...' : 'Skip, build resume without job context'}
                 </button>
               </>
             ) : (
               <>
                 <div className="mb-4">
                   <h2 className="text-[20px] font-semibold text-neutral-90 mb-1">Paste the job description</h2>
-                  <p className="text-[13px] text-neutral-50">Copy the full job posting from the website and paste it below. We'll extract the keywords and requirements.</p>
+                  <p className="text-[13px] text-neutral-50">Copy the full job posting from the website and paste it below. We&apos;ll extract the keywords and requirements.</p>
                 </div>
                 <textarea
                   value={pastedText}
                   onChange={(e) => setPastedText(e.target.value)}
                   placeholder="Paste the full job description here...&#10;&#10;e.g. &quot;About the role: We're looking for a Senior Product Manager to lead our growth team...&quot;"
-                  className="w-full h-48 px-4 py-3 text-[14px] bg-white border border-neutral-20 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-neutral-35 text-neutral-90 resize-none mb-3"
+                  className="w-full h-48 px-4 py-3 text-[14px] bg-white/90 backdrop-blur-sm border border-neutral-20 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-neutral-35 text-neutral-90 resize-none mb-3 shadow-sm"
                   autoFocus
                 />
                 <button
                   onClick={handlePasteSubmit}
                   disabled={pasteLoading || pastedText.trim().length < 50}
-                  className="w-full flex items-center justify-center gap-2 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md disabled:opacity-50 mb-3"
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-colors shadow-md shadow-primary/10 disabled:opacity-50 mb-3"
                 >
                   {pasteLoading
                     ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
@@ -367,12 +519,12 @@ function JobPreviewContent() {
           </div>
         )}
 
-        {/* Ready — the magic moment */}
+        {/* Ready state */}
         {status === 'ready' && job && (
           <div>
             {/* Job header */}
             <div className="mb-7">
-              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-[11px] font-bold px-2.5 py-1 rounded-full mb-3 uppercase tracking-wide">
+              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-[11px] font-bold px-2.5 py-1 rounded-full mb-3 uppercase tracking-wide border border-green-200/50">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                 Analyzed
               </div>
@@ -387,7 +539,7 @@ function JobPreviewContent() {
             </div>
 
             {/* Keywords card */}
-            <div className="bg-white rounded-2xl border border-neutral-15 p-5 mb-4 shadow-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-10/60 p-5 mb-4 shadow-lg shadow-neutral-900/[0.04]">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[14px] font-semibold text-neutral-90">
                   {allKeywords.length} keywords found
@@ -409,17 +561,17 @@ function JobPreviewContent() {
                 )}
               </div>
               <p className="text-[12px] text-neutral-40 mt-3 pt-3 border-t border-neutral-10">
-                We'll suggest where to include these in your resume to pass ATS filters.
+                We&apos;ll place these keywords throughout your resume to pass ATS filters.
               </p>
             </div>
 
             {/* Value prop */}
-            <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-xl p-4 mb-6 backdrop-blur-sm">
               <svg className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
               </svg>
               <p className="text-[13px] text-primary">
-                <span className="font-semibold">Your resume will be tailored for this exact role.</span> We'll pre-fill keywords, suggest bullet points, and highlight the skills that matter for this position.
+                <span className="font-semibold">Your resume will be tailored for this exact role.</span> We&apos;ll pre-fill keywords, suggest bullet points, and highlight the skills that matter for this position.
               </p>
             </div>
 
@@ -427,13 +579,13 @@ function JobPreviewContent() {
             <button
               onClick={handleGoogleSignup}
               disabled={authLoading}
-              className="w-full flex items-center justify-center gap-3 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-all shadow-md hover:shadow-lg disabled:opacity-70 mb-3"
+              className="w-full flex items-center justify-center gap-3 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-all shadow-md shadow-primary/10 hover:shadow-lg disabled:opacity-70 mb-3"
             >
               {authLoading
                 ? <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
                 : <GoogleIcon />
               }
-              {authLoading ? 'Redirecting to Google...' : 'Get my tailored resume — it\'s free'}
+              {authLoading ? 'Redirecting to Google...' : 'Get my tailored resume, it\'s free'}
             </button>
             <p className="text-center text-[13px] text-neutral-40">
               Already have an account?{' '}
@@ -454,7 +606,7 @@ function JobPreviewContent() {
 export default function JobPreviewPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#f0f4ff] via-[#f6f8ff] to-white flex items-center justify-center">
         <div className="w-10 h-10 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     }>

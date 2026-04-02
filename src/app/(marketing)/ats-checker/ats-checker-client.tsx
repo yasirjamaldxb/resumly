@@ -406,7 +406,7 @@ export function ATSCheckerClient() {
                       <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
                       </svg>
-                      {result.suggestions.length} issue{result.suggestions.length !== 1 ? 's' : ''} found — here&apos;s how to fix them
+                      {result.suggestions.length} issue{result.suggestions.length !== 1 ? 's' : ''} found. Here&apos;s how to fix them
                     </h3>
                     {/* Show first suggestion clearly */}
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
@@ -454,7 +454,7 @@ export function ATSCheckerClient() {
                     Unlock your full ATS report
                   </h3>
                   <p className="text-[14px] text-neutral-60 mb-6 max-w-[400px] mx-auto">
-                    Get your complete analysis with all {result.suggestions.length} fix suggestions and detailed breakdown — we&apos;ll also email you the full report so you can reference it later.
+                    Get your complete analysis with all {result.suggestions.length} fix suggestions and detailed breakdown. We&apos;ll also email you the full report so you can reference it later.
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-3 max-w-[440px] mx-auto">

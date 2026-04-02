@@ -45,7 +45,7 @@ export function TechnicalTemplate({ data, styles }: Props) {
           flexShrink: 0,
           backgroundColor: sidebarBg,
           color: '#ffffff',
-          padding: `${s.paddingTop}px ${s.paddingLeft * 0.5}px`,
+          padding: `${s.paddingTop}px ${s.paddingLeft * 0.5}px ${s.paddingBottom}px`,
           boxSizing: 'border-box',
         }}
       >
@@ -166,7 +166,7 @@ export function TechnicalTemplate({ data, styles }: Props) {
       <div
         style={{
           flex: 1,
-          padding: `${s.paddingTop}px ${s.paddingRight}px`,
+          padding: `${s.paddingTop}px ${s.paddingRight}px ${s.paddingBottom}px`,
           boxSizing: 'border-box',
         }}
       >

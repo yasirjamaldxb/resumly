@@ -64,7 +64,7 @@ function SkillLevelSlider({
         ))}
       </div>
       <p className="text-xs text-neutral-50">
-        Level — <span className="font-medium text-neutral-70">{SKILL_LEVEL_LABELS[level]}</span>
+        Level: <span className="font-medium text-neutral-70">{SKILL_LEVEL_LABELS[level]}</span>
       </p>
     </div>
   );
@@ -98,7 +98,7 @@ function LanguageLevelSlider({
         ))}
       </div>
       <p className="text-xs text-neutral-50">
-        Level — <span className="font-medium text-neutral-70">{LANG_LEVEL_LABELS[proficiency]}</span>
+        Level: <span className="font-medium text-neutral-70">{LANG_LEVEL_LABELS[proficiency]}</span>
       </p>
     </div>
   );
@@ -395,7 +395,7 @@ export function SkillsForm({ data, onChange }: Props) {
         {/* Suggestions */}
         {suggestions.length > 0 && (
           <div>
-            <p className="text-xs text-neutral-50 mb-2">Common skills — click to add:</p>
+            <p className="text-xs text-neutral-50 mb-2">Common skills, click to add:</p>
             <div className="flex flex-wrap gap-1.5">
               {suggestions.slice(0, 10).map((s) => (
                 <button

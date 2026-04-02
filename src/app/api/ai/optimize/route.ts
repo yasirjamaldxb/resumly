@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
+import { getUserUsage, canUseOptimization } from '@/lib/usage';
+import { logAiUsage } from '@/lib/ai-usage';
+import { buildUserContext, type UserProfile } from '@/lib/user-context';
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -15,8 +18,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const usage = await getUserUsage(supabase, user.id);
+    if (!canUseOptimization(usage)) {
+      return NextResponse.json({
+        error: 'limit_reached',
+        message: `You've used your free application. Upgrade to create unlimited optimized resumes and cover letters.`,
+        tier: usage.tier,
+      }, { status: 403 });
+    }
+
     const body = await req.json();
-    const { resumeData, jobData } = body;
+    const { resumeData, jobData, userProfile, rejectedSkills } = body;
 
     if (!resumeData || !jobData) {
       return NextResponse.json({ error: 'resumeData and jobData are required' }, { status: 400 });
@@ -27,7 +39,20 @@ export async function POST(req: NextRequest) {
       baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
     });
 
-    const prompt = `You are an expert resume optimizer. Optimize this resume to match the target job description.
+    // Collect all job keywords/skills the resume must contain
+    const allJobKeywords = [
+      ...(jobData.skills || []),
+      ...(jobData.keywords || []),
+    ];
+    const uniqueKeywords = [...new Set(allJobKeywords.map((k: string) => k.toLowerCase()))];
+    const keywordList = allJobKeywords.filter((k: string, i: number) =>
+      allJobKeywords.findIndex((j: string) => j.toLowerCase() === k.toLowerCase()) === i
+    );
+
+    const candidateContext = buildUserContext(userProfile as UserProfile | undefined);
+
+    const prompt = `You are an expert resume optimizer. Optimize this resume to achieve a 100% keyword match with the target job description.
+${candidateContext}
 
 TARGET JOB:
 Title: ${jobData.title || 'N/A'}
@@ -36,6 +61,9 @@ Description: ${jobData.description || 'N/A'}
 Requirements: ${(jobData.requirements || []).join(', ')}
 Skills needed: ${(jobData.skills || []).join(', ')}
 Keywords: ${(jobData.keywords || []).join(', ')}
+
+REQUIRED KEYWORDS THAT MUST ALL APPEAR IN THE RESUME:
+${keywordList.join(', ')}
 
 CURRENT RESUME:
 Name: ${resumeData.personalDetails?.firstName} ${resumeData.personalDetails?.lastName}
@@ -46,9 +74,9 @@ Skills: ${resumeData.skills?.map((s: { name: string }) => s.name).join(', ')}
 
 Return ONLY valid JSON (no markdown, no code blocks) with these fields:
 {
-  "summary": "Optimized 3-sentence professional summary targeting this specific job",
+  "summary": "Optimized 3-sentence professional summary targeting this specific job, weaving in key job terms naturally",
   "jobTitle": "Optimized job title matching the target role",
-  "skills": ["skill1", "skill2", ...up to 15 most relevant skills for this job],
+  "skills": ["skill1", "skill2", ...ALL skills - keep existing relevant ones AND add EVERY missing job keyword/skill],
   "bulletImprovements": [
     {
       "experienceIndex": 0,
@@ -57,18 +85,25 @@ Return ONLY valid JSON (no markdown, no code blocks) with these fields:
       "improved": "improved bullet with relevant keywords and metrics"
     }
   ],
-  "matchScore": 85,
   "changes": ["Brief description of each change made"]
 }
 
 Rules:
-- NEVER fabricate experience, companies, or roles
-- Reword existing bullets to include relevant keywords from the job
-- Add metrics and quantifiable results where the original suggests impact
+- CRITICAL: Every single keyword from REQUIRED KEYWORDS must appear somewhere in the optimized resume — in skills, summary, or bullet improvements. Missing even one keyword hurts the ATS match score.
+- ONLY add skills that the candidate's resume already lists OR that the candidate explicitly confirmed they have. NEVER guess or assume skills based on job title or role — the user has already been asked about missing skills.
+- Weave keywords naturally into bullet point improvements where relevant.
+- NEVER fabricate experience, companies, roles, metrics, or numbers. If the original bullet has no numbers, rewrite it to be stronger but do NOT invent percentages, dollar amounts, or team sizes. Only include metrics that already exist in the original resume.
+- Reword existing bullets to include relevant keywords from the job — make them more impactful and specific, but keep the facts truthful to what the candidate wrote.
 - Reorder skills to prioritize job-relevant ones first
 - Match the job title to what the role is asking for (if similar enough)
 - Keep the same tone and voice as the original
-- matchScore = estimated ATS keyword match percentage (0-100)`;
+${(rejectedSkills as string[] || []).length > 0 ? `
+SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).join(', ')}
+- Do NOT add these skills to the skills list or claim the candidate has them
+- Instead, COMPENSATE creatively: emphasize transferable skills, highlight adjacent experience, and show strong learning ability
+- Frame existing experience to demonstrate readiness to pick up these tools/skills quickly
+- In bullet improvements, emphasize outcomes and impact that show the candidate can deliver results regardless of specific tools
+- In the summary, position the candidate's existing strengths as complementary to these requirements` : ''}`;
 
     const completion = await openai.chat.completions.create({
       model: 'gemini-2.5-flash',
@@ -84,11 +119,11 @@ Rules:
     const jsonStr = content.replace(/```json\s*\n?/g, '').replace(/```\s*$/g, '').trim();
     const result = JSON.parse(jsonStr);
 
-    // Increment usage counter
-    await supabase
-      .from('profiles')
-      .update({ ai_optimizations_used: (body.currentOptimizations || 0) + 1 })
-      .eq('id', user.id);
+    // Increment usage counter + log cost
+    await Promise.all([
+      supabase.from('profiles').update({ ai_optimizations_used: (usage.optimizationsUsed || 0) + 1 }).eq('id', user.id),
+      logAiUsage(supabase, user.id, 'optimize', completion, { jobTitle: jobData.title }),
+    ]);
 
     return NextResponse.json({ success: true, optimization: result });
   } catch (error) {

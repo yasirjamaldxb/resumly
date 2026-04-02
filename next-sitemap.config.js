@@ -1,22 +1,47 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://resumly.app',
+  siteUrl: 'https://resumly.app',
   generateRobotsTxt: true,
+  generateIndexSitemap: false,
   robotsTxtOptions: {
     policies: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard', '/builder', '/auth'],
+        disallow: [
+          '/dashboard',
+          '/builder',
+          '/auth',
+          '/api',
+          '/funnel',
+          '/import',
+          '/job-preview',
+          '/r/',
+        ],
       },
     ],
-    additionalSitemaps: ['https://resumly.app/sitemap.xml'],
   },
-  exclude: ['/dashboard', '/builder/*', '/auth/*', '/api/*'],
+  exclude: [
+    '/dashboard',
+    '/dashboard/*',
+    '/builder/*',
+    '/auth/*',
+    '/api/*',
+    '/funnel/*',
+    '/import',
+    '/job-preview',
+    '/r/*',
+    '/icon.svg',
+    '/apple-icon.png',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/sitemap-0.xml',
+    '/z9k-panel',
+  ],
   changefreq: 'weekly',
   priority: 0.7,
   sitemapSize: 5000,
-  additionalPaths: async (config) => {
+  additionalPaths: async () => {
     const examples = [
       'software-engineer', 'nurse', 'student', 'marketing-manager',
       'data-scientist', 'product-manager', 'web-developer', 'ux-designer',
@@ -25,12 +50,14 @@ module.exports = {
     ];
 
     return [
-      { loc: '/', changefreq: 'daily', priority: 1.0 },
-      { loc: '/resume-builder', changefreq: 'weekly', priority: 0.9 },
-      { loc: '/resume-templates', changefreq: 'weekly', priority: 0.9 },
-      { loc: '/resume-examples', changefreq: 'weekly', priority: 0.8 },
-      { loc: '/cover-letter-builder', changefreq: 'weekly', priority: 0.8 },
-      { loc: '/ats-checker', changefreq: 'weekly', priority: 0.8 },
+      { loc: '/', changefreq: 'daily', priority: 1.0, lastmod: new Date().toISOString() },
+      { loc: '/resume-builder', changefreq: 'weekly', priority: 0.9, lastmod: new Date().toISOString() },
+      { loc: '/resume-templates', changefreq: 'weekly', priority: 0.9, lastmod: new Date().toISOString() },
+      { loc: '/resume-examples', changefreq: 'weekly', priority: 0.8, lastmod: new Date().toISOString() },
+      { loc: '/cover-letter-builder', changefreq: 'weekly', priority: 0.8, lastmod: new Date().toISOString() },
+      { loc: '/ai-resume-builder', changefreq: 'weekly', priority: 0.8, lastmod: new Date().toISOString() },
+      { loc: '/ats-checker', changefreq: 'weekly', priority: 0.8, lastmod: new Date().toISOString() },
+      { loc: '/blog', changefreq: 'weekly', priority: 0.7, lastmod: new Date().toISOString() },
       ...examples.map((slug) => ({
         loc: `/resume-examples/${slug}`,
         changefreq: 'monthly',

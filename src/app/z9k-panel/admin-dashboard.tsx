@@ -44,6 +44,15 @@ interface DashboardData {
     metadata: Record<string, unknown>;
     created_at: string;
   }>;
+  aiCosts: {
+    totalCost: number;
+    totalCalls: number;
+    totalTokens: number;
+    byEndpoint: Record<string, { cost: number; calls: number }>;
+    topUsers: Array<{ userId: string; cost: number; calls: number; tokens: number }>;
+    dailyCost: Record<string, number>;
+    topAiProfiles: Array<{ id: string; ai_optimizations_used: number; subscription_tier: string; created_at: string }>;
+  };
   range: number;
 }
 
@@ -51,7 +60,7 @@ export function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState('30');
-  const [activeTab, setActiveTab] = useState<'overview' | 'funnel' | 'errors' | 'ats' | 'resumes'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'funnel' | 'errors' | 'ats' | 'resumes' | 'ai-costs'>('overview');
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -89,6 +98,7 @@ export function AdminDashboard() {
     { id: 'funnel' as const, label: 'Funnel' },
     { id: 'resumes' as const, label: 'Resumes' },
     { id: 'ats' as const, label: 'ATS Checker' },
+    { id: 'ai-costs' as const, label: `AI Costs ($${data.aiCosts?.totalCost?.toFixed(2) || '0.00'})` },
     { id: 'errors' as const, label: `Errors (${data.overview.totalErrors})` },
   ];
 
@@ -149,6 +159,7 @@ export function AdminDashboard() {
         {activeTab === 'funnel' && <FunnelTab data={data} />}
         {activeTab === 'resumes' && <ResumesTab data={data} />}
         {activeTab === 'ats' && <ATSTab data={data} />}
+        {activeTab === 'ai-costs' && <AICostsTab data={data} />}
         {activeTab === 'errors' && <ErrorsTab data={data} />}
       </div>
     </div>
@@ -333,7 +344,7 @@ function FunnelTab({ data }: { data: DashboardData }) {
         <h3 className="text-sm font-semibold text-neutral-300 mb-4">Growth Insights</h3>
         <div className="space-y-3">
           {f.signups > 0 && f.resumesCreated === 0 && (
-            <Insight type="critical" text="Users are signing up but NOT creating resumes. The onboarding flow needs work — consider auto-creating a resume on signup." />
+            <Insight type="critical" text="Users are signing up but NOT creating resumes. The onboarding flow needs work. Consider auto-creating a resume on signup." />
           )}
           {f.resumesCreated > 0 && f.pdfDownloads === 0 && (
             <Insight type="warning" text="Users create resumes but don't download. The download button might be hard to find, or users abandon before completing their resume." />
@@ -600,6 +611,158 @@ function ErrorsTab({ data }: { data: DashboardData }) {
         title="Daily Errors"
         data={data.dailyEventsByType['api_error'] || {}}
         color="#ef4444"
+        days={data.range}
+      />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+// AI COSTS TAB
+// ═══════════════════════════════════════════════
+
+function AICostsTab({ data }: { data: DashboardData }) {
+  const ai = data.aiCosts;
+  if (!ai) return <p className="text-neutral-500 text-sm">No AI usage data yet.</p>;
+
+  const avgCostPerCall = ai.totalCalls > 0 ? ai.totalCost / ai.totalCalls : 0;
+  const projectedMonthlyCost = ai.totalCost > 0 && data.range > 0
+    ? (ai.totalCost / data.range) * 30
+    : 0;
+
+  return (
+    <div className="space-y-6">
+      {/* Top-level metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-5 text-center">
+          <p className="text-[11px] uppercase tracking-wider text-green-400/60 mb-1">Total AI Cost</p>
+          <p className="text-3xl font-bold text-green-400">${ai.totalCost.toFixed(4)}</p>
+          <p className="text-[11px] text-green-400/60 mt-1">this period</p>
+        </div>
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-5 text-center">
+          <p className="text-[11px] uppercase tracking-wider text-blue-400/60 mb-1">Total API Calls</p>
+          <p className="text-3xl font-bold text-blue-400">{ai.totalCalls}</p>
+          <p className="text-[11px] text-blue-400/60 mt-1">this period</p>
+        </div>
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 text-center">
+          <p className="text-[11px] uppercase tracking-wider text-purple-400/60 mb-1">Avg Cost/Call</p>
+          <p className="text-3xl font-bold text-purple-400">${avgCostPerCall.toFixed(4)}</p>
+          <p className="text-[11px] text-purple-400/60 mt-1">{(ai.totalTokens / Math.max(ai.totalCalls, 1)).toFixed(0)} tokens avg</p>
+        </div>
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-5 text-center">
+          <p className="text-[11px] uppercase tracking-wider text-amber-400/60 mb-1">Projected /mo</p>
+          <p className="text-3xl font-bold text-amber-400">${projectedMonthlyCost.toFixed(2)}</p>
+          <p className="text-[11px] text-amber-400/60 mt-1">at current rate</p>
+        </div>
+      </div>
+
+      {/* Cost by endpoint */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-sm font-semibold text-neutral-300 mb-4">Cost by Endpoint</h3>
+        <div className="space-y-3">
+          {Object.entries(ai.byEndpoint)
+            .sort((a, b) => b[1].cost - a[1].cost)
+            .map(([endpoint, stats]) => {
+              const pct = ai.totalCost > 0 ? (stats.cost / ai.totalCost) * 100 : 0;
+              return (
+                <div key={endpoint}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-mono text-neutral-300">/api/ai/{endpoint}</span>
+                      <span className="text-[11px] text-neutral-500">{stats.calls} calls</span>
+                    </div>
+                    <span className="text-sm font-bold text-white">${stats.cost.toFixed(4)} ({pct.toFixed(0)}%)</span>
+                  </div>
+                  <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          {Object.keys(ai.byEndpoint).length === 0 && (
+            <p className="text-neutral-500 text-sm">No AI calls logged yet.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Top users by cost */}
+      <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-white/10">
+          <h3 className="text-sm font-semibold text-neutral-300">Top Users by AI Cost</h3>
+          <p className="text-[12px] text-neutral-500 mt-0.5">Users consuming the most API credits this period</p>
+        </div>
+        {ai.topUsers.length === 0 ? (
+          <div className="p-8 text-center text-neutral-500 text-sm">No AI usage logged yet.</div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            <div className="grid grid-cols-5 gap-4 px-4 py-2 text-[11px] uppercase tracking-wider text-neutral-500 font-medium">
+              <span>User ID</span>
+              <span className="text-right">Calls</span>
+              <span className="text-right">Tokens</span>
+              <span className="text-right">Cost</span>
+              <span className="text-right">Tier</span>
+            </div>
+            {ai.topUsers.map((u, i) => {
+              const profile = ai.topAiProfiles?.find(p => p.id === u.userId);
+              return (
+                <div key={u.userId} className="grid grid-cols-5 gap-4 px-4 py-3 hover:bg-white/5 transition items-center">
+                  <span className="text-[12px] font-mono text-neutral-400 truncate" title={u.userId}>
+                    <span className={`inline-block w-4 text-center mr-2 ${i < 3 ? 'text-amber-400' : 'text-neutral-600'}`}>
+                      {i + 1}
+                    </span>
+                    {u.userId.slice(0, 8)}...
+                  </span>
+                  <span className="text-[13px] text-white text-right font-medium">{u.calls}</span>
+                  <span className="text-[13px] text-neutral-300 text-right">{u.tokens.toLocaleString()}</span>
+                  <span className={`text-[13px] text-right font-bold ${u.cost > 0.01 ? 'text-red-400' : 'text-green-400'}`}>
+                    ${u.cost.toFixed(4)}
+                  </span>
+                  <span className="text-right">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                      profile?.subscription_tier === 'pro' ? 'bg-purple-500/20 text-purple-400' :
+                      profile?.subscription_tier === 'starter' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-neutral-500/20 text-neutral-400'
+                    }`}>
+                      {profile?.subscription_tier || 'free'}
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Profitability insight */}
+      {ai.totalCalls > 0 && (
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-neutral-300 mb-4">Profitability Analysis</h3>
+          <div className="space-y-3">
+            <Insight
+              type={projectedMonthlyCost < 5 ? 'info' : projectedMonthlyCost < 20 ? 'warning' : 'critical'}
+              text={`Projected monthly AI cost: $${projectedMonthlyCost.toFixed(2)}. ${
+                projectedMonthlyCost < 5
+                  ? 'Costs are very low. Focus on growth before monetizing.'
+                  : projectedMonthlyCost < 20
+                    ? 'Costs are manageable but growing. Ensure free users are gated and Pro pricing covers this.'
+                    : 'Costs are significant. Verify usage gates are working and consider tightening free tier limits.'
+              }`}
+            />
+            {ai.topUsers.length > 0 && ai.topUsers[0].cost > projectedMonthlyCost * 0.3 && (
+              <Insight
+                type="warning"
+                text={`Top user accounts for ${((ai.topUsers[0].cost / ai.totalCost) * 100).toFixed(0)}% of total cost (${ai.topUsers[0].calls} calls, $${ai.topUsers[0].cost.toFixed(4)}). Check if they're on a paid plan.`}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Daily cost chart */}
+      <DailyChart
+        title="Daily AI Cost ($)"
+        data={Object.fromEntries(Object.entries(ai.dailyCost).map(([k, v]) => [k, Math.round(v * 10000)]))}
+        color="#10b981"
         days={data.range}
       />
     </div>

@@ -12,7 +12,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
     sections: [
       {
         heading: 'Choose the right resume format',
-        content: 'The three main resume formats are chronological (most common — lists work history newest to oldest), functional (skills-based, better for career changers), and combination (hybrid of both). For most people, the chronological or combination format works best. Hiring managers and ATS systems are most familiar with chronological resumes.',
+        content: 'The three main resume formats are chronological (most common, lists work history newest to oldest), functional (skills-based, better for career changers), and combination (hybrid of both). For most people, the chronological or combination format works best. Hiring managers and ATS systems are most familiar with chronological resumes.',
       },
       {
         heading: 'Essential resume sections',
@@ -20,7 +20,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'How to write your professional summary',
-        content: 'Your professional summary is prime real estate — the first thing recruiters read. It should be 3-5 sentences that: state your job title and years of experience, highlight your top 2-3 relevant skills or achievements, and include keywords from your target job description. Avoid phrases like "hard-working" or "team player" — these are meaningless without evidence.',
+        content: 'Your professional summary is prime real estate, the first thing recruiters read. It should be 3-5 sentences that: state your job title and years of experience, highlight your top 2-3 relevant skills or achievements, and include keywords from your target job description. Avoid phrases like "hard-working" or "team player". These are meaningless without evidence.',
       },
       {
         heading: 'Writing effective work experience bullet points',
@@ -32,12 +32,12 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'How long should your resume be?',
-        content: 'The right resume length depends on your experience: 0-10 years: 1 page maximum. 10+ years: 2 pages maximum. Academic/research roles: CV format, no page limit. Focus on relevance — cut anything older than 15 years or unrelated to your target role.',
+        content: 'The right resume length depends on your experience: 0-10 years: 1 page maximum. 10+ years: 2 pages maximum. Academic/research roles: CV format, no page limit. Focus on relevance. Cut anything older than 15 years or unrelated to your target role.',
       },
     ],
   },
   'ats-resume-guide': {
-    intro: 'Applicant Tracking Systems (ATS) are used by 99% of Fortune 500 companies to automatically filter resumes. If your resume isn\'t formatted correctly, it will be rejected before a human ever reads it — no matter how qualified you are.',
+    intro: 'Applicant Tracking Systems (ATS) are used by 99% of Fortune 500 companies to automatically filter resumes. If your resume isn\'t formatted correctly, it will be rejected before a human ever reads it, no matter how qualified you are.',
     sections: [
       {
         heading: 'What is an ATS and how does it work?',
@@ -48,7 +48,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
         content: 'To ensure ATS can parse your resume: use standard fonts (Arial, Calibri, Times New Roman), avoid tables, text boxes, columns, headers/footers, and graphics, use standard section headings ("Work Experience" not "Where I\'ve Been"), submit as PDF with embedded text (never a scanned image), and keep file size under 2MB.',
       },
       {
-        heading: 'ATS keywords — the most important factor',
+        heading: 'ATS keywords: the most important factor',
         content: 'The #1 way to pass ATS is keyword matching. Read the job description carefully and use the exact same terms they use. If they say "project management" use that phrase, not "managing projects." If they list "Salesforce" as a requirement, make sure that exact word appears in your skills section.',
       },
       {
@@ -70,7 +70,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'How to structure a resume summary',
-        content: 'An effective resume summary follows a simple formula: lead with your professional title and years of experience, follow with two or three of your most impressive and relevant accomplishments or skills, and close with what you bring to the target role. Keep it between 30 and 60 words. Avoid first-person pronouns like "I" and generic filler phrases like "results-driven professional" unless you back them up with specifics. Every word should earn its place — if a sentence could apply to any candidate in your field, it is too vague.',
+        content: 'An effective resume summary follows a simple formula: lead with your professional title and years of experience, follow with two or three of your most impressive and relevant accomplishments or skills, and close with what you bring to the target role. Keep it between 30 and 60 words. Avoid first-person pronouns like "I" and generic filler phrases like "results-driven professional" unless you back them up with specifics. Every word should earn its place. If a sentence could apply to any candidate in your field, it is too vague.',
       },
       {
         heading: 'Resume summary examples by experience level',
@@ -99,7 +99,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'How to identify the right skills for each application',
-        content: 'Start with the job description — it is your blueprint. Read through the requirements and preferred qualifications sections and list every skill mentioned. Then cross-reference this list against your own abilities, certifying which ones you genuinely possess. Prioritize skills that appear multiple times in the posting or are listed as required rather than preferred. Also review several similar job postings from different companies to identify industry-standard skills that may not appear in a single listing but are broadly expected in your field.',
+        content: 'Start with the job description. It is your blueprint. Read through the requirements and preferred qualifications sections and list every skill mentioned. Then cross-reference this list against your own abilities, certifying which ones you genuinely possess. Prioritize skills that appear multiple times in the posting or are listed as required rather than preferred. Also review several similar job postings from different companies to identify industry-standard skills that may not appear in a single listing but are broadly expected in your field.',
       },
       {
         heading: 'Top technical skills by industry in 2026',
@@ -107,11 +107,11 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'How to organize your skills section',
-        content: 'Group your skills into logical categories for readability. A software developer might use categories like "Languages," "Frameworks & Libraries," "Databases," and "DevOps Tools." A marketing professional might group by "Analytics," "Content & SEO," "Advertising Platforms," and "Design Tools." List your strongest and most relevant skills first within each category. Avoid rating your skills with bars, charts, or percentages — these are subjective, take up space, and most ATS systems cannot read them. If you want to indicate proficiency, use clear labels like "Proficient" or "Working knowledge."',
+        content: 'Group your skills into logical categories for readability. A software developer might use categories like "Languages," "Frameworks & Libraries," "Databases," and "DevOps Tools." A marketing professional might group by "Analytics," "Content & SEO," "Advertising Platforms," and "Design Tools." List your strongest and most relevant skills first within each category. Avoid rating your skills with bars, charts, or percentages. These are subjective, take up space, and most ATS systems cannot read them. If you want to indicate proficiency, use clear labels like "Proficient" or "Working knowledge."',
       },
       {
         heading: 'Skills to avoid listing on your resume',
-        content: 'Remove any skill that is expected of virtually every professional in 2026. Microsoft Word, email, basic internet research, and typing are assumed competencies and listing them can make you look inexperienced. Also avoid listing skills you cannot actually perform well — interviewers will test your claims. Outdated technologies should be removed unless the specific job requires them. And never list subjective traits as skills: "hard worker," "fast learner," and "detail-oriented" are not skills. They are self-assessments that carry no weight without supporting evidence in your experience section.',
+        content: 'Remove any skill that is expected of virtually every professional in 2026. Microsoft Word, email, basic internet research, and typing are assumed competencies and listing them can make you look inexperienced. Also avoid listing skills you cannot actually perform well. Interviewers will test your claims. Outdated technologies should be removed unless the specific job requires them. And never list subjective traits as skills: "hard worker," "fast learner," and "detail-oriented" are not skills. They are self-assessments that carry no weight without supporting evidence in your experience section.',
       },
       {
         heading: 'Making your skills ATS-friendly',
@@ -124,19 +124,19 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
     sections: [
       {
         heading: 'When you need a cover letter (and when you can skip it)',
-        content: 'Always submit a cover letter when the job posting explicitly requests one, when you are applying through email or a company website that provides an upload field for it, or when you are making a career change and need to explain the transition. You can generally skip a cover letter when applying through platforms like LinkedIn Easy Apply where there is no option to attach one, or when the posting specifically says not to include one. When in doubt, include it — a cover letter rarely hurts your candidacy but a missing one occasionally does.',
+        content: 'Always submit a cover letter when the job posting explicitly requests one, when you are applying through email or a company website that provides an upload field for it, or when you are making a career change and need to explain the transition. You can generally skip a cover letter when applying through platforms like LinkedIn Easy Apply where there is no option to attach one, or when the posting specifically says not to include one. When in doubt, include it. A cover letter rarely hurts your candidacy but a missing one occasionally does.',
       },
       {
         heading: 'Cover letter structure and format',
-        content: 'A strong cover letter follows a clear four-paragraph structure. The opening paragraph states which position you are applying for and includes one sentence that grabs attention — a notable achievement, a connection to the company, or a specific reason you are excited about the role. The second paragraph covers your most relevant experience and accomplishments, drawing direct connections to the job requirements. The third paragraph explains why this particular company appeals to you and what you would bring to their team. The closing paragraph includes a call to action, thanking the reader and expressing interest in discussing the role further. Keep the entire letter under 400 words.',
+        content: 'A strong cover letter follows a clear four-paragraph structure. The opening paragraph states which position you are applying for and includes one sentence that grabs attention, such as a notable achievement, a connection to the company, or a specific reason you are excited about the role. The second paragraph covers your most relevant experience and accomplishments, drawing direct connections to the job requirements. The third paragraph explains why this particular company appeals to you and what you would bring to their team. The closing paragraph includes a call to action, thanking the reader and expressing interest in discussing the role further. Keep the entire letter under 400 words.',
       },
       {
         heading: 'Writing an opening that gets attention',
-        content: 'The worst way to start a cover letter is "I am writing to apply for the position of..." — it wastes valuable space stating the obvious. Instead, lead with something specific: "When I led the migration of our payment system to a microservices architecture, I reduced transaction processing time by 40% — and I am eager to bring that same approach to the Platform Engineer role at [Company]." Another effective approach is to reference a genuine connection: a referral from a current employee, a company initiative you admire, or a product you actually use. The goal is to make the hiring manager want to keep reading.',
+        content: 'The worst way to start a cover letter is "I am writing to apply for the position of..." because it wastes valuable space stating the obvious. Instead, lead with something specific: "When I led the migration of our payment system to a microservices architecture, I reduced transaction processing time by 40%, and I am eager to bring that same approach to the Platform Engineer role at [Company]." Another effective approach is to reference a genuine connection: a referral from a current employee, a company initiative you admire, or a product you actually use. The goal is to make the hiring manager want to keep reading.',
       },
       {
         heading: 'Connecting your experience to the job requirements',
-        content: 'The body of your cover letter should not repeat your resume — it should expand on it. Pick two or three requirements from the job posting and match them to specific experiences from your career, providing context that your resume bullet points cannot capture. Explain the situation, what you did, and what resulted. This is also the place to address any potential concerns a hiring manager might have, such as gaps in employment, relocation, or a transition from a different industry. Frame these as strengths: "My five years in hospitality management gave me the client-facing and operational skills that translate directly to the account management role."',
+        content: 'The body of your cover letter should not repeat your resume. It should expand on it. Pick two or three requirements from the job posting and match them to specific experiences from your career, providing context that your resume bullet points cannot capture. Explain the situation, what you did, and what resulted. This is also the place to address any potential concerns a hiring manager might have, such as gaps in employment, relocation, or a transition from a different industry. Frame these as strengths: "My five years in hospitality management gave me the client-facing and operational skills that translate directly to the account management role."',
       },
       {
         heading: 'Cover letter mistakes that cost you interviews',
@@ -144,7 +144,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'Cover letter tips for specific situations',
-        content: 'If you are a career changer, lead with transferable skills and explain your motivation for switching fields in concrete terms. If you have employment gaps, address them briefly and positively — focus on what you did during the gap (freelancing, coursework, volunteering) and pivot quickly to your qualifications. If you are applying to a startup, keep the tone slightly less formal and emphasize adaptability and ownership. For executive roles, focus on strategic impact and leadership outcomes rather than tactical responsibilities. Regardless of your situation, always proofread carefully — a single typo in a cover letter carries more weight than one on a resume because the letter is meant to demonstrate your communication skills.',
+        content: 'If you are a career changer, lead with transferable skills and explain your motivation for switching fields in concrete terms. If you have employment gaps, address them briefly and positively. Focus on what you did during the gap (freelancing, coursework, volunteering) and pivot quickly to your qualifications. If you are applying to a startup, keep the tone slightly less formal and emphasize adaptability and ownership. For executive roles, focus on strategic impact and leadership outcomes rather than tactical responsibilities. Regardless of your situation, always proofread carefully. A single typo in a cover letter carries more weight than one on a resume because the letter is meant to demonstrate your communication skills.',
       },
     ],
   },
@@ -153,11 +153,11 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
     sections: [
       {
         heading: 'Why action verbs matter on a resume',
-        content: 'Every bullet point in your work experience section should begin with a strong action verb. This is not just a style preference — it directly affects how your accomplishments are perceived. Compare "Was responsible for managing a team of 10 engineers" with "Led a team of 10 engineers to deliver a $2M platform migration ahead of schedule." The second version communicates the same role but demonstrates leadership and results. Action verbs also help with ATS optimization, as many systems weight the verbs used in experience descriptions when ranking candidates.',
+        content: 'Every bullet point in your work experience section should begin with a strong action verb. This is not just a style preference. It directly affects how your accomplishments are perceived. Compare "Was responsible for managing a team of 10 engineers" with "Led a team of 10 engineers to deliver a $2M platform migration ahead of schedule." The second version communicates the same role but demonstrates leadership and results. Action verbs also help with ATS optimization, as many systems weight the verbs used in experience descriptions when ranking candidates.',
       },
       {
         heading: 'Action words for leadership and management',
-        content: 'When describing leadership roles, use verbs that convey authority and decision-making: Directed, Orchestrated, Spearheaded, Championed, Oversaw, Governed, Steered, Mentored, Mobilized, Delegated, Supervised, Coordinated, Helmed, Guided, Appointed, Recruited, Cultivated, Empowered, Unified, and Forged. Choose the verb that most accurately reflects your level of involvement. "Spearheaded" implies you initiated something, while "Coordinated" suggests you organized an existing effort. Precision matters — overstating your role can backfire in interviews when you are asked to elaborate.',
+        content: 'When describing leadership roles, use verbs that convey authority and decision-making: Directed, Orchestrated, Spearheaded, Championed, Oversaw, Governed, Steered, Mentored, Mobilized, Delegated, Supervised, Coordinated, Helmed, Guided, Appointed, Recruited, Cultivated, Empowered, Unified, and Forged. Choose the verb that most accurately reflects your level of involvement. "Spearheaded" implies you initiated something, while "Coordinated" suggests you organized an existing effort. Precision matters. Overstating your role can backfire in interviews when you are asked to elaborate.',
       },
       {
         heading: 'Action words for achievements and results',
@@ -165,7 +165,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'Action words for technical and analytical work',
-        content: 'For roles involving technical expertise, analysis, or problem-solving, use: Engineered, Architected, Developed, Programmed, Debugged, Automated, Optimized, Analyzed, Diagnosed, Investigated, Evaluated, Modeled, Computed, Forecasted, Quantified, Configured, Integrated, Migrated, Deployed, and Refactored. These verbs signal hands-on technical capability. In technical resumes especially, specificity is key — "Architected a distributed caching layer using Redis that reduced database load by 45%" tells the reader exactly what you did and what technology you used.',
+        content: 'For roles involving technical expertise, analysis, or problem-solving, use: Engineered, Architected, Developed, Programmed, Debugged, Automated, Optimized, Analyzed, Diagnosed, Investigated, Evaluated, Modeled, Computed, Forecasted, Quantified, Configured, Integrated, Migrated, Deployed, and Refactored. These verbs signal hands-on technical capability. In technical resumes especially, specificity is key. "Architected a distributed caching layer using Redis that reduced database load by 45%" tells the reader exactly what you did and what technology you used.',
       },
       {
         heading: 'Action words for communication and collaboration',
@@ -173,7 +173,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'Action words for creativity and innovation',
-        content: 'If your work involves creating new things, designing solutions, or driving innovation: Designed, Created, Conceptualized, Pioneered, Launched, Innovated, Invented, Revamped, Transformed, Introduced, Established, Founded, Initiated, Devised, Imagined, Prototyped, Built, Crafted, Produced, and Originated. These verbs work well for roles in design, product development, marketing, and entrepreneurship. Avoid using "Created" or "Built" for everything — vary your verbs across bullet points to keep each one distinct and engaging. When building your resume in Resumly, review your bullet points to ensure you are not repeating the same action verb more than once on the entire document.',
+        content: 'If your work involves creating new things, designing solutions, or driving innovation: Designed, Created, Conceptualized, Pioneered, Launched, Innovated, Invented, Revamped, Transformed, Introduced, Established, Founded, Initiated, Devised, Imagined, Prototyped, Built, Crafted, Produced, and Originated. These verbs work well for roles in design, product development, marketing, and entrepreneurship. Avoid using "Created" or "Built" for everything. Vary your verbs across bullet points to keep each one distinct and engaging. When building your resume in Resumly, review your bullet points to ensure you are not repeating the same action verb more than once on the entire document.',
       },
     ],
   },
@@ -182,7 +182,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
     sections: [
       {
         heading: 'The fundamental difference',
-        content: 'A resume is a concise, targeted document — typically one to two pages — that summarizes your relevant work experience, skills, and education for a specific job. A curriculum vitae (CV) is a comprehensive document that covers your entire academic and professional history, including publications, research, grants, teaching experience, and conference presentations. In the United States and Canada, resumes are the standard for most private-sector jobs, while CVs are reserved for academic, research, and medical positions. In Europe, the Middle East, Africa, and Asia, "CV" is the common term for what Americans call a resume.',
+        content: 'A resume is a concise, targeted document, typically one to two pages, that summarizes your relevant work experience, skills, and education for a specific job. A curriculum vitae (CV) is a comprehensive document that covers your entire academic and professional history, including publications, research, grants, teaching experience, and conference presentations. In the United States and Canada, resumes are the standard for most private-sector jobs, while CVs are reserved for academic, research, and medical positions. In Europe, the Middle East, Africa, and Asia, "CV" is the common term for what Americans call a resume.',
       },
       {
         heading: 'When to use a resume',
@@ -190,7 +190,7 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'When to use a CV',
-        content: 'Use a CV when applying for academic positions (professor, researcher, postdoctoral fellow), medical roles (physician, surgeon, medical researcher), scientific research positions, grants and fellowships, or any position that explicitly requests a CV. CVs are also standard for most job applications outside North America. Unlike resumes, CVs grow longer as your career progresses — a senior academic might have a CV that runs 10 or more pages. There is no page limit, and completeness is valued over brevity.',
+        content: 'Use a CV when applying for academic positions (professor, researcher, postdoctoral fellow), medical roles (physician, surgeon, medical researcher), scientific research positions, grants and fellowships, or any position that explicitly requests a CV. CVs are also standard for most job applications outside North America. Unlike resumes, CVs grow longer as your career progresses. A senior academic might have a CV that runs 10 or more pages. There is no page limit, and completeness is valued over brevity.',
       },
       {
         heading: 'Key structural differences',
@@ -198,11 +198,11 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'International considerations',
-        content: 'If you are applying for jobs outside North America, research the local conventions before submitting your application. In the UK, Ireland, and New Zealand, "CV" refers to a short document similar to an American resume — usually two pages. In Germany, CVs often include a professional photo, date of birth, and nationality, though this is changing. In many Asian countries, a CV with a photo is standard. In Australia, both terms are used, and the expected document is typically two to three pages. When in doubt, follow the instructions in the job posting or ask the recruiter which format they prefer.',
+        content: 'If you are applying for jobs outside North America, research the local conventions before submitting your application. In the UK, Ireland, and New Zealand, "CV" refers to a short document similar to an American resume, usually two pages. In Germany, CVs often include a professional photo, date of birth, and nationality, though this is changing. In many Asian countries, a CV with a photo is standard. In Australia, both terms are used, and the expected document is typically two to three pages. When in doubt, follow the instructions in the job posting or ask the recruiter which format they prefer.',
       },
       {
         heading: 'Converting between a CV and resume',
-        content: 'If you have a CV and need to create a resume, start by identifying the most relevant experiences for your target role and cutting everything else. Remove publications, conferences, and teaching experience unless directly relevant. Condense descriptions into achievement-focused bullet points and add a professional summary at the top. If you need to expand a resume into a CV, add sections for publications, research, and academic service, and provide more detail on each role. Resumly\'s builder supports both formats — you can start with a resume template and add academic sections as needed, or build a comprehensive CV and export a condensed version for industry applications.',
+        content: 'If you have a CV and need to create a resume, start by identifying the most relevant experiences for your target role and cutting everything else. Remove publications, conferences, and teaching experience unless directly relevant. Condense descriptions into achievement-focused bullet points and add a professional summary at the top. If you need to expand a resume into a CV, add sections for publications, research, and academic service, and provide more detail on each role. Resumly\'s builder supports both formats. You can start with a resume template and add academic sections as needed, or build a comprehensive CV and export a condensed version for industry applications.',
       },
     ],
   },
@@ -219,19 +219,19 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'Building a strong education section',
-        content: 'When you have limited work experience, your education section becomes a primary selling point. List your degree, institution, and graduation date (or expected date). Include your GPA if it is 3.5 or above. Add relevant coursework that aligns with the job you are targeting — a marketing position would benefit from seeing courses like Consumer Behavior, Digital Marketing, and Market Research. List academic honors, dean\'s list recognition, scholarships, and relevant certifications. If you completed a thesis or capstone project, include a brief description with results or scope, treating it like a work experience entry.',
+        content: 'When you have limited work experience, your education section becomes a primary selling point. List your degree, institution, and graduation date (or expected date). Include your GPA if it is 3.5 or above. Add relevant coursework that aligns with the job you are targeting. A marketing position would benefit from seeing courses like Consumer Behavior, Digital Marketing, and Market Research. List academic honors, dean\'s list recognition, scholarships, and relevant certifications. If you completed a thesis or capstone project, include a brief description with results or scope, treating it like a work experience entry.',
       },
       {
         heading: 'Turning projects and volunteer work into resume entries',
-        content: 'Format your projects and volunteer work exactly like professional experience entries: include a title, the organization (or "Personal Project"), dates, and bullet points describing what you did and what you accomplished. Use the same action-verb-plus-result formula. For example: "Designed and developed a budget tracking web application using React and Firebase, attracting 200 users in the first month" or "Coordinated a food drive that collected 2,000 pounds of donations by recruiting and managing a team of 15 volunteers." Quantify wherever possible — numbers give your contributions weight and credibility.',
+        content: 'Format your projects and volunteer work exactly like professional experience entries: include a title, the organization (or "Personal Project"), dates, and bullet points describing what you did and what you accomplished. Use the same action-verb-plus-result formula. For example: "Designed and developed a budget tracking web application using React and Firebase, attracting 200 users in the first month" or "Coordinated a food drive that collected 2,000 pounds of donations by recruiting and managing a team of 15 volunteers." Quantify wherever possible. Numbers give your contributions weight and credibility.',
       },
       {
         heading: 'Writing a resume objective instead of a summary',
-        content: 'Since you do not yet have a track record to summarize, use a resume objective instead of a professional summary. A resume objective states who you are, what relevant skills or education you bring, and what type of role you are seeking. Keep it to two sentences. A strong example: "Recent Computer Science graduate with hands-on experience in Python and JavaScript through academic projects and a summer internship. Seeking a junior developer role where I can contribute to full-stack development while growing my skills in cloud infrastructure." Avoid vague objectives like "Seeking a challenging position" — they communicate nothing useful.',
+        content: 'Since you do not yet have a track record to summarize, use a resume objective instead of a professional summary. A resume objective states who you are, what relevant skills or education you bring, and what type of role you are seeking. Keep it to two sentences. A strong example: "Recent Computer Science graduate with hands-on experience in Python and JavaScript through academic projects and a summer internship. Seeking a junior developer role where I can contribute to full-stack development while growing my skills in cloud infrastructure." Avoid vague objectives like "Seeking a challenging position". They communicate nothing useful.',
       },
       {
         heading: 'Entry-level resume tips that make a difference',
-        content: 'Tailor your resume for each application, even as a new graduate. Match your skills and language to the job posting. Use a clean, professional template — this is not the time for creative design unless you are applying to a design role. Include a LinkedIn profile URL and make sure your profile is complete and consistent with your resume. Remove high school information once you are in college or have graduated. Never include references on the resume itself; "References available upon request" is assumed and wastes space. Proofread meticulously — when you have limited experience, presentation and attention to detail matter even more. Resumly\'s templates are designed to make entry-level resumes look polished and professional without requiring extensive work history to fill the page.',
+        content: 'Tailor your resume for each application, even as a new graduate. Match your skills and language to the job posting. Use a clean, professional template. This is not the time for creative design unless you are applying to a design role. Include a LinkedIn profile URL and make sure your profile is complete and consistent with your resume. Remove high school information once you are in college or have graduated. Never include references on the resume itself; "References available upon request" is assumed and wastes space. Proofread meticulously. When you have limited experience, presentation and attention to detail matter even more. Resumly\'s templates are designed to make entry-level resumes look polished and professional without requiring extensive work history to fill the page.',
       },
     ],
   },
@@ -240,15 +240,15 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
     sections: [
       {
         heading: 'Formatting tips that improve readability',
-        content: 'Use a clean, single-column layout with clearly defined sections and consistent formatting throughout. Set margins between 0.5 and 1 inch on all sides. Use a professional, readable font like Calibri, Arial, or Garamond at 10-12 point size. Bold your section headings and job titles, but avoid underlining (it can cause ATS parsing errors). Use standard bullet points — not checkmarks, arrows, or other symbols. Leave adequate white space between sections so the resume does not feel cramped. Left-align all text; centered text is harder to scan quickly and can confuse ATS parsers.',
+        content: 'Use a clean, single-column layout with clearly defined sections and consistent formatting throughout. Set margins between 0.5 and 1 inch on all sides. Use a professional, readable font like Calibri, Arial, or Garamond at 10-12 point size. Bold your section headings and job titles, but avoid underlining (it can cause ATS parsing errors). Use standard bullet points, not checkmarks, arrows, or other symbols. Leave adequate white space between sections so the resume does not feel cramped. Left-align all text; centered text is harder to scan quickly and can confuse ATS parsers.',
       },
       {
         heading: 'Content tips for stronger bullet points',
-        content: 'Every bullet point under your work experience should communicate a specific contribution, not just a duty. Start each bullet with a strong action verb and include a measurable result whenever possible. Limit each role to 4-6 bullet points, focusing on your most impressive and relevant achievements. Remove filler phrases like "duties included" and "responsible for" — they add words without adding value. If you managed people, state how many. If you handled a budget, state the amount. If you improved a process, state the percentage improvement. Concrete details make your resume memorable and credible.',
+        content: 'Every bullet point under your work experience should communicate a specific contribution, not just a duty. Start each bullet with a strong action verb and include a measurable result whenever possible. Limit each role to 4-6 bullet points, focusing on your most impressive and relevant achievements. Remove filler phrases like "duties included" and "responsible for". They add words without adding value. If you managed people, state how many. If you handled a budget, state the amount. If you improved a process, state the percentage improvement. Concrete details make your resume memorable and credible.',
       },
       {
         heading: 'Tailoring your resume for each application',
-        content: 'Sending the same resume to every job is one of the most common mistakes job seekers make. Each application should receive a version of your resume that mirrors the language and priorities of the job description. This does not mean rewriting from scratch — maintain a master resume with all your experience, then create tailored versions by reordering bullet points, adjusting your summary, and emphasizing the skills most relevant to each position. Pay special attention to the keywords used in the posting and make sure they appear in your resume, ideally in context rather than just in a skills list.',
+        content: 'Sending the same resume to every job is one of the most common mistakes job seekers make. Each application should receive a version of your resume that mirrors the language and priorities of the job description. This does not mean rewriting from scratch. Maintain a master resume with all your experience, then create tailored versions by reordering bullet points, adjusting your summary, and emphasizing the skills most relevant to each position. Pay special attention to the keywords used in the posting and make sure they appear in your resume, ideally in context rather than just in a skills list.',
       },
       {
         heading: 'What to leave off your resume',
@@ -256,11 +256,11 @@ const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string;
       },
       {
         heading: 'Proofreading and final checks',
-        content: 'Typos and grammatical errors are among the top reasons hiring managers reject resumes. After writing your resume, step away for at least a few hours before proofreading it. Read it aloud to catch awkward phrasing. Check that all dates are accurate and formatted consistently (choose either "Jan 2023" or "January 2023" and stick with it). Verify that your contact information is correct — a wrong phone number or outdated email will cost you interviews. Have someone else review it as well; fresh eyes catch errors you will miss. Finally, save and submit as a PDF to ensure formatting is preserved across devices.',
+        content: 'Typos and grammatical errors are among the top reasons hiring managers reject resumes. After writing your resume, step away for at least a few hours before proofreading it. Read it aloud to catch awkward phrasing. Check that all dates are accurate and formatted consistently (choose either "Jan 2023" or "January 2023" and stick with it). Verify that your contact information is correct. A wrong phone number or outdated email will cost you interviews. Have someone else review it as well; fresh eyes catch errors you will miss. Finally, save and submit as a PDF to ensure formatting is preserved across devices.',
       },
       {
         heading: 'Keeping your resume current',
-        content: 'Do not wait until you are job hunting to update your resume. Make it a habit to add new accomplishments, skills, certifications, and projects as they happen. Set a calendar reminder to review your resume every quarter. This practice ensures you never forget significant achievements and reduces the stress of a last-minute resume overhaul when an opportunity arises. Keep a running document of quantified accomplishments — revenue generated, costs saved, projects completed, people managed — so you always have fresh material to draw from. Resumly lets you maintain multiple versions of your resume, making it easy to keep a master copy updated while creating role-specific versions when you need them.',
+        content: 'Do not wait until you are job hunting to update your resume. Make it a habit to add new accomplishments, skills, certifications, and projects as they happen. Set a calendar reminder to review your resume every quarter. This practice ensures you never forget significant achievements and reduces the stress of a last-minute resume overhaul when an opportunity arises. Keep a running document of quantified accomplishments (revenue generated, costs saved, projects completed, people managed) so you always have fresh material to draw from. Resumly lets you maintain multiple versions of your resume, making it easy to keep a master copy updated while creating role-specific versions when you need them.',
       },
     ],
   },
@@ -323,7 +323,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
             <div className="flex-1">
               <p className="font-semibold text-gray-900">Ready to put this into practice?</p>
-              <p className="text-sm text-gray-600 mt-1">Build your ATS-optimized resume in minutes with Resumly — free.</p>
+              <p className="text-sm text-gray-600 mt-1">Build your ATS-optimized resume in minutes with Resumly, free.</p>
             </div>
             <Button asChild className="flex-shrink-0">
               <Link href="/builder/new">Build My Resume →</Link>
@@ -351,7 +351,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Bottom CTA */}
           <div className="mt-16 bg-blue-600 text-white rounded-2xl p-8 text-center">
             <h2 className="text-2xl font-bold mb-2">Apply what you learned</h2>
-            <p className="text-blue-100 mb-6">Build an ATS-optimized resume using our free builder — everything from this guide is built right in.</p>
+            <p className="text-blue-100 mb-6">Build an ATS-optimized resume using our free builder. Everything from this guide is built right in.</p>
             <Button className="bg-white text-blue-600 hover:bg-blue-50 font-semibold" size="lg" asChild>
               <Link href="/builder/new">Build My Resume Free →</Link>
             </Button>

@@ -114,7 +114,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
   };
 
   return (
-    <div className="bg-white border border-neutral-20/80 rounded-xl overflow-hidden hover:shadow-md hover:border-neutral-30 transition-all group relative">
+    <div className="bg-white border border-neutral-20 rounded-xl overflow-hidden hover:shadow-md hover:border-neutral-30 transition-all group relative">
       {/* Share toast */}
       {showShareToast && (
         <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-neutral-90 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
@@ -234,7 +234,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
           <button
             onClick={handleShare}
             disabled={sharing}
-            title={isPublic ? 'Sharing on — click to disable & copy link' : 'Share resume — creates a public link'}
+            title={isPublic ? 'Sharing on, click to disable & copy link' : 'Share resume, creates a public link'}
             className={`px-2.5 rounded-lg border transition-all text-[13px] ${
               isPublic
                 ? 'border-green-300 bg-green-50 text-green-600 hover:bg-green-100'

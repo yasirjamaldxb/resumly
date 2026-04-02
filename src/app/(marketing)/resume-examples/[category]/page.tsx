@@ -16,14 +16,14 @@ interface ExampleData {
 const EXAMPLES: Record<string, ExampleData> = {
   'software-engineer': {
     title: 'Software Engineer',
-    description: 'A strong software engineer resume highlights technical skills, project impact, and measurable outcomes. Recruiters spend just 6 seconds on each resume — make yours count with the right keywords and quantified achievements.',
+    description: 'A strong software engineer resume highlights technical skills, project impact, and measurable outcomes. Recruiters spend just 6 seconds on each resume. Make yours count with the right keywords and quantified achievements.',
     keySkills: ['JavaScript', 'Python', 'React', 'Node.js', 'AWS', 'Docker', 'SQL', 'Git', 'REST APIs', 'Agile/Scrum', 'TypeScript', 'CI/CD'],
     sections: ['Professional Summary', 'Technical Skills', 'Work Experience', 'Projects', 'Education', 'Certifications'],
     tips: [
       'Quantify achievements: "Reduced page load time by 40%" beats "Improved performance"',
       'List programming languages and frameworks prominently near the top',
       'Include GitHub profile URL and notable open-source contributions',
-      'Tailor keywords to each job description for ATS optimization — use the exact terms from the JD',
+      'Tailor keywords to each job description for ATS optimization. Use the exact terms from the JD',
       'Use STAR format for bullet points: Action + Task + Result',
       'Include system scale metrics: "Serving 2M daily active users", "Processed 500K requests/day"',
     ],
@@ -36,7 +36,7 @@ const EXAMPLES: Record<string, ExampleData> = {
   },
   'data-scientist': {
     title: 'Data Scientist',
-    description: 'Data scientist resumes must balance technical depth with business impact. Show how your models translated to real outcomes — revenue, efficiency, or risk reduction.',
+    description: 'Data scientist resumes must balance technical depth with business impact. Show how your models translated to real outcomes: revenue, efficiency, or risk reduction.',
     keySkills: ['Python', 'R', 'Machine Learning', 'SQL', 'TensorFlow', 'PyTorch', 'Pandas', 'NumPy', 'Tableau', 'Statistics', 'NLP', 'A/B Testing'],
     sections: ['Professional Summary', 'Technical Skills', 'Work Experience', 'Projects', 'Education', 'Publications'],
     tips: [
@@ -76,7 +76,7 @@ const EXAMPLES: Record<string, ExampleData> = {
     keySkills: ['Patient Care', 'EMR/EHR (Epic)', 'IV Therapy', 'Medication Administration', 'BLS/ACLS', 'Wound Care', 'Critical Thinking', 'HIPAA Compliance', 'Telemetry', 'Patient Education'],
     sections: ['Licenses & Certifications', 'Professional Summary', 'Clinical Experience', 'Education', 'Skills & Competencies'],
     tips: [
-      'Put licenses and certifications at the top — they\'re the first thing recruiters look for',
+      'Put licenses and certifications at the top. They\'re the first thing recruiters look for',
       'Specify patient ratios, unit types (ICU, ED, Med-Surg), and specialties',
       'Include all certifications with expiration dates: BLS, ACLS, PALS, CEN, etc.',
       'Mention specific EMR systems: Epic, Cerner, Meditech',
@@ -167,7 +167,7 @@ const EXAMPLES: Record<string, ExampleData> = {
     keySkills: ['Microsoft Office', 'Communication', 'Time Management', 'Problem Solving', 'Teamwork', 'Research', 'Social Media', 'Customer Service', 'Data Analysis', 'Presentation Skills'],
     sections: ['Education', 'Relevant Experience', 'Projects', 'Skills', 'Activities & Leadership', 'Awards & Honors'],
     tips: [
-      'Lead with education — it\'s your primary credential as a student',
+      'Lead with education. It\'s your primary credential as a student',
       'Include relevant coursework, GPA if 3.5+, Dean\'s List, and academic awards',
       'List part-time jobs, volunteer work, and campus leadership roles',
       'Highlight class projects that demonstrate real skills',
@@ -190,7 +190,7 @@ const EXAMPLES: Record<string, ExampleData> = {
       'List every extracurricular: sports, clubs, student government, band, theater',
       'Include any leadership positions, however small: team captain, club officer',
       'Babysitting, lawn mowing, and tutoring all count as work experience',
-      'Volunteer hours show character — include them with organization and hours',
+      'Volunteer hours show character, so include them with organization and hours',
       'Keep it to 1 page maximum',
     ],
     sampleBullets: [
@@ -209,7 +209,7 @@ const EXAMPLES: Record<string, ExampleData> = {
       'Show relevant coursework and academic projects as proof of skills',
       'Include any previous internships or part-time jobs prominently',
       'Highlight any tools or software you\'ve used in class that are relevant to the role',
-      'A strong objective statement helps — mention the specific company and role',
+      'A strong objective statement helps. Mention the specific company and role',
     ],
     sampleBullets: [
       'Completed marketing analytics project using Google Analytics and Excel, identifying 3 content opportunities that increased blog traffic by 28%',
@@ -219,11 +219,11 @@ const EXAMPLES: Record<string, ExampleData> = {
   },
   'ux-designer': {
     title: 'UX Designer',
-    description: 'UX designer resumes need to show your design process, tools, and business impact. Include a portfolio link — it\'s as important as the resume itself.',
+    description: 'UX designer resumes need to show your design process, tools, and business impact. Include a portfolio link. It\'s as important as the resume itself.',
     keySkills: ['Figma', 'Sketch', 'Adobe XD', 'User Research', 'Wireframing', 'Prototyping', 'Usability Testing', 'Design Systems', 'HTML/CSS', 'Accessibility (WCAG)', 'Information Architecture'],
     sections: ['Portfolio Link', 'Professional Summary', 'Work Experience', 'Skills & Tools', 'Education', 'Projects'],
     tips: [
-      'Always include a link to your portfolio — this is non-negotiable for UX roles',
+      'Always include a link to your portfolio. This is non-negotiable for UX roles',
       'Show measurable UX outcomes: "Reduced task completion time by 35%", "Improved conversion by 22%"',
       'Describe your design process, not just deliverables',
       'Show collaboration with engineers and product managers',
@@ -245,7 +245,7 @@ const EXAMPLES: Record<string, ExampleData> = {
       'Include links to live projects or GitHub repos',
       'Quantify performance improvements: page load speed, Core Web Vitals scores',
       'Mention CMS experience if relevant (WordPress, Shopify, Webflow)',
-      'Show full-stack capability if you have it — it\'s highly valued',
+      'Show full-stack capability if you have it. It\'s highly valued',
     ],
     sampleBullets: [
       'Built and launched e-commerce platform handling $2M/month in transactions using React, Node.js, and PostgreSQL',
@@ -277,7 +277,7 @@ const EXAMPLES: Record<string, ExampleData> = {
     keySkills: ['Salesforce', 'Sales Strategy', 'Team Leadership', 'Pipeline Management', 'B2B Sales', 'CRM', 'Forecasting', 'Contract Negotiation', 'Account Management', 'Territory Planning'],
     sections: ['Professional Summary', 'Sales Achievements', 'Work Experience', 'Education', 'Skills'],
     tips: [
-      'Put your best revenue numbers in the summary or headline — don\'t bury them',
+      'Put your best revenue numbers in the summary or headline. Don\'t bury them',
       'Show quota attainment consistently: "Exceeded quota for 8 consecutive quarters"',
       'List team size managed and total revenue responsibility',
       'Mention average deal size and sales cycle length for context',
@@ -295,7 +295,7 @@ const EXAMPLES: Record<string, ExampleData> = {
     keySkills: ['Adobe Creative Suite', 'Figma', 'Illustrator', 'Photoshop', 'InDesign', 'After Effects', 'Branding', 'Typography', 'Print Design', 'Digital Design', 'Video Editing'],
     sections: ['Portfolio Link', 'Professional Summary', 'Work Experience', 'Skills & Tools', 'Education', 'Awards'],
     tips: [
-      'Portfolio link is essential — make it easy to find at the top of your resume',
+      'Portfolio link is essential. Make it easy to find at the top of your resume',
       'Show diversity of work: print, digital, branding, social media',
       'Quantify impact where possible: "Redesign increased engagement by 40%"',
       'Highlight client or brand names you\'ve worked with',
@@ -429,8 +429,8 @@ function getExampleData(slug: string): ExampleData {
       'Tailor your resume to the specific job description using keywords from the posting',
       'Quantify achievements with numbers, percentages, and dollar amounts',
       'Start every bullet point with a strong action verb',
-      'Keep it to 1-2 pages maximum — recruiters spend 6-7 seconds on first review',
-      'Proofread carefully — typos are an immediate disqualifier for most hiring managers',
+      'Keep it to 1-2 pages maximum. Recruiters spend 6-7 seconds on first review',
+      'Proofread carefully. Typos are an immediate disqualifier for most hiring managers',
     ],
   };
 }

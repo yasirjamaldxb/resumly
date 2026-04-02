@@ -35,7 +35,7 @@ export function ModernTemplate({ data, styles }: Props) {
           flexShrink: 0,
           backgroundColor: s.colorScheme,
           color: '#ffffff',
-          padding: `${s.paddingTop}px ${s.paddingLeft * 0.5}px`,
+          padding: `${s.paddingTop}px ${s.paddingLeft * 0.5}px ${s.paddingBottom}px`,
         }}
       >
         {/* Photo */}
@@ -106,7 +106,7 @@ export function ModernTemplate({ data, styles }: Props) {
           <SideSection title="Languages" styles={s}>
             {languages.map((lang) => (
               <p key={lang.id} style={{ margin: `0 0 ${4 * s.scale}px`, fontSize: `${s.smallFontSize}px` }}>
-                <strong>{lang.name}</strong> — <span style={{ opacity: 0.8, textTransform: 'capitalize' }}>{lang.proficiency}</span>
+                <strong>{lang.name}</strong>, <span style={{ opacity: 0.8, textTransform: 'capitalize' }}>{lang.proficiency}</span>
               </p>
             ))}
           </SideSection>
@@ -114,7 +114,7 @@ export function ModernTemplate({ data, styles }: Props) {
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: `${s.paddingTop}px ${s.paddingRight}px` }}>
+      <div style={{ flex: 1, padding: `${s.paddingTop}px ${s.paddingRight}px ${s.paddingBottom}px` }}>
         {/* Summary */}
         {p.summary && (
           <MainSection title="About Me" color={s.colorScheme} styles={s}>
@@ -156,7 +156,7 @@ export function ModernTemplate({ data, styles }: Props) {
               <div key={edu.id} style={{ marginBottom: i < education.length - 1 ? `${10 * s.scale}px` : 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: s.dateAlignment === 'left' ? 'row-reverse' : 'row' }}>
                   <p style={{ fontWeight: 700, margin: 0, fontSize: `${s.baseFontSize}px` }}>
-                    {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
+                    {edu.degree}{edu.field ? `, ${edu.field}` : ''}
                   </p>
                   <p style={{ margin: 0, fontSize: `${s.smallFontSize * 0.95}px`, color: '#888' }}>
                     {formatDate(edu.startDate)} – {edu.current ? 'Present' : formatDate(edu.endDate)}

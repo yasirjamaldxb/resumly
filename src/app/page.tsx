@@ -13,46 +13,46 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
+  title: 'Resumly, Your AI Job Search Companion | Tailored Resumes That Get Interviews',
   description:
-    'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, and instant text-based PDF download. 100% free — no credit card, no watermarks. Start building now.',
+    'Paste any job link and get a tailored, ATS-optimized resume in minutes. AI matches your experience to the job description so your application gets seen by recruiters. Resume + cover letter + tracking, all in one platform.',
   keywords: [
-    'free resume builder', 'resume builder', 'ATS resume', 'resume templates',
-    'CV builder', 'resume maker', 'professional resume', 'ATS friendly resume',
-    'online resume builder', 'resume builder free', 'best resume builder 2026',
-    'resume builder no sign up', 'ATS optimized resume', 'text based resume PDF',
+    'AI resume builder', 'job search tool', 'ATS resume', 'resume tailored to job',
+    'CV builder', 'resume maker', 'ATS friendly resume', 'job application tracker',
+    'AI cover letter', 'resume for job description', 'applicant tracking system',
+    'resume optimization', 'job search companion', 'tailored resume builder',
   ].join(', '),
   alternates: { canonical: 'https://resumly.app' },
   openGraph: {
-    title: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
-    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF. 100% free.',
+    title: 'Resumly, Your AI Job Search Companion',
+    description: 'Paste any job link. Get a tailored, ATS-optimized resume that gets you interviews. Resume + cover letter + tracking in one platform.',
     url: 'https://resumly.app',
     siteName: 'Resumly',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Resume Builder · Resumly',
-    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF. 100% free.',
+    title: 'Resumly | AI Job Search Companion',
+    description: 'Paste any job link. Get a tailored resume that gets you interviews. AI-powered, ATS-optimized.',
   },
 };
 
 const exampleCategories = [
-  { title: 'Doctor', slug: 'doctor' },
-  { title: 'Architect', slug: 'architect' },
-  { title: 'Civil Engineer', slug: 'civil-engineer' },
-  { title: 'Driver', slug: 'driver' },
+  { title: 'Software Engineer', slug: 'software-engineer' },
+  { title: 'Product Manager', slug: 'product-manager' },
+  { title: 'Marketing', slug: 'marketing-manager' },
+  { title: 'Data Analyst', slug: 'data-analyst' },
+  { title: 'Designer', slug: 'graphic-designer' },
+  { title: 'Finance', slug: 'accountant' },
+  { title: 'Healthcare', slug: 'doctor' },
   { title: 'Teacher', slug: 'teacher' },
-  { title: 'Accountant', slug: 'accountant' },
-  { title: 'Retail', slug: 'retail' },
-  { title: 'Human Resources', slug: 'human-resources' },
-  { title: 'Administrative', slug: 'administrative-assistant' },
-  { title: 'Student', slug: 'student' },
+  { title: 'Sales', slug: 'retail' },
+  { title: 'HR', slug: 'human-resources' },
 ];
 
 const blogPosts = [
-  { title: 'How to write a resume: Expert guide & examples (2026)', slug: 'how-to-write-a-resume', tag: 'FIELD TESTED', tagColor: 'bg-orange-100 text-orange-700', cardBg: 'bg-orange-50' },
-  { title: 'How to Write a Cover Letter in 2026', slug: 'how-to-write-a-cover-letter', tag: 'HR APPROVED', tagColor: 'bg-pink-100 text-pink-700', cardBg: 'bg-pink-50' },
+  { title: 'How to tailor your resume for every job application (2026)', slug: 'how-to-write-a-resume', tag: 'JOB SEARCH', tagColor: 'bg-orange-100 text-orange-700', cardBg: 'bg-orange-50' },
+  { title: 'Why 75% of resumes never reach a human, and how to fix yours', slug: 'how-to-write-a-cover-letter', tag: 'ATS GUIDE', tagColor: 'bg-pink-100 text-pink-700', cardBg: 'bg-pink-50' },
 ];
 
 function ResumeExamplesPreview() {
@@ -77,35 +77,35 @@ function ResumeExamplesPreview() {
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <h2 className="text-[28px] sm:text-[34px] font-medium text-white leading-tight tracking-tight mb-3">
-              Get the interview
+              See real resumes
               <br />
-              with professional
+              that landed
               <br />
-              resume examples
+              interviews
             </h2>
             <p className="text-[14px] text-white/60 mb-6 max-w-[380px]">
-              Explore our library of profession-specific examples. Find inspiration and see what works for your field.
+              Browse profession-specific examples. See what hiring managers actually want to read, and use them as a starting point for your own.
             </p>
             <Link href="/resume-examples" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded font-semibold text-[13px] transition-colors">
-              See all resume examples
+              Browse resume examples
             </Link>
           </div>
 
-          {/* Resume thumbnails - like resume.io */}
+          {/* Resume thumbnails */}
           <div className="flex gap-4 justify-center">
             {[
-              { id: 'professional', name: 'Professional', role: 'Marketing Manager' },
+              { id: 'professional', name: 'Professional', role: 'Product Manager' },
               { id: 'modern', name: 'Modern', role: 'Software Engineer' },
-              { id: 'ats-pro', name: 'ATS Pro', role: 'Project Manager' },
+              { id: 'ats-pro', name: 'ATS Pro', role: 'Data Analyst' },
             ].map((example, i) => (
               <Link key={example.id} href={`/resume-examples`} className={`group block ${i === 2 ? 'hidden sm:block' : ''}`}>
-                <div className="w-[160px] bg-white rounded-lg shadow-xl overflow-hidden transition-transform group-hover:scale-105 group-hover:shadow-2xl">
+                <div className="w-[160px] aspect-[1/1.414] bg-white rounded-lg shadow-xl overflow-hidden transition-transform group-hover:scale-105 group-hover:shadow-2xl">
                   <Image
                     src={`/templates/${example.id}.png`}
                     alt={`${example.name} resume example`}
                     width={794}
                     height={1123}
-                    className="w-full h-auto"
+                    className="w-full h-full object-cover object-top"
                     quality={80}
                   />
                 </div>
@@ -128,7 +128,7 @@ function ExpertAdvice() {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-[28px] sm:text-[34px] font-medium text-neutral-90 tracking-tight leading-tight">
-            Need some expert advice?
+            Job search tips from experts
           </h2>
           <Link href="/blog" className="text-primary hover:text-primary-dark text-[13px] font-semibold inline-flex items-center gap-1 transition-colors">
             Read the blog
@@ -177,11 +177,11 @@ export default function HomePage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
-            name: 'Resumly – Free Resume Builder',
+            name: 'Resumly | AI Job Search Companion',
             url: 'https://resumly.app',
-            description: 'Free ATS-friendly resume builder with AI assistance and professional templates.',
+            description: 'AI-powered job search companion that creates tailored, ATS-optimized resumes from any job link.',
             applicationCategory: 'BusinessApplication',
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'First application free' },
           }),
         }}
       />

@@ -41,6 +41,13 @@ const nextConfig: NextConfig = {
   // Redirects for SEO
   async redirects() {
     return [
+      // www → non-www canonical redirect
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.resumly.app' }],
+        destination: 'https://resumly.app/:path*',
+        permanent: true,
+      },
       { source: '/cv-builder', destination: '/resume-builder', permanent: true },
       { source: '/cv-templates', destination: '/resume-templates', permanent: true },
       { source: '/builder', destination: '/builder/new', permanent: false },

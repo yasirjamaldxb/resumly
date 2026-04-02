@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         const { data, error: sendError } = await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || 'Resumly <hello@resumly.app>',
           to: cleanEmail,
-          subject: `Your ATS Score: ${score}/100 — ${rating} | Full Report Inside`,
+          subject: `Your ATS Score: ${score}/100, ${rating} | Full Report Inside`,
           react: ATSReportEmail({
             score: score || 0,
             rating: rating || 'Unknown',

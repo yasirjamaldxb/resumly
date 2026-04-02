@@ -6,7 +6,7 @@ import { ATSCheckerClient } from './ats-checker-client';
 export const metadata: Metadata = {
   title: 'Free ATS Resume Checker: Score Your Resume Instantly (2026)',
   description:
-    'Upload your resume and get an instant ATS compatibility score. Our free checker analyzes formatting, keywords, sections, and content quality — with actionable fix suggestions.',
+    'Upload your resume and get an instant ATS compatibility score. Our free checker analyzes formatting, keywords, sections, and content quality, with actionable fix suggestions.',
   keywords: [
     'ATS resume checker', 'ATS score', 'resume scanner', 'applicant tracking system',
     'ATS friendly resume', 'resume checker free', 'ATS compatibility', 'resume score',
@@ -44,7 +44,7 @@ export default function ATSCheckerPage() {
               An Applicant Tracking System (ATS) is software that companies use to manage job applications. Over 97% of Fortune 500 companies and 75% of all employers use ATS software to screen resumes before a human ever sees them.
             </p>
             <p className="text-[14px] text-neutral-60 leading-relaxed mb-10">
-              The ATS scans your resume for keywords, proper formatting, standard section headings, and structured content. If your resume doesn&apos;t pass the ATS, it gets rejected automatically — even if you&apos;re perfectly qualified for the job.
+              The ATS scans your resume for keywords, proper formatting, standard section headings, and structured content. If your resume doesn&apos;t pass the ATS, it gets rejected automatically, even if you&apos;re perfectly qualified for the job.
             </p>
 
             <h2 className="text-[24px] font-medium text-neutral-90 mb-5 tracking-tight">
@@ -52,7 +52,7 @@ export default function ATSCheckerPage() {
             </h2>
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
               {[
-                { title: 'Contact Information', desc: 'Email, phone, LinkedIn, and location — all required by ATS.' },
+                { title: 'Contact Information', desc: 'Email, phone, LinkedIn, and location, all required by ATS.' },
                 { title: 'Resume Sections', desc: 'Standard section headings like Experience, Education, Skills.' },
                 { title: 'Content Quality', desc: 'Action verbs, measurable achievements, bullet points, dates.' },
                 { title: 'Formatting', desc: 'Clean text encoding, no problematic headers/footers, text-based PDF.' },
@@ -76,7 +76,7 @@ export default function ATSCheckerPage() {
                 { mistake: 'Non-standard section headings', fix: 'Use standard headings: "Work Experience" not "Where I\'ve Been". ATS looks for specific keywords.' },
                 { mistake: 'Missing keywords', fix: 'Mirror the exact terms from the job description. If they say "project management", don\'t just write "PM".' },
                 { mistake: 'No measurable achievements', fix: 'Replace vague descriptions with specific numbers: "Increased revenue by 25%" beats "Helped grow revenue".' },
-                { mistake: 'Missing dates', fix: 'Every position needs start/end dates. Gaps are okay — but missing dates entirely is a red flag.' },
+                { mistake: 'Missing dates', fix: 'Every position needs start/end dates. Gaps are okay, but missing dates entirely is a red flag.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0 text-[13px] font-bold mt-0.5">{i + 1}</div>
@@ -91,7 +91,7 @@ export default function ATSCheckerPage() {
             <div className="bg-green-50 border border-green-200 rounded-xl p-6">
               <h3 className="text-[15px] font-semibold text-green-800 mb-2">Why text-based PDFs matter</h3>
               <p className="text-[13px] text-green-700 leading-relaxed">
-                Many resume builders generate image-based PDFs — they look fine to humans but ATS systems see a blank page. Resumly generates real text-based PDFs where every word is selectable and machine-readable. This is the single biggest factor in whether your resume passes ATS screening.
+                Many resume builders generate image-based PDFs. They look fine to humans but ATS systems see a blank page. Resumly generates real text-based PDFs where every word is selectable and machine-readable. This is the single biggest factor in whether your resume passes ATS screening.
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function ATSCheckerPage() {
             </h2>
             <div className="space-y-4">
               {[
-                { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want — no sign-up required, no limits.' },
+                { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want, no sign-up required, no limits.' },
                 { q: 'Is my resume data safe?', a: 'Your resume is processed in memory and never stored on our servers. It is deleted immediately after analysis.' },
                 { q: 'What score should I aim for?', a: 'Aim for 80% or higher. Resumes scoring 90%+ have the best chance of passing ATS screening. Focus on fixing the suggestions our checker provides.' },
                 { q: 'Does this replace a human review?', a: 'No. Our ATS checker identifies formatting and structural issues that cause ATS rejection. You should still have your resume reviewed by a professional or mentor for content quality.' },
@@ -130,7 +130,7 @@ export default function ATSCheckerPage() {
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
             mainEntity: [
-              { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want — no sign-up required, no limits.' },
+              { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want, no sign-up required, no limits.' },
               { q: 'Is my resume data safe?', a: 'Your resume is processed in memory and never stored on our servers.' },
               { q: 'What score should I aim for?', a: 'Aim for 80% or higher. Resumes scoring 90%+ have the best chance of passing ATS screening.' },
               { q: 'What file formats are supported?', a: 'Currently we support PDF files only.' },

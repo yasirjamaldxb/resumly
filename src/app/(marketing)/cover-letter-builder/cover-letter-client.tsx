@@ -82,7 +82,7 @@ export function CoverLetterClient() {
             Free AI Cover Letter Builder
           </h1>
           <p className="text-[17px] text-neutral-50 max-w-[520px] mx-auto leading-relaxed">
-            Fill in your details and get a tailored, ATS-friendly cover letter in seconds. No templates — genuinely personalized.
+            Fill in your details and get a tailored, ATS-friendly cover letter in seconds. No templates, genuinely personalized.
           </p>
         </div>
       </section>
@@ -285,7 +285,7 @@ export function CoverLetterClient() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                 ),
                 title: 'Always review & edit',
-                desc: 'Add personal touches — a specific anecdote or a detail about the company — before sending.'
+                desc: 'Add personal touches, like a specific anecdote or a detail about the company, before sending.'
               },
             ].map((tip) => (
               <div key={tip.title} className="bg-white rounded-xl border border-neutral-20 p-5">
@@ -304,7 +304,7 @@ export function CoverLetterClient() {
       <section className="py-12 bg-white border-t border-neutral-20">
         <div className="max-w-[600px] mx-auto px-6 text-center">
           <h2 className="text-[22px] font-semibold text-neutral-90 tracking-tight mb-2">Need a resume to go with it?</h2>
-          <p className="text-[14px] text-neutral-50 mb-6">Build a matching ATS-friendly resume in under 10 minutes — free, no account required.</p>
+          <p className="text-[14px] text-neutral-50 mb-6">Build a matching ATS-friendly resume in under 10 minutes. Free, no account required.</p>
           <Link
             href="/builder/new"
             className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-md text-[14px]"

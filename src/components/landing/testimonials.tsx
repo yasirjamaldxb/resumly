@@ -5,26 +5,26 @@ const benefits = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'ATS-Friendly Format',
-    description: 'Every template is designed to pass Applicant Tracking Systems. Your resume gets seen by real humans, not filtered out by software.',
+    title: 'Built for ATS',
+    description: 'Every resume is designed to pass Applicant Tracking Systems. Your application reaches real humans.not filtered out by software that can\'t read your PDF.',
   },
   {
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
       </svg>
     ),
-    title: 'Real Text-Based PDFs',
-    description: 'Unlike other builders that export images, our PDFs contain real, selectable text. Recruiters and ATS can actually read your content.',
+    title: 'AI That Understands Jobs',
+    description: 'Our AI reads the job description, identifies what matters, and rewrites your resume to match.right keywords, right tone, right format. No generic templates.',
   },
   {
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
       </svg>
     ),
-    title: '100% Free Forever',
-    description: 'No hidden fees, no premium paywalls, no credit card required. Create unlimited resumes with full access to all 10 templates.',
+    title: 'One Platform, Every Application',
+    description: 'Resume, cover letter, application tracking.all in one place. No more juggling between LinkedIn, Google Docs, and spreadsheets. Resumly is your complete job search hub.',
   },
 ];
 
@@ -36,7 +36,7 @@ export function TestimonialsSection() {
           Why job seekers choose Resumly
         </h2>
         <p className="text-[14px] text-neutral-50 text-center mb-10 max-w-[500px] mx-auto">
-          We built the resume builder we wished existed when we were job hunting. Here&apos;s what makes it different.
+          We built the job search tool we wished existed. Not just a resume builder.a complete application companion.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">

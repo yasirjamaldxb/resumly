@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 function unsubscribedHtml(message: string): string {
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribed — Resumly</title></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribed | Resumly</title></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;background:#f6f9fc">
   <div style="text-align:center;max-width:400px;padding:40px">
     <div style="font-size:48px;margin-bottom:16px">📧</div>

@@ -25,26 +25,26 @@ export default function TemplatesEmail({ firstName, unsubscribeUrl, builderUrl }
 
       <Text style={template}>
         <strong>🏢 Corporate / Finance / Law</strong><br />
-        Go with <strong>Classic</strong> or <strong>Professional</strong> — clean, traditional, no-nonsense.
+        Go with <strong>Classic</strong> or <strong>Professional</strong>. Clean, traditional, no-nonsense.
       </Text>
 
       <Text style={template}>
         <strong>💻 Tech / Startup / Engineering</strong><br />
-        Try <strong>ATS Pro</strong> or <strong>Technical</strong> — optimized for applicant tracking systems.
+        Try <strong>ATS Pro</strong> or <strong>Technical</strong>. Optimized for applicant tracking systems.
       </Text>
 
       <Text style={template}>
         <strong>🎨 Design / Marketing / Creative</strong><br />
-        Use <strong>Modern</strong> or <strong>Creative</strong> — shows personality while staying professional.
+        Use <strong>Modern</strong> or <strong>Creative</strong>. Shows personality while staying professional.
       </Text>
 
       <Text style={template}>
         <strong>📋 General / Career Change</strong><br />
-        <strong>Minimal</strong> or <strong>Elegant</strong> — versatile templates that work for any role.
+        <strong>Minimal</strong> or <strong>Elegant</strong>. Versatile templates that work for any role.
       </Text>
 
       <Text style={text}>
-        Switching templates is instant — your content stays, only the design changes.
+        Switching templates is instant. Your content stays, only the design changes.
         Try a few and see which one feels right.
       </Text>
 

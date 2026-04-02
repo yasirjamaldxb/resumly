@@ -31,7 +31,7 @@ export function CompactTemplate({ data, styles }: Props) {
         margin: '0 auto',
         boxSizing: 'border-box',
         borderTop: `${3 * s.scale}px solid ${s.colorScheme}`,
-        padding: `${compactPaddingTop}px ${compactPaddingLeft}px`,
+        padding: `${compactPaddingTop}px ${compactPaddingLeft}px ${s.paddingBottom * 0.6}px`,
       }}
     >
       {/* Header: name left, contact right */}

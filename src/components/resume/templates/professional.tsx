@@ -26,7 +26,7 @@ export function ProfessionalTemplate({ data, styles }: Props) {
         lineHeight: s.lineHeight,
         color: '#2d2d2d',
         backgroundColor: '#ffffff',
-        padding: `${s.paddingTop * 1.1}px ${s.paddingLeft * 1.2}px`,
+        padding: `${s.paddingTop * 1.1}px ${s.paddingLeft * 1.2}px ${s.paddingBottom * 1.1}px`,
         maxWidth: `${s.pageWidth}px`,
         minHeight: `${s.pageHeight}px`,
         margin: '0 auto',

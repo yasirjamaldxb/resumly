@@ -223,7 +223,7 @@ export function CreativeTemplate({ data, styles }: Props) {
           width: `${sidebarWidth}px`,
           flexShrink: 0,
           backgroundColor: '#f8f9fa',
-          padding: `${s.paddingTop}px ${s.paddingLeft * 0.55}px`,
+          padding: `${s.paddingTop}px ${s.paddingLeft * 0.55}px ${s.paddingBottom}px`,
         }}
       >
         {/* Photo */}

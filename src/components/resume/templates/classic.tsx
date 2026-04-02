@@ -22,7 +22,7 @@ export function ClassicTemplate({ data, styles }: Props) {
         lineHeight: s.lineHeight,
         color: '#1a1a1a',
         backgroundColor: '#ffffff',
-        padding: `${s.paddingTop}px ${s.paddingLeft * 1.2}px`,
+        padding: `${s.paddingTop}px ${s.paddingLeft * 1.2}px ${s.paddingBottom}px`,
         maxWidth: `${s.pageWidth}px`,
         minHeight: `${s.pageHeight}px`,
         margin: '0 auto',

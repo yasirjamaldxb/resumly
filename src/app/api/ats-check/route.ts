@@ -76,7 +76,7 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
     score: hasLinkedIn ? 5 : 0,
     maxScore: 5,
     message: hasLinkedIn ? 'LinkedIn profile URL found' : 'No LinkedIn profile detected',
-    fix: hasLinkedIn ? undefined : 'Add your LinkedIn profile URL. Most recruiters check LinkedIn — include linkedin.com/in/yourname.',
+    fix: hasLinkedIn ? undefined : 'Add your LinkedIn profile URL. Most recruiters check LinkedIn, so include linkedin.com/in/yourname.',
   });
 
   // Check for location/city
@@ -114,7 +114,7 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
       score: found ? sectionScore : 0,
       maxScore: sectionScore,
       message: found ? `${section.label} section found` : `No ${section.label} section detected`,
-      fix: found ? undefined : `Add a clearly labeled "${section.label}" section. Use standard heading names — ATS software looks for these exact keywords.`,
+      fix: found ? undefined : `Add a clearly labeled "${section.label}" section. Use standard heading names. ATS software looks for these exact keywords.`,
     });
   }
 
@@ -230,7 +230,7 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
     score: !hasSpecialChars ? 5 : 0,
     maxScore: 5,
     message: !hasSpecialChars
-      ? 'Text encoding is clean — ATS can read all characters'
+      ? 'Text encoding is clean. ATS can read all characters'
       : 'Special characters detected that may cause ATS parsing errors',
     fix: hasSpecialChars ? 'Remove special characters, fancy symbols, or emojis. Stick to standard characters. ATS systems often misread special characters, turning your resume into garbled text.' : undefined,
   });
@@ -245,7 +245,7 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
     maxScore: 5,
     message: !hasHeaderFooter
       ? 'No problematic headers or footers detected'
-      : 'Page numbers or headers/footers detected — these can confuse ATS',
+      : 'Page numbers or headers/footers detected. These can confuse ATS',
     fix: hasHeaderFooter ? 'Remove page numbers and headers/footers. ATS systems sometimes read these as part of your content, inserting random numbers into your experience section.' : undefined,
   });
 
@@ -258,8 +258,8 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
     score: isTextBased ? 5 : 0,
     maxScore: 5,
     message: isTextBased
-      ? 'PDF contains real text — ATS can read it'
-      : 'Very little text extracted — this may be an image-based PDF',
+      ? 'PDF contains real text. ATS can read it'
+      : 'Very little text extracted. This may be an image-based PDF',
     fix: isTextBased ? undefined : 'Your PDF appears to be image-based (scanned or screenshot). ATS systems CANNOT read image-based PDFs. Rebuild your resume using Resumly to get a text-based PDF that every ATS can parse.',
   });
 
@@ -292,7 +292,7 @@ function analyzeResume(text: string): { checks: CheckResult[]; totalScore: numbe
     score: noFirstPerson ? 5 : 0,
     maxScore: 5,
     message: noFirstPerson
-      ? 'Professional tone — minimal first-person pronouns'
+      ? 'Professional tone, minimal first-person pronouns'
       : `${firstPersonCount} first-person pronouns found (I, me, my)`,
     fix: noFirstPerson ? undefined : 'Remove first-person pronouns (I, me, my). Instead of "I managed a team", write "Managed a team of 12". This is standard resume convention and reads more professionally.',
   });

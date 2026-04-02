@@ -12,8 +12,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const allowedFields = [
-      'job_level', 'industry', 'years_experience',
+      'full_name', 'job_level', 'industry', 'years_experience',
       'target_role', 'preferred_location', 'onboarding_complete',
+      'career_context', 'phone', 'location', 'linkedin_url', 'headline',
+      'profile_data',
     ];
 
     const updateData: Record<string, unknown> = {};

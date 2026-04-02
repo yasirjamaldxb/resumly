@@ -54,7 +54,7 @@ export default function ATSReportEmail({
   return (
     <Html>
       <Head />
-      <Preview>{`Your ATS Score: ${score}/100 — ${rating} | Resumly`}</Preview>
+      <Preview>{`Your ATS Score: ${score}/100, ${rating} | Resumly`}</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header */}
@@ -89,7 +89,7 @@ export default function ATSReportEmail({
               return (
                 <div key={name} style={categoryRow}>
                   <Text style={categoryName}>
-                    {name} — <span style={{ color: barColor, fontWeight: 700 }}>{pct}%</span>
+                    {name}: <span style={{ color: barColor, fontWeight: 700 }}>{pct}%</span>
                   </Text>
                   <div style={barTrack}>
                     <div style={{ ...barFill, width: `${pct}%`, backgroundColor: barColor }} />
@@ -131,7 +131,7 @@ export default function ATSReportEmail({
                       {check.passed ? '\u2713' : '\u2717'}
                     </Text>
                     <Text style={checkText}>
-                      <strong>{check.name}</strong> ({check.score}/{check.maxScore}) — {check.message}
+                      <strong>{check.name}</strong> ({check.score}/{check.maxScore}): {check.message}
                     </Text>
                   </div>
                 ))}

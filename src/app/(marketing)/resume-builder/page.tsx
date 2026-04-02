@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'Free Resume Builder: Make & Download Your Resume Easily (2026)',
   description:
-    'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant text-based PDF download. No watermarks, no fees — completely free.',
+    'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant text-based PDF download. No watermarks, no fees, completely free.',
   alternates: { canonical: 'https://resumly.app/resume-builder' },
   openGraph: {
     title: 'Free Resume Builder: Make & Download Your Resume Easily · Resumly',
@@ -19,7 +19,7 @@ const benefits = [
   { icon: '🤖', text: 'AI writes your bullets & summary' },
   { icon: '✅', text: 'ATS-optimized templates that pass screening' },
   { icon: '⚡', text: 'Build in under 10 minutes' },
-  { icon: '📄', text: 'Text-based PDF — no watermarks, no images' },
+  { icon: '📄', text: 'Text-based PDF, no watermarks, no images' },
   { icon: '🎨', text: '10 professional templates' },
   { icon: '📊', text: 'Real-time ATS score checker' },
 ];
@@ -33,10 +33,10 @@ export default function ResumeBuilderPage() {
         <section className="bg-gradient-to-b from-blue-50 to-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
-              Free Resume Builder — Build Your Resume Online
+              Free Resume Builder: Build Your Resume Online
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Create a professional, ATS-friendly resume in minutes. Our AI-powered builder guides you through every step — no design skills needed.
+              Create a professional, ATS-friendly resume in minutes. Our AI-powered builder guides you through every step. No design skills needed.
             </p>
             <Button size="xl" asChild>
               <Link href="/builder/new">Start Building for Free →</Link>
@@ -86,7 +86,7 @@ export default function ResumeBuilderPage() {
 
               <h3 className="text-xl font-bold text-gray-900">Step 5: Download your resume</h3>
               <p>
-                Once your ATS score hits 80%+, download your resume as a perfectly formatted PDF. No watermarks, no fees — just a professional resume ready to send.
+                Once your ATS score hits 80%+, download your resume as a perfectly formatted PDF. No watermarks, no fees. Just a professional resume ready to send.
               </p>
             </div>
 

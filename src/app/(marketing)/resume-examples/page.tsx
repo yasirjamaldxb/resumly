@@ -97,7 +97,7 @@ export default function ResumeExamplesPage() {
                 Browse examples to understand the right format, keywords, and achievements to include for your target role.
               </p>
               <p>
-                Never copy a resume example word-for-word — instead, use them as inspiration and customize with your own experience and achievements.
+                Never copy a resume example word-for-word. Instead, use them as inspiration and customize with your own experience and achievements.
                 Our free resume builder makes it easy to adapt any example to your specific background.
               </p>
             </div>

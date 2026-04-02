@@ -45,7 +45,7 @@ export function ExecutiveTemplate({ data, styles }: Props) {
       <div
         style={{
           flex: 1,
-          padding: `${s.paddingTop}px ${s.paddingRight}px`,
+          padding: `${s.paddingTop}px ${s.paddingRight}px ${s.paddingBottom}px`,
         }}
       >
         {/* Header */}

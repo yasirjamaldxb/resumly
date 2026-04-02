@@ -11,7 +11,7 @@ export default function WelcomeEmail({ firstName, unsubscribeUrl, builderUrl }: 
   const name = firstName || 'there';
 
   return (
-    <EmailLayout preview="Welcome to Resumly — your professional resume in minutes" unsubscribeUrl={unsubscribeUrl}>
+    <EmailLayout preview="Welcome to Resumly. Your professional resume in minutes" unsubscribeUrl={unsubscribeUrl}>
       <Heading style={heading}>Welcome to Resumly! 🎉</Heading>
 
       <Text style={text}>
@@ -20,7 +20,7 @@ export default function WelcomeEmail({ firstName, unsubscribeUrl, builderUrl }: 
 
       <Text style={text}>
         Thanks for joining Resumly. You now have access to professional resume templates,
-        AI-powered writing suggestions, and instant PDF downloads — all completely free.
+        AI-powered writing suggestions, and instant PDF downloads, all completely free.
       </Text>
 
       <Text style={text}>

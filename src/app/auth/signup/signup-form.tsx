@@ -52,7 +52,7 @@ export function SignupForm() {
         </div>
         <h2 className="text-[22px] font-semibold text-neutral-90 mb-2">Account created!</h2>
         <p className="text-neutral-50 text-[14px] mb-6">
-          We sent a confirmation link to <strong>{email}</strong>. You can verify later — start building your resume now.
+          We sent a confirmation link to <strong>{email}</strong>. You can verify later. Start building your resume now.
         </p>
         <Button size="lg" className="w-full" onClick={() => router.push('/builder/new')}>
           Start Building My Resume →

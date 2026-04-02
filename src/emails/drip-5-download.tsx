@@ -11,7 +11,7 @@ export default function DownloadPushEmail({ firstName, unsubscribeUrl, builderUr
   const name = firstName || 'there';
 
   return (
-    <EmailLayout preview="Your resume is ready to download — one click away" unsubscribeUrl={unsubscribeUrl}>
+    <EmailLayout preview="Your resume is ready to download, one click away" unsubscribeUrl={unsubscribeUrl}>
       <Heading style={heading}>Your resume is ready 📄</Heading>
 
       <Text style={text}>
@@ -19,7 +19,7 @@ export default function DownloadPushEmail({ firstName, unsubscribeUrl, builderUr
       </Text>
 
       <Text style={text}>
-        You&apos;ve put in the work — now it&apos;s time to download your resume and start applying.
+        You&apos;ve put in the work. Now it&apos;s time to download your resume and start applying.
         Here&apos;s a quick checklist before you hit download:
       </Text>
 
@@ -30,7 +30,7 @@ export default function DownloadPushEmail({ firstName, unsubscribeUrl, builderUr
       <Text style={checklist}>☑️ Relevant skills (6-10 keywords)</Text>
 
       <Text style={text}>
-        Your PDF will be ATS-friendly with real, selectable text — not an image.
+        Your PDF will be ATS-friendly with real, selectable text, not an image.
         This means applicant tracking systems can read it properly, giving you the best
         chance of getting past automated screening.
       </Text>

@@ -94,7 +94,7 @@ export function EducationForm({ data, onChange }: Props) {
     if (edu.field) parts.push(edu.field);
     if (edu.startDate) {
       const end = edu.current ? 'Present' : edu.endDate || '';
-      parts.push(`${edu.startDate}${end ? ` — ${end}` : ''}`);
+      parts.push(`${edu.startDate}${end ? ` - ${end}` : ''}`);
     }
     return parts.join(' · ');
   };

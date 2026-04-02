@@ -24,21 +24,21 @@ export default function ReferralEmail({ firstName, unsubscribeUrl, shareUrl }: P
       </Text>
 
       <Text style={text}>
-        If you know someone who&apos;s job hunting, looking to update their resume, or graduating soon —
+        If you know someone who&apos;s job hunting, looking to update their resume, or graduating soon,
         share Resumly with them. It&apos;s free and takes 3 minutes to get a professional resume.
       </Text>
 
       <EmailButton href={shareUrl}>Share Resumly →</EmailButton>
 
       <Text style={text}>
-        Or just forward this email — sometimes the simplest way is the best.
+        Or just forward this email. Sometimes the simplest way is the best.
       </Text>
 
       <Text style={divider}>─ ─ ─</Text>
 
       <Text style={text}>
         <strong>One more thing:</strong> We&apos;d love your feedback. What&apos;s one thing we could do better?
-        Just reply to this email — we read every response.
+        Just reply to this email. We read every response.
       </Text>
 
       <Text style={subtext}>

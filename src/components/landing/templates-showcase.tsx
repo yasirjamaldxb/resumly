@@ -20,22 +20,22 @@ export function TemplatesShowcase() {
     <section className="py-16 bg-neutral-10">
       <div className="max-w-[1200px] mx-auto px-6">
         <h2 className="text-[28px] sm:text-[34px] font-medium text-neutral-90 text-center mb-3 tracking-tight leading-tight">
-          Recruiter-tested resume templates
+          10 recruiter-tested templates
         </h2>
         <p className="text-[14px] text-neutral-50 text-center mb-10 max-w-[460px] mx-auto">
-          Pick from our collection of beautiful, ATS-friendly templates. Download to PDF in one click.
+          Every template is ATS-optimized and tested against real applicant tracking systems. Pick one and we&apos;ll tailor it to your job.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 mb-10">
           {templates.map((t) => (
             <Link key={t.id} href={`/resume-templates#${t.id}`} className="group block relative">
-              <div className="w-full rounded-lg shadow-md border border-neutral-20 overflow-hidden relative group-hover:shadow-xl transition-all duration-300">
+              <div className="w-full aspect-[1/1.414] rounded-lg shadow-md border border-neutral-20 overflow-hidden relative group-hover:shadow-xl transition-all duration-300">
                 <Image
                   src={`/templates/${t.id}.png`}
                   alt={`${t.name} resume template`}
                   width={794}
                   height={1123}
-                  className="w-full h-auto"
+                  className="w-full h-full object-cover object-top"
                   quality={80}
                 />
                 <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">

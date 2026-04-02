@@ -20,7 +20,7 @@ export default function TipsEmail({ firstName, unsubscribeUrl, builderUrl }: Pro
 
       <Text style={text}>
         Recruiters spend an average of 7 seconds scanning a resume. Here are the top mistakes
-        that get resumes rejected — and how to avoid them:
+        that get resumes rejected, and how to avoid them:
       </Text>
 
       <Text style={tip}><strong>❌ Generic objective statements.</strong> Replace &quot;Seeking a challenging role&quot; with a specific professional summary that highlights your key skills.</Text>
@@ -34,7 +34,7 @@ export default function TipsEmail({ firstName, unsubscribeUrl, builderUrl }: Pro
       <Text style={tip}><strong>❌ Too long or too short.</strong> One page for &lt;10 years experience, two pages max. Every line should earn its spot.</Text>
 
       <Text style={text}>
-        Resumly&apos;s templates are designed to avoid all of these automatically — clean formatting,
+        Resumly&apos;s templates are designed to avoid all of these automatically: clean formatting,
         ATS-optimized structure, and AI suggestions to help you write stronger bullet points.
       </Text>
 

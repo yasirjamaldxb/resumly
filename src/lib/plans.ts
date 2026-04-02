@@ -15,9 +15,9 @@ export interface PlanLimits {
 
 export const PLAN_LIMITS: Record<PlanTier, PlanLimits> = {
   free: {
-    maxApplications: 3,
-    maxResumes: 5,
-    maxOptimizations: 3,
+    maxApplications: 1,
+    maxResumes: 3,
+    maxOptimizations: 2, // 1 optimize + 1 cover letter = 1 full application
     coverLetters: true,
     interviewPrep: false,
     bundleDownload: false,

@@ -69,7 +69,7 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <div className="relative z-10 text-white/30 text-[12px]">100% free — no credit card required</div>
+        <div className="relative z-10 text-white/30 text-[12px]">100% free, no credit card required</div>
       </div>
 
       {/* Right panel - form */}

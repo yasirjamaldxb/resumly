@@ -465,7 +465,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!text || text.trim().length < 20) {
-      return NextResponse.json({ error: 'Could not extract text from the file. It may be image-based — try a text-based PDF.' }, { status: 400 });
+      return NextResponse.json({ error: 'Could not extract text from the file. It may be image-based. Try a text-based PDF.' }, { status: 400 });
     }
 
     // Try AI parsing first, fall back to regex

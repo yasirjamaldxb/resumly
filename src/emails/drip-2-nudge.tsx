@@ -11,7 +11,7 @@ export default function NudgeEmail({ firstName, unsubscribeUrl, builderUrl }: Pr
   const name = firstName || 'there';
 
   return (
-    <EmailLayout preview="Your resume is waiting — finish it in 5 minutes" unsubscribeUrl={unsubscribeUrl}>
+    <EmailLayout preview="Your resume is waiting. Finish it in 5 minutes" unsubscribeUrl={unsubscribeUrl}>
       <Heading style={heading}>Pick up where you left off</Heading>
 
       <Text style={text}>
@@ -19,7 +19,7 @@ export default function NudgeEmail({ firstName, unsubscribeUrl, builderUrl }: Pr
       </Text>
 
       <Text style={text}>
-        You started your resume yesterday — don&apos;t let it sit unfinished!
+        You started your resume yesterday. Don&apos;t let it sit unfinished!
         Most users complete theirs in just 5-10 minutes.
       </Text>
 
@@ -34,7 +34,7 @@ export default function NudgeEmail({ firstName, unsubscribeUrl, builderUrl }: Pr
       <EmailButton href={builderUrl}>Complete Your Resume →</EmailButton>
 
       <Text style={subtext}>
-        Your progress is automatically saved — pick up right where you left off.
+        Your progress is automatically saved. Pick up right where you left off.
       </Text>
     </EmailLayout>
   );

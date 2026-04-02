@@ -10,10 +10,29 @@ interface UpgradeModalProps {
   message?: string;
 }
 
+// Product IDs from Polar dashboard — set these in env vars after creating products
+const PRODUCT_IDS = {
+  starter_monthly: process.env.NEXT_PUBLIC_POLAR_STARTER_MONTHLY || '',
+  starter_yearly: process.env.NEXT_PUBLIC_POLAR_STARTER_YEARLY || '',
+  pro_monthly: process.env.NEXT_PUBLIC_POLAR_PRO_MONTHLY || '',
+  pro_yearly: process.env.NEXT_PUBLIC_POLAR_PRO_YEARLY || '',
+};
+
 export function UpgradeModal({ isOpen, onClose, currentTier, message }: UpgradeModalProps) {
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
 
   if (!isOpen) return null;
+
+  const handleCheckout = (plan: 'starter' | 'pro') => {
+    const productId = PRODUCT_IDS[`${plan}_${billing}`];
+    if (!productId) {
+      // Fallback: if no product ID configured, show coming soon
+      alert('Payments coming soon! We\'re setting up our payment system.');
+      return;
+    }
+    // Redirect to Polar checkout via our API route
+    window.location.href = `/api/checkout?products=${productId}`;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -74,12 +93,15 @@ export function UpgradeModal({ isOpen, onClose, currentTier, message }: UpgradeM
               </div>
             </div>
             <ul className="space-y-1 text-[13px] text-neutral-60">
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> 10 applications/month</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Daily job alerts</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Application tracking</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> 10 applications/month</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Daily job alerts</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Application tracking</li>
             </ul>
             {currentTier !== 'starter' && currentTier !== 'pro' && (
-              <button className="mt-3 w-full border border-primary text-primary py-2 rounded-lg text-[14px] font-medium hover:bg-primary/5 transition-colors">
+              <button
+                onClick={() => handleCheckout('starter')}
+                className="mt-3 w-full border border-primary text-primary py-2 rounded-lg text-[14px] font-medium hover:bg-primary/5 transition-colors"
+              >
                 Upgrade to Starter
               </button>
             )}
@@ -101,13 +123,16 @@ export function UpgradeModal({ isOpen, onClose, currentTier, message }: UpgradeM
               </div>
             </div>
             <ul className="space-y-1 text-[13px] text-neutral-60">
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Unlimited applications</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Interview prep (AI talking points)</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Bundle downloads (resume + cover letter)</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-500">✓</span> Weekly progress reports</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Unlimited applications</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Interview prep (AI talking points)</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Bundle downloads (resume + cover letter)</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-500">&#10003;</span> Weekly progress reports</li>
             </ul>
             {currentTier !== 'pro' && (
-              <button className="mt-3 w-full bg-primary text-white py-2 rounded-lg text-[14px] font-medium hover:bg-primary/90 transition-colors">
+              <button
+                onClick={() => handleCheckout('pro')}
+                className="mt-3 w-full bg-primary text-white py-2 rounded-lg text-[14px] font-medium hover:bg-primary/90 transition-colors"
+              >
                 Upgrade to Pro
               </button>
             )}

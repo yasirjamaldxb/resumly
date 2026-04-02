@@ -13,7 +13,7 @@ export const DRIP_SEQUENCE: DripEmail[] = [
     number: 1,
     delayHours: 0, // immediately on signup
     subjects: [
-      'Welcome to Resumly — your resume in minutes',
+      'Welcome to Resumly, your resume in minutes',
       'Your free resume builder is ready',
       '3 minutes to a professional resume',
     ],
@@ -22,7 +22,7 @@ export const DRIP_SEQUENCE: DripEmail[] = [
     number: 2,
     delayHours: 24, // 1 day
     subjects: [
-      'Your resume is waiting — finish in 5 min',
+      'Your resume is waiting. Finish in 5 min',
       "Don't leave your resume half-finished",
       'Pick up where you left off',
     ],
@@ -43,7 +43,7 @@ export const DRIP_SEQUENCE: DripEmail[] = [
     subjects: [
       'Which resume style matches your industry?',
       'Find your perfect resume template',
-      '10 professional templates — pick yours',
+      '10 professional templates, pick yours',
     ],
   },
   {
@@ -61,7 +61,7 @@ export const DRIP_SEQUENCE: DripEmail[] = [
     delayHours: 240, // 10 days
     subjects: [
       'How job seekers are landing interviews',
-      'From applying to hired — real tips',
+      'From applying to hired, real tips',
       'People are getting hired with resumes like yours',
     ],
   },
