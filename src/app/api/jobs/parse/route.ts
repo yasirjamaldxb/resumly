@@ -893,6 +893,21 @@ async function fetchPage(url: string, retries = 2): Promise<string> {
 // Opens the URL in real Chromium, waits for JS to render, extracts text
 // ══════════════════════════════════════════════════════════════
 
+// Detect if extracted text is actually a security/CAPTCHA wall, not a job
+function isBrowserSecurityWall(text: string, title: string | null): boolean {
+  const lower = (text + ' ' + (title || '')).toLowerCase();
+  const securitySignals = [
+    'help us protect', 'verify you are human', 'captcha', 'are you a robot',
+    'checking your browser', 'please verify', 'access denied', 'security check',
+    'enable javascript', 'enable cookies', 'unusual traffic', 'automated access',
+    'prove you\'re not a robot', 'complete the security check', 'blocked your ip',
+    'too many requests', 'rate limited', 'cloudflare', 'just a moment',
+    'attention required', 'please wait while we verify',
+  ];
+  const matchCount = securitySignals.filter(s => lower.includes(s)).length;
+  return matchCount >= 1;
+}
+
 async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
   let browser: any = null;
   try {
@@ -901,7 +916,11 @@ async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
     const puppeteer = (await import('puppeteer-core')).default;
 
     browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [
+        ...chromium.args,
+        '--disable-blink-features=AutomationControlled', // Hide automation flag
+        '--disable-features=IsolateOrigins,site-per-process',
+      ],
       defaultViewport: { width: 1280, height: 900 },
       executablePath: await chromium.executablePath(),
       headless: 'shell' as any,
@@ -909,11 +928,44 @@ async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
 
     const page = await browser.newPage();
 
+    // ── Stealth: make headless browser look like a real user ──
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
     );
 
-    // Dismiss cookie/consent banners that block content
+    // Remove webdriver flag (main way sites detect headless)
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => false });
+      // Fake plugins array (headless has 0 plugins)
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [
+          { name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer' },
+          { name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+          { name: 'Native Client', filename: 'internal-nacl-plugin' },
+        ],
+      });
+      // Fake languages
+      Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+      // Override chrome.runtime to look like real Chrome
+      (window as any).chrome = { runtime: {}, loadTimes: () => ({}), csi: () => ({}) };
+      // Fake permissions query
+      const originalQuery = window.navigator.permissions.query.bind(window.navigator.permissions);
+      window.navigator.permissions.query = (parameters: any) => {
+        if (parameters.name === 'notifications') {
+          return Promise.resolve({ state: 'denied' } as PermissionStatus);
+        }
+        return originalQuery(parameters);
+      };
+    });
+
+    // Set extra headers to look more real
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'en-US,en;q=0.9',
+      'sec-ch-ua': '"Chromium";v="131", "Google Chrome";v="131", "Not_A Brand";v="24"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"Windows"',
+    });
+
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 25000 });
 
     // Wait for dynamic content to render (SPAs, lazy loading)
@@ -1044,11 +1096,17 @@ async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
       return null;
     }
 
+    // Check if we got a security/CAPTCHA wall instead of actual job content
+    if (isBrowserSecurityWall(visibleText, null)) {
+      console.log('[job-parse] Browser: security wall detected in extracted text, aborting');
+      return null;
+    }
+
     console.log(`[job-parse] Browser: got ${visibleText.length} chars of text from ${isGlassdoor ? 'Glassdoor detail panel' : isIndeed ? 'Indeed detail panel' : 'page'}`);
 
     // Try JSON-LD from the rendered HTML first
     const { job: jsonLd } = extractJsonLd(html);
-    if (jsonLd?.title) {
+    if (jsonLd?.title && !isBrowserSecurityWall('', jsonLd.title)) {
       const job = jsonLdToNormalized(jsonLd, url);
       job.source_type = 'browser';
       return job;
@@ -1078,7 +1136,7 @@ async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
 
     // Use AI to parse the extracted text (most reliable)
     const aiResult = await aiParseJobText(visibleText);
-    if (aiResult && aiResult.title) {
+    if (aiResult && aiResult.title && !isBrowserSecurityWall('', aiResult.title)) {
       const job = emptyJob();
       job.title = aiResult.title;
       job.company = aiResult.company || null;
@@ -1101,6 +1159,12 @@ async function fetchWithBrowser(url: string): Promise<NormalizedJob | null> {
     job.source_type = 'browser';
     job.source_url = url;
     enrichFromText(job, visibleText);
+
+    // Final safety: never return a security wall as a job
+    if (job.title && isBrowserSecurityWall('', job.title)) {
+      console.log('[job-parse] Browser: extracted title is a security wall, rejecting');
+      return null;
+    }
 
     return job.title ? job : null;
   } catch (err) {
