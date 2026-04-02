@@ -36,6 +36,7 @@ function JobPreviewContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const jobUrl = searchParams.get('url') || '';
+  const jobText = searchParams.get('text') || '';
 
   const [status, setStatus] = useState<'loading' | 'ready' | 'error' | 'paste'>('loading');
   const [job, setJob] = useState<ParsedJob | null>(null);
@@ -48,6 +49,64 @@ function JobPreviewContent() {
   const [authChecked, setAuthChecked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
+  // If text was passed from homepage, parse it directly
+  useEffect(() => {
+    if (!jobText || jobUrl) return;
+    const parseText = async () => {
+      try {
+        const res = await fetch('/api/jobs/parse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: jobText }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setErrorMsg(data.message || 'Could not analyze the job description');
+          setStatus('paste');
+          setPastedText(jobText);
+          return;
+        }
+
+        // Check if user is logged in
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user && data.job) {
+          // Logged in: save job and go to funnel
+          try {
+            const saveRes = await fetch('/api/jobs/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...data.job, url: '', raw_text: jobText.slice(0, 2000) }),
+            });
+            const saveResult = await saveRes.json();
+            if (saveResult.id) {
+              router.replace(`/funnel/${saveResult.id}`);
+              return;
+            }
+          } catch { /* fall through */ }
+        }
+
+        setJob(data.job);
+        setStatus('ready');
+        if (typeof window !== 'undefined' && data.job?.title) {
+          localStorage.setItem('resumly_job_context', JSON.stringify({
+            title: data.job.title,
+            company: data.job.company,
+            url: '',
+            keywords: data.job.keywords || [],
+            skills: data.job.skills || [],
+          }));
+        }
+      } catch {
+        setErrorMsg('Could not analyze the job description. Try again.');
+        setStatus('paste');
+        setPastedText(jobText);
+      }
+    };
+    parseText();
+  }, [jobText, jobUrl, router]);
+
   // Animated loading steps
   useEffect(() => {
     if (status !== 'loading') return;
@@ -59,7 +118,7 @@ function JobPreviewContent() {
 
   // Check auth first, then either redirect (logged in) or parse for preview (not logged in)
   useEffect(() => {
-    if (!jobUrl) { router.replace('/builder/new'); return; }
+    if (!jobUrl) { if (!jobText) router.replace('/builder/new'); return; }
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();

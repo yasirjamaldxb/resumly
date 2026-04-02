@@ -54,7 +54,7 @@ export function HeroSection() {
             </h1>
 
             <p className="text-[17px] text-neutral-50 mb-8 leading-relaxed max-w-[460px]">
-              Paste any job link and Resumly builds everything you need to apply: tailored resume, cover letter, ATS optimization, and application tracking. All in under 5 minutes.
+              Paste any job link or description and Resumly builds everything you need to apply: tailored resume, cover letter, ATS optimization, and application tracking. All in under 5 minutes.
             </p>
 
             {/* THE INPUT */}
