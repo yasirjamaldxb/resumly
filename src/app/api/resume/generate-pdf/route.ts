@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { trackEvent, logError } from '@/lib/analytics';
 import { createElement } from 'react';
 import { getTemplateStyles } from '@/lib/template-utils';
+import type { ResumeData } from '@/types/resume';
 
 export const maxDuration = 60;
 
@@ -26,18 +27,20 @@ export async function POST(req: NextRequest) {
     // Downloads folder via Content-Disposition, skipping the JS blob path that
     // triggers Chrome's "Save As" dialog.
     const contentType = req.headers.get('content-type') || '';
-    let resumeData: unknown;
+    let resumeData: ResumeData | null = null;
     if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
       const form = await req.formData();
       const raw = form.get('resumeData');
       try {
-        resumeData = typeof raw === 'string' ? JSON.parse(raw) : null;
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : null;
+        resumeData = parsed && typeof parsed === 'object' ? parsed as ResumeData : null;
       } catch {
         resumeData = null;
       }
     } else {
       const body = await req.json();
-      resumeData = body?.resumeData;
+      const rd = body?.resumeData;
+      resumeData = rd && typeof rd === 'object' ? rd as ResumeData : null;
     }
 
     if (!resumeData) {

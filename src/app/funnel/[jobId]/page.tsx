@@ -605,7 +605,11 @@ function FunnelPage() {
         }
         throw new Error(result.error || 'Generation failed');
       }
-      setCoverLetterContent(result.text);
+      const text = typeof result.text === 'string' ? result.text.trim() : '';
+      if (!text) {
+        throw new Error('The AI returned an empty cover letter. Please click Regenerate to try again.');
+      }
+      setCoverLetterContent(text);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate cover letter');
     } finally {
