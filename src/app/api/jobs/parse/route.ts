@@ -669,8 +669,14 @@ async function aiParseJobText(text: string): Promise<{ title: string; company: s
     const truncated = text.slice(0, 4000);
     const completion = await callGemini('jobs-parse', {
       messages: [
-        { role: 'system', content: 'Extract job posting details from text. Return ONLY valid JSON, no markdown.' },
-        { role: 'user', content: `Extract the job details from this text. Return JSON with: title, company, location, description (max 300 chars), requirements (array of strings, max 8), skills (array of strings, max 15).
+        { role: 'system', content: 'Extract job posting details from text. Return ONLY valid JSON, no markdown. Never invent or infer skills that are not explicitly mentioned in the text.' },
+        { role: 'user', content: `Extract the job details from this text. Return JSON with:
+- title: the exact job title (short noun phrase, NOT a sentence)
+- company: the employer name only
+- location: city/country or "Remote"/"Hybrid"
+- description (max 300 chars)
+- requirements (array of strings, max 8)
+- skills (array of strings, max 15) — ONLY skills explicitly named in the text, verbatim. Preserve original casing for acronyms (SQL, AWS, CRM, SaaS, API, KPI). Do NOT add related technologies the text does not mention.
 
 If this is NOT a job posting (e.g. search results, homepage, error page), return {"error": "not_a_job_posting"}.
 
@@ -747,6 +753,25 @@ function enrichFromText(job: NormalizedJob, text: string): void {
   }
 }
 
+// Display-case map for skills that should NOT be title-cased
+// (acronyms, brand names, and words with non-standard casing).
+const SKILL_DISPLAY_CASE: Record<string, string> = {
+  'javascript': 'JavaScript', 'typescript': 'TypeScript', 'nodejs': 'Node.js', 'node.js': 'Node.js',
+  'next.js': 'Next.js', 'react native': 'React Native', 'ci/cd': 'CI/CD', 'a/b testing': 'A/B Testing',
+  'aws': 'AWS', 'gcp': 'GCP', 'sql': 'SQL', 'nosql': 'NoSQL', 'api': 'API', 'rest': 'REST',
+  'graphql': 'GraphQL', 'html': 'HTML', 'css': 'CSS', 'sass': 'SASS', 'ui design': 'UI Design',
+  'ux design': 'UX Design', 'seo': 'SEO', 'sem': 'SEM', 'crm': 'CRM', 'erp': 'ERP', 'sap': 'SAP',
+  'kpis': 'KPIs', 'okrs': 'OKRs', 'nlp': 'NLP', 'ios': 'iOS', 'sre': 'SRE', 'p&l': 'P&L',
+  'hr': 'HR', 'devops': 'DevOps', 'tensorflow': 'TensorFlow', 'pytorch': 'PyTorch',
+  'github actions': 'GitHub Actions', 'power bi': 'Power BI', 'c++': 'C++', 'c#': 'C#',
+  'postgresql': 'PostgreSQL', 'mysql': 'MySQL', 'mongodb': 'MongoDB', 'dynamodb': 'DynamoDB',
+  'oauth': 'OAuth', 'hubspot': 'HubSpot', 'salesforce': 'Salesforce',
+};
+
+function displaySkill(skill: string): string {
+  return SKILL_DISPLAY_CASE[skill] || skill.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
 function extractKeywords(text: string): { skills: string[]; keywords: string[] } {
   const lower = text.toLowerCase();
   const foundSkills: string[] = [];
@@ -755,7 +780,7 @@ function extractKeywords(text: string): { skills: string[]; keywords: string[] }
     const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`\\b${escaped}\\b`, 'i');
     if (regex.test(lower)) {
-      foundSkills.push(skill.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+      foundSkills.push(displaySkill(skill));
     }
   }
 

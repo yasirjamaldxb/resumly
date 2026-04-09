@@ -339,6 +339,9 @@ function FunnelPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [upgradeMessage, setUpgradeMessage] = useState('');
+  // True once any AI endpoint returned limit_reached. Blocks continue buttons
+  // and prevents auto-optimize from firing on every re-render.
+  const [limitReached, setLimitReached] = useState(false);
 
   // Match analysis — recomputes whenever resume or job data changes
   const matchAnalysis = useMemo(() => computeMatch(resumeData, jobData), [resumeData, jobData]);
@@ -425,17 +428,17 @@ function FunnelPage() {
 
   // Auto-optimize resume when entering resume step
   useEffect(() => {
-    if (step === 'resume' && !optimization && !optimizing && jobData && resumeData.personalDetails.firstName) {
+    if (step === 'resume' && !optimization && !optimizing && !limitReached && jobData && resumeData.personalDetails.firstName) {
       handleOptimize();
     }
-  }, [step, jobData, resumeData.personalDetails.firstName]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [step, jobData, resumeData.personalDetails.firstName, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-generate cover letter on that step
   useEffect(() => {
-    if (step === 'cover-letter' && !coverLetterContent && !generatingCoverLetter && jobData && resumeData.personalDetails.firstName) {
+    if (step === 'cover-letter' && !coverLetterContent && !generatingCoverLetter && !limitReached && jobData && resumeData.personalDetails.firstName) {
       handleGenerateCoverLetter();
     }
-  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [step, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Handlers ──────────────────────────────────────
 
@@ -495,6 +498,7 @@ function FunnelPage() {
         if (result.error === 'limit_reached') {
           setUpgradeMessage(result.message);
           setShowUpgrade(true);
+          setLimitReached(true);
           setOptimizing(false);
           return;
         }
@@ -530,6 +534,10 @@ function FunnelPage() {
 
   // Save resume & go to cover letter
   const handleSaveAndContinue = async () => {
+    if (limitReached) {
+      setShowUpgrade(true);
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -600,6 +608,7 @@ function FunnelPage() {
         if (result.error === 'limit_reached') {
           setUpgradeMessage(result.message);
           setShowUpgrade(true);
+          setLimitReached(true);
           setGeneratingCoverLetter(false);
           return;
         }
@@ -952,22 +961,16 @@ function FunnelPage() {
                 <div className="mb-5">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex-1 h-px bg-neutral-15" />
-                    <span className="text-[10px] font-semibold text-neutral-30 uppercase tracking-wider">Skill match: {matchedJobSkills.length + confirmedSkills.length}/{uniqueJobSkills.length}</span>
+                    <span className="text-[10px] font-semibold text-neutral-30 uppercase tracking-wider">Skill match: {matchedJobSkills.length}/{uniqueJobSkills.length}</span>
                     <div className="flex-1 h-px bg-neutral-15" />
                   </div>
 
-                  {/* Matched skills */}
+                  {/* Matched skills (includes ones the user confirmed with Yes — they get added to resumeData.skills so appear here) */}
                   {matchedJobSkills.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {matchedJobSkills.slice(0, 12).map((s, i) => (
                         <span key={i} className="text-[11px] bg-green-50 border border-green-200 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
                           <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                          {s}
-                        </span>
-                      ))}
-                      {confirmedSkills.map((s, i) => (
-                        <span key={`c-${i}`} className="text-[11px] bg-green-50 border border-green-200 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
-                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
                           {s}
                         </span>
                       ))}
@@ -1171,7 +1174,7 @@ function FunnelPage() {
                 {/* Continue CTA */}
                 <Button
                   onClick={handleSaveAndContinue}
-                  disabled={saving || optimizing}
+                  disabled={saving || optimizing || limitReached}
                   loading={saving}
                   size="lg"
                   className="w-full"
@@ -1231,7 +1234,7 @@ function FunnelPage() {
                     </div>
                   </div>
                 )}
-                <Button onClick={handleSaveAndContinue} disabled={saving || optimizing} loading={saving} size="lg" className="w-full">
+                <Button onClick={handleSaveAndContinue} disabled={saving || optimizing || limitReached} loading={saving} size="lg" className="w-full">
                   Continue to cover letter
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </Button>
@@ -1449,7 +1452,7 @@ function FunnelPage() {
         open={showUpgrade}
         onClose={() => setShowUpgrade(false)}
         currentTier="free"
-        feature={upgradeMessage}
+        message={upgradeMessage}
       />
     </div>
   );

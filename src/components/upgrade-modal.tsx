@@ -8,6 +8,9 @@ import { PLAN_PRICES } from '@/lib/plans';
 interface UpgradeModalProps {
   open: boolean;
   onClose: () => void;
+  /** Full, already-formatted reason sentence to show (e.g. "You've used your free application."). */
+  message?: string;
+  /** @deprecated Short feature label — gets wrapped in "You've reached the free plan limit for …". */
   feature?: string;
   currentTier?: string;
 }
@@ -36,7 +39,13 @@ const PRO_FEATURES = [
   'Priority support',
 ];
 
-export function UpgradeModal({ open, onClose, feature, currentTier = 'free' }: UpgradeModalProps) {
+export function UpgradeModal({ open, onClose, message, feature, currentTier = 'free' }: UpgradeModalProps) {
+  // Accept either a full sentence (`message`) or a short label (`feature`).
+  // If the "feature" prop already contains a full sentence (ends with a period or
+  // is long), treat it as a message to avoid double-wrapping.
+  const looksLikeFullSentence = feature && (feature.length > 40 || /[.!?]$/.test(feature.trim()));
+  const displayMessage = message || (looksLikeFullSentence ? feature : undefined);
+  const shortLabel = !displayMessage ? feature : undefined;
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
 
   const handleCheckout = (plan: 'starter' | 'pro') => {
@@ -96,9 +105,14 @@ export function UpgradeModal({ open, onClose, feature, currentTier = 'free' }: U
               <h2 className="text-[22px] font-bold text-neutral-90 tracking-tight">
                 Upgrade your plan
               </h2>
-              {feature && (
+              {displayMessage && (
+                <p className="text-neutral-50 text-[14px] mt-1.5 max-w-md mx-auto">
+                  {displayMessage}
+                </p>
+              )}
+              {shortLabel && (
                 <p className="text-neutral-50 text-[14px] mt-1.5 max-w-sm mx-auto">
-                  You&apos;ve reached the free plan limit for <span className="font-medium text-neutral-70">{feature}</span>. Upgrade to continue.
+                  You&apos;ve reached the free plan limit for <span className="font-medium text-neutral-70">{shortLabel}</span>. Upgrade to continue.
                 </p>
               )}
             </div>
