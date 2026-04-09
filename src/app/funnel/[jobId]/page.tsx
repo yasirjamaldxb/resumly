@@ -322,6 +322,8 @@ function FunnelPage() {
   const [coverLetterTone, setCoverLetterTone] = useState<'professional' | 'formal' | 'enthusiastic'>('professional');
   const [generatingCoverLetter, setGeneratingCoverLetter] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const [downloadingCoverLetter, setDownloadingCoverLetter] = useState(false);
 
   // User profile / onboarding
   const [userProfile, setUserProfile] = useState<UserProfile>({});
@@ -616,6 +618,56 @@ function FunnelPage() {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (downloadingPdf) return;
+    setDownloadingPdf(true);
+    try {
+      const first = resumeData.personalDetails?.firstName || 'resume';
+      const last = resumeData.personalDetails?.lastName || '';
+      const filename = [first, last].filter(Boolean).join('_') + '_resume.pdf';
+      const res = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeData: { ...resumeData, templateId: selectedTemplate } }),
+      });
+      if (!res.ok) throw new Error('pdf');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      setError('Resume PDF download failed. Please try again.');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
+
+  const handleDownloadCoverLetter = () => {
+    if (!coverLetterContent.trim() || downloadingCoverLetter) return;
+    setDownloadingCoverLetter(true);
+    try {
+      const first = resumeData.personalDetails?.firstName || 'cover';
+      const last = resumeData.personalDetails?.lastName || 'letter';
+      const filename = [first, last].filter(Boolean).join('_') + '_cover_letter.txt';
+      const blob = new Blob([coverLetterContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloadingCoverLetter(false);
     }
   };
 
@@ -1331,12 +1383,24 @@ function FunnelPage() {
               ? `Your tailored resume and cover letter for ${jobData.title} at ${jobData.company} are saved and ready.`
               : 'Your resume and cover letter are saved and ready to download.'}
           </p>
-          <Button size="lg" asChild>
-            <Link href="/dashboard">
-              Go to dashboard
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-            </Link>
-          </Button>
+          {error && (
+            <p className="text-[13px] text-red-500 mb-4">{error}</p>
+          )}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mb-4">
+            <Button size="lg" onClick={handleDownloadPdf} loading={downloadingPdf} disabled={downloadingPdf}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m-9 6h12a2 2 0 002-2V7a2 2 0 00-2-2h-4l-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              {downloadingPdf ? 'Preparing…' : 'Download resume PDF'}
+            </Button>
+            {coverLetterContent.trim() && (
+              <Button size="lg" variant="outline" onClick={handleDownloadCoverLetter} disabled={downloadingCoverLetter}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Download cover letter
+              </Button>
+            )}
+          </div>
+          <Link href="/dashboard" className="inline-block text-[13px] text-neutral-40 hover:text-neutral-60 transition-colors">
+            Or go to dashboard →
+          </Link>
         </main>
       )}
 
