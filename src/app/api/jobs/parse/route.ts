@@ -781,20 +781,38 @@ function extractKeywords(text: string): { skills: string[]; keywords: string[] }
   };
 }
 
+// A plausible job title is a short noun phrase like "Senior Product Manager"
+// or "Sales Manager". It should NOT contain verbs or descriptive copy like
+// "is a Series B SaaS company". This filter rejects the kinds of company-
+// description openers that kept leaking through in the parser.
+function looksLikeJobTitle(s: string): boolean {
+  if (!s) return false;
+  const clean = s.trim();
+  if (clean.length < 3 || clean.length > 80) return false;
+  if (/\b(is|are|was|were|has|have|we're|we\s+are|our|about|looking|seeking|hiring)\b/i.test(clean)) return false;
+  if (/[.!?]/.test(clean)) return false;
+  if (clean.split(/\s+/).length > 8) return false;
+  return true;
+}
+
 function extractTitle(text: string): string | null {
-  const patterns = [/(?:job title|position|role)[:\s]+([^\n.]{5,60})/i];
-  for (const p of patterns) {
-    const m = text.match(p);
-    if (m) return m[1].trim();
-  }
+  // 1. Explicit "Job Title: ..." pattern
+  const explicit = text.match(/(?:job\s*title|position|role)\s*[:\-]\s*([^\n.]{3,80})/i);
+  if (explicit && looksLikeJobTitle(explicit[1])) return explicit[1].trim();
+
+  // 2. First few lines — find the first line that actually looks like a title
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-  const firstLine = lines[0] || '';
-  if (firstLine.length >= 5 && firstLine.length <= 80 && /[A-Z]/.test(firstLine[0])) {
-    const skipPrefixes = /^(we|our|about|the|this|a |an |i |you|are|is|at |in |on |to |for )/i;
-    if (!skipPrefixes.test(firstLine)) return firstLine.replace(/[-–—|]+$/, '').trim();
+  const skipPrefixes = /^(we|our|about|the|this|a\s|an\s|i\s|you|are|is\s|at\s|in\s|on\s|to\s|for\s)/i;
+  for (const line of lines.slice(0, 8)) {
+    if (skipPrefixes.test(line)) continue;
+    const cleaned = line.replace(/[-–—|:]+$/, '').trim();
+    if (looksLikeJobTitle(cleaned)) return cleaned;
   }
+
+  // 3. Any standalone line that matches the strict title shape
   const m = text.match(/^([A-Z][A-Za-z\s/&,()-]{5,60})$/m);
-  if (m) return m[1].trim();
+  if (m && looksLikeJobTitle(m[1])) return m[1].trim();
+
   return null;
 }
 
@@ -811,9 +829,19 @@ function extractCompany(text: string): string | null {
 }
 
 function extractLocation(text: string): string | null {
-  const m = text.match(/(?:location|based in|office)[:\s]+([^\n]{3,60})/i)
-    || text.match(/((?:Remote|Hybrid|On-?site)(?:\s*[–-]\s*[A-Z][A-Za-z\s,]{3,40})?)/i);
-  return m ? m[1].trim() : null;
+  // Require a word boundary + explicit colon so we don't match "... Analytics Location\n"
+  // where "Location" is a column header or label. The old regex greedily matched any
+  // occurrence and grabbed stray text after it.
+  const m =
+    text.match(/\b(?:location|based\s+in|office)\s*:\s*([^\n]{3,60})/i) ||
+    text.match(/((?:Remote|Hybrid|On-?site)(?:\s*[–-]\s*[A-Z][A-Za-z\s,]{3,40})?)/i) ||
+    // Fallback: "City, ST" or "City, Country" on its own line
+    text.match(/^\s*([A-Z][a-zA-Z .'-]+,\s*(?:[A-Z]{2}|[A-Z][a-zA-Z ]+))\s*$/m);
+  if (!m) return null;
+  const loc = m[1].trim();
+  // Reject obviously bogus results: a company name followed by the literal word "Location"
+  if (/\bLocation\b/i.test(loc) && loc.split(/\s+/).length > 4) return null;
+  return loc;
 }
 
 function extractSalary(text: string): string | null {
