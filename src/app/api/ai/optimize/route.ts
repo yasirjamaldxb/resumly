@@ -105,7 +105,10 @@ SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).
 - In bullet improvements, emphasize outcomes and impact that show the candidate can deliver results regardless of specific tools
 - In the summary, position the candidate's existing strengths as complementary to these requirements` : ''}`;
 
-    const completion = await openai.chat.completions.create({
+    // Gemini occasionally returns 503 (service unavailable) under load.
+    // Retry with exponential backoff before giving up so real users don't
+    // see spurious "AI optimization failed" errors.
+    const callGemini = async () => openai.chat.completions.create({
       model: 'gemini-2.5-flash',
       messages: [
         { role: 'system', content: 'You are a resume optimization expert. You MUST respond with ONLY valid JSON — no markdown fences, no explanatory text, no preamble. Start with { and end with }.' },
@@ -115,6 +118,31 @@ SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).
       max_tokens: 16000,
       response_format: { type: 'json_object' },
     });
+
+    let completion;
+    let lastErr: unknown;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        completion = await callGemini();
+        break;
+      } catch (err) {
+        lastErr = err;
+        const status = (err as { status?: number })?.status;
+        // Only retry on transient upstream failures (503, 502, 429, 500).
+        if (status !== 503 && status !== 502 && status !== 429 && status !== 500) throw err;
+        console.warn(`[optimize] Gemini ${status} on attempt ${attempt + 1}/3, retrying...`);
+        await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt))); // 500ms, 1s, 2s
+      }
+    }
+    if (!completion) {
+      const status = (lastErr as { status?: number })?.status;
+      console.error('[optimize] Gemini failed after 3 retries:', lastErr);
+      return NextResponse.json({
+        error: status === 503 || status === 429
+          ? 'The AI service is temporarily busy. Please try again in a moment.'
+          : 'AI optimization failed. Please try again.',
+      }, { status: 503 });
+    }
 
     const content = completion.choices[0]?.message?.content || '';
     // Robust JSON extraction: strip markdown fences of any flavor, then
