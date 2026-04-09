@@ -703,14 +703,19 @@ function FunnelPage() {
         const hasNoExperience = (resumeData.workExperience || []).length === 0;
         const totalExtracted = [pd.firstName, pd.lastName, pd.email, pd.phone, pd.jobTitle].filter(Boolean).length;
 
-        // Skill gap analysis
-        const userSkillNames = (resumeData.skills || []).map(s => s.name.toLowerCase());
-        const allJobTerms = [...(jobData?.skills || []), ...(jobData?.keywords || [])];
+        // Skill gap analysis — guard against legacy data with null/undefined fields
+        const userSkillNames = (resumeData.skills || [])
+          .map(s => (s && typeof s.name === 'string' ? s.name.toLowerCase() : ''))
+          .filter(Boolean);
+        const allJobTerms = [...(jobData?.skills || []), ...(jobData?.keywords || [])]
+          .filter((t): t is string => typeof t === 'string' && t.length > 0);
         const seen = new Set<string>();
         const uniqueJobSkills = allJobTerms.filter(t => { const lower = t.toLowerCase(); if (seen.has(lower)) return false; seen.add(lower); return true; });
         const matchedJobSkills = uniqueJobSkills.filter(skill => { const lower = skill.toLowerCase(); return userSkillNames.some(us => us.includes(lower) || lower.includes(us)); });
         const missingSkills = uniqueJobSkills.filter(skill => { const lower = skill.toLowerCase(); return !userSkillNames.some(us => us.includes(lower) || lower.includes(us)); });
-        const unansweredSkills = missingSkills.filter(s => !confirmedSkills.map(c => c.toLowerCase()).includes(s.toLowerCase()) && !rejectedSkills.map(r => r.toLowerCase()).includes(s.toLowerCase()));
+        const confirmedLower = (confirmedSkills || []).filter((c): c is string => typeof c === 'string').map(c => c.toLowerCase());
+        const rejectedLower = (rejectedSkills || []).filter((r): r is string => typeof r === 'string').map(r => r.toLowerCase());
+        const unansweredSkills = missingSkills.filter(s => !confirmedLower.includes(s.toLowerCase()) && !rejectedLower.includes(s.toLowerCase()));
 
         const hasProfileData = !!(userProfile.target_role && userProfile.job_level);
         const canProceed = cvUploaded && pd.firstName?.trim() && pd.lastName?.trim();
@@ -1265,11 +1270,11 @@ function FunnelPage() {
                 </div>
 
                 {/* Key Requirements to Address */}
-                {jobData?.requirements && jobData.requirements.length > 0 && (
+                {jobData?.requirements && jobData.requirements.filter((r): r is string => typeof r === 'string').length > 0 && (
                   <div className="bg-white rounded-xl border border-neutral-20 shadow-sm p-5">
                     <p className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider mb-3">Key requirements</p>
                     <ul className="space-y-2">
-                      {jobData.requirements.slice(0, 5).map((req, i) => {
+                      {jobData.requirements.filter((r): r is string => typeof r === 'string' && r.length > 0).slice(0, 5).map((req, i) => {
                         const reqLower = req.toLowerCase();
                         const isAddressed = coverLetterContent.toLowerCase().split(/\s+/).some(word =>
                           reqLower.split(/\s+/).filter(w => w.length > 3).some(rw => word.includes(rw))
