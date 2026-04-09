@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { trackEvent, logError } from '@/lib/analytics';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -9,6 +10,14 @@ export async function POST(req: NextRequest) {
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
   });
   try {
+    // Auth guard — AI suggest is only used inside the authenticated builder,
+    // never gate anonymous callers against our Gemini quota.
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { type, jobTitle, position, company, description, experience } = body;
 

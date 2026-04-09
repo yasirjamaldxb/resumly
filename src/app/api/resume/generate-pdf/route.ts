@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { trackEvent, logError } from '@/lib/analytics';
 import { createElement } from 'react';
 import { getTemplateStyles } from '@/lib/template-utils';
+import { createClient } from '@/lib/supabase/server';
 import type { ResumeData } from '@/types/resume';
 
 export const maxDuration = 60;
@@ -22,6 +23,13 @@ export async function POST(req: NextRequest) {
   let browser: any = null;
 
   try {
+    // Auth guard — Puppeteer/Chromium is expensive, never serve anonymous
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Accept both JSON (fetch) and form-urlencoded (hidden form POST) so the
     // browser can be trusted to stream the response straight to the user's
     // Downloads folder via Content-Disposition, skipping the JS blob path that
