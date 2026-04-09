@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { getUserUsage } from '@/lib/usage';
 import { logAiUsage } from '@/lib/ai-usage';
+import { callGemini } from '@/lib/gemini';
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -32,11 +32,6 @@ export async function POST(req: NextRequest) {
     if (!jobData || !resumeData) {
       return NextResponse.json({ error: 'jobData and resumeData are required' }, { status: 400 });
     }
-
-    const openai = new OpenAI({
-      apiKey,
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    });
 
     const prompt = `You are an expert interview coach. Analyze the overlap between this candidate's resume and the target job to prepare them for an interview.
 
@@ -77,14 +72,14 @@ Rules:
 - Suggested answers should reference the candidate's real experience and skills
 - The salary insight should consider the role level, required skills, and candidate's experience`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
+    const completion = await callGemini('interview-prep', {
       messages: [
         { role: 'system', content: 'You are an expert interview coach. Return only valid JSON.' },
         { role: 'user', content: prompt },
       ],
       temperature: 0.4,
       max_tokens: 4000,
+      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content || '';

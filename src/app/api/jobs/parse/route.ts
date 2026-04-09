@@ -662,19 +662,12 @@ async function parseGenericPage(url: string): Promise<{ job: NormalizedJob | nul
 // ══════════════════════════════════════════════════════════════
 
 async function aiParseJobText(text: string): Promise<{ title: string; company: string; location: string; description: string; requirements: string[]; skills: string[] } | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || text.length < 100) return null;
+  if (!process.env.GEMINI_API_KEY || text.length < 100) return null;
 
   try {
-    const { default: OpenAI } = await import('openai');
-    const openai = new OpenAI({
-      apiKey,
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    });
-
+    const { callGemini } = await import('@/lib/gemini');
     const truncated = text.slice(0, 4000);
-    const completion = await openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
+    const completion = await callGemini('jobs-parse', {
       messages: [
         { role: 'system', content: 'Extract job posting details from text. Return ONLY valid JSON, no markdown.' },
         { role: 'user', content: `Extract the job details from this text. Return JSON with: title, company, location, description (max 300 chars), requirements (array of strings, max 8), skills (array of strings, max 15).
@@ -686,6 +679,7 @@ ${truncated}` },
       ],
       temperature: 0.1,
       max_tokens: 2000,
+      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content || '';

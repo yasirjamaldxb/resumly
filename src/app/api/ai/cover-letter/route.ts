@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { getUserUsage, canUseOptimization } from '@/lib/usage';
 import { logAiUsage } from '@/lib/ai-usage';
 import { buildUserContext, type UserProfile } from '@/lib/user-context';
+import { callGemini } from '@/lib/gemini';
 
 interface ExperienceEntry {
   position: string;
@@ -42,11 +42,6 @@ export async function POST(req: NextRequest) {
         tier: usage.tier,
       }, { status: 403 });
     }
-
-    const openai = new OpenAI({
-      apiKey,
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    });
 
     const body = await req.json();
     const {
@@ -183,15 +178,25 @@ HARD RULES:
 - Body paragraphs should be 200-300 words total. Every word must earn its place.
 - Return the COMPLETE cover letter with header, body, and sign-off`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.7,
-      max_tokens: 4000,
-    });
+    let completion;
+    try {
+      completion = await callGemini('cover-letter', {
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 4000,
+      });
+    } catch (err) {
+      const status = (err as { status?: number })?.status;
+      console.error('[cover-letter] Gemini failed after retries + fallback:', err);
+      return NextResponse.json({
+        error: status === 503 || status === 429
+          ? 'The AI service is temporarily busy. Please try again in a moment.'
+          : 'Cover letter generation failed. Please try again.',
+      }, { status: 503 });
+    }
 
     const text = completion.choices[0]?.message?.content || '';
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { callGemini } from '@/lib/gemini';
 
 // Extract text from PDF using pdf-parse (import lib directly to avoid test-file loading issue)
 async function extractPdfText(buffer: Buffer): Promise<string> {
@@ -21,13 +21,7 @@ async function extractDocxText(buffer: Buffer): Promise<string> {
 // ══════════════════════════════════════════════
 
 async function parseResumeWithAI(text: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-
-  const openai = new OpenAI({
-    apiKey,
-    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  });
+  if (!process.env.GEMINI_API_KEY) return null;
 
   const prompt = `You are an expert resume parser. Extract ALL information from this resume text into a structured JSON object.
 
@@ -117,14 +111,14 @@ Resume text:
 ${text.slice(0, 8000)}`;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
+    const completion = await callGemini('parse-upload', {
       messages: [
         { role: 'system', content: 'You are a resume parser. Return only valid JSON, no markdown formatting.' },
         { role: 'user', content: prompt },
       ],
       temperature: 0.1,
       max_tokens: 16000,
+      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content || '';

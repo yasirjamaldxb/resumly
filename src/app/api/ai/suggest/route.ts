@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { trackEvent, logError } from '@/lib/analytics';
 import { createClient } from '@/lib/supabase/server';
+import { callGemini } from '@/lib/gemini';
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
-  const openai = new OpenAI({
-    apiKey: apiKey || 'placeholder',
-    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  });
   try {
     // Auth guard — AI suggest is only used inside the authenticated builder,
     // never gate anonymous callers against our Gemini quota.
@@ -62,8 +58,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
-    const completion = await openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
+    const completion = await callGemini('suggest', {
       messages: [
         {
           role: 'system',

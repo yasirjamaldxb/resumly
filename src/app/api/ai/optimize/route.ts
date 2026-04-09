@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { getUserUsage, canUseOptimization } from '@/lib/usage';
 import { logAiUsage } from '@/lib/ai-usage';
 import { buildUserContext, type UserProfile } from '@/lib/user-context';
+import { callGemini } from '@/lib/gemini';
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -33,11 +33,6 @@ export async function POST(req: NextRequest) {
     if (!resumeData || !jobData) {
       return NextResponse.json({ error: 'resumeData and jobData are required' }, { status: 400 });
     }
-
-    const openai = new OpenAI({
-      apiKey,
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    });
 
     // Collect all job keywords/skills the resume must contain
     const allJobKeywords = [
@@ -105,38 +100,22 @@ SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).
 - In bullet improvements, emphasize outcomes and impact that show the candidate can deliver results regardless of specific tools
 - In the summary, position the candidate's existing strengths as complementary to these requirements` : ''}`;
 
-    // Gemini occasionally returns 503 (service unavailable) under load.
-    // Retry with exponential backoff before giving up so real users don't
-    // see spurious "AI optimization failed" errors.
-    const callGemini = async () => openai.chat.completions.create({
-      model: 'gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: 'You are a resume optimization expert. You MUST respond with ONLY valid JSON — no markdown fences, no explanatory text, no preamble. Start with { and end with }.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.3,
-      max_tokens: 16000,
-      response_format: { type: 'json_object' },
-    });
-
+    // callGemini() handles retries + automatic fallback to gemini-2.5-flash-lite
+    // when the primary flash model is throttled with 503.
     let completion;
-    let lastErr: unknown;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        completion = await callGemini();
-        break;
-      } catch (err) {
-        lastErr = err;
-        const status = (err as { status?: number })?.status;
-        // Only retry on transient upstream failures (503, 502, 429, 500).
-        if (status !== 503 && status !== 502 && status !== 429 && status !== 500) throw err;
-        console.warn(`[optimize] Gemini ${status} on attempt ${attempt + 1}/3, retrying...`);
-        await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt))); // 500ms, 1s, 2s
-      }
-    }
-    if (!completion) {
-      const status = (lastErr as { status?: number })?.status;
-      console.error('[optimize] Gemini failed after 3 retries:', lastErr);
+    try {
+      completion = await callGemini('optimize', {
+        messages: [
+          { role: 'system', content: 'You are a resume optimization expert. You MUST respond with ONLY valid JSON — no markdown fences, no explanatory text, no preamble. Start with { and end with }.' },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.3,
+        max_tokens: 16000,
+        response_format: { type: 'json_object' },
+      });
+    } catch (err) {
+      const status = (err as { status?: number })?.status;
+      console.error('[optimize] Gemini failed after retries + fallback:', err);
       return NextResponse.json({
         error: status === 503 || status === 429
           ? 'The AI service is temporarily busy. Please try again in a moment.'
