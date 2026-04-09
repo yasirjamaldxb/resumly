@@ -69,7 +69,7 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <div className="relative z-10 text-white/30 text-[12px]">100% free, no credit card required</div>
+        <div className="relative z-10 text-white/30 text-[12px]">No credit card required</div>
       </div>
 
       {/* Right panel - form */}
@@ -92,7 +92,7 @@ export default function LoginPage() {
           </Suspense>
           <p className="text-center text-[14px] text-neutral-50 mt-8">
             Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="text-primary hover:text-primary-dark font-semibold">Create one free</Link>
+            <Link href="/auth/signup" className="text-primary hover:text-primary-dark font-semibold">Create one</Link>
           </p>
         </div>
       </div>

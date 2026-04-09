@@ -103,7 +103,7 @@ function MegaExamples() {
       <div className="w-[280px] bg-[#f8f9fb] border-l border-neutral-20 py-6 px-6">
         <Link href="/resume-examples" className="group block">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">{icons.builder}</div>
-          <span className="text-[16px] font-bold text-neutral-80 group-hover:text-primary transition-colors">500+ Free Resume Examples by industry</span>
+          <span className="text-[16px] font-bold text-neutral-80 group-hover:text-primary transition-colors">500+ Resume Examples by industry</span>
           <p className="text-[13px] text-neutral-50 mt-2 leading-snug">Use the expert guides and our resume builder to create a beautiful resume in minutes.</p>
           <span className="inline-flex items-center gap-1 mt-3 text-[14px] font-semibold text-primary group-hover:text-primary-dark transition-colors">Get started now <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></span>
         </Link>
@@ -142,7 +142,7 @@ function MegaCoverLetter() {
         <Link href="/cover-letter-builder" className="group block">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">{icons.coverletter}</div>
           <span className="text-[16px] font-bold text-neutral-80 group-hover:text-primary transition-colors">Cover Letter Builder</span>
-          <p className="text-[13px] text-neutral-50 mt-2 leading-snug">Build professional cover letters in a few simple steps by using our free Cover Letter builder.</p>
+          <p className="text-[13px] text-neutral-50 mt-2 leading-snug">Build professional cover letters in a few simple steps with our AI Cover Letter builder.</p>
           <span className="inline-flex items-center gap-1 mt-3 text-[14px] font-semibold text-primary group-hover:text-primary-dark transition-colors">Get started now <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></span>
         </Link>
       </div>
@@ -191,15 +191,17 @@ const megaMenus: Record<string, () => React.ReactNode> = {
 const navItems = [
   { label: 'Resume Templates', href: '/resume-templates', hasMega: true },
   { label: 'Resume Examples', href: '/resume-examples', hasMega: true },
-  { label: 'Cover Letter', href: '/cover-letter-builder', hasMega: true },
+  { label: 'ATS Checker', href: '/ats-checker', hasMega: false },
+  { label: 'Pricing', href: '/pricing', hasMega: false },
   { label: 'FAQ', href: '/#faq', hasMega: false },
-  { label: 'Resources', href: '/blog', hasMega: true },
 ];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -211,8 +213,31 @@ export function Header() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < 80) {
+        // Near top — always show
+        setVisible(true);
+      } else if (currentY < lastScrollY) {
+        // Scrolling up — reveal
+        setVisible(true);
+      } else if (currentY > lastScrollY + 4) {
+        // Scrolling down — hide
+        setVisible(false);
+      }
+      setLastScrollY(currentY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-neutral-20">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-20 transition-transform duration-300 ${
+        visible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
       <div className="w-full px-6 lg:px-10">
         <div className="flex items-center justify-between h-[64px]">
           {/* Logo */}
@@ -283,9 +308,9 @@ export function Header() {
                 <span className="w-px h-5 bg-neutral-20 mx-1" />
                 <Link
                   href="/auth/signup"
-                  className="ml-1 px-3 xl:px-4 py-2 text-[13px] xl:text-[14px] font-semibold whitespace-nowrap text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors"
+                  className="ml-1 px-3 xl:px-4 py-2 text-[13px] xl:text-[14px] font-semibold whitespace-nowrap text-white bg-primary rounded-md hover:bg-primary/90 transition-colors"
                 >
-                  My Account
+                  Get Started Free
                 </Link>
               </>
             )}

@@ -31,7 +31,7 @@ export default async function ResumesPage() {
           <p className="text-neutral-50 text-[13px] mt-0.5">{hasResumes ? `${resumes.length} resume${resumes.length !== 1 ? 's' : ''}` : 'No resumes yet'}</p>
         </div>
         <Button asChild size="sm" className="gap-2">
-          <Link href="/builder/new">
+          <Link href="/builder">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
             New Resume
           </Link>
@@ -41,7 +41,7 @@ export default async function ResumesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {/* New resume card */}
         <Link
-          href="/builder/new"
+          href="/builder"
           className="group border-2 border-dashed border-neutral-20 rounded-xl flex flex-col items-center justify-center text-center hover:border-primary/30 hover:bg-primary/[0.02] transition-all min-h-[220px]"
         >
           <div className="w-10 h-10 bg-neutral-10 group-hover:bg-primary/8 rounded-lg flex items-center justify-center mb-2.5 transition-colors">

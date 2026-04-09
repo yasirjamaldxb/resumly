@@ -118,7 +118,7 @@ function JobPreviewContent() {
 
   // Check auth first, then either redirect (logged in) or parse for preview (not logged in)
   useEffect(() => {
-    if (!jobUrl) { if (!jobText) router.replace('/builder/new'); return; }
+    if (!jobUrl) { if (!jobText) router.replace('/'); return; }
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -284,9 +284,7 @@ function JobPreviewContent() {
     });
   };
 
-  const allKeywords = [...(job?.keywords || []), ...(job?.skills || [])].filter(Boolean);
-  const visibleKeywords = allKeywords.slice(0, 7);
-  const hiddenCount = Math.max(0, allKeywords.length - 7);
+  const allKeywords = [...new Set([...(job?.keywords || []), ...(job?.skills || [])])].filter(Boolean);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#f0f4ff] via-[#f6f8ff] to-white">
@@ -312,15 +310,19 @@ function JobPreviewContent() {
           </div>
           <span className="font-semibold text-[15px] text-neutral-90 tracking-tight">resumly<span className="text-primary">.app</span></span>
         </Link>
-        <Link href="/auth/login" className="text-[13px] text-neutral-50 hover:text-neutral-90 transition-colors">
+        <Link
+          href={`/auth/login?redirectTo=${encodeURIComponent(`/job-preview?${jobUrl ? `url=${encodeURIComponent(jobUrl)}` : `text=${encodeURIComponent(jobText)}`}`)}`}
+          className="text-[13px] text-neutral-50 hover:text-neutral-90 transition-colors"
+        >
           Sign in
         </Link>
       </header>
 
-      <div className="relative max-w-[540px] mx-auto px-5 py-6 sm:py-14">
+      <div className="relative w-full px-5 py-5 sm:py-8">
 
         {/* Progress steps */}
-        <div className="flex items-center gap-2 mb-5 sm:mb-10">
+        <div className="max-w-[500px] mx-auto">
+        <div className="flex items-center gap-2 mb-5 sm:mb-8">
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${status === 'loading' ? 'border-2 border-primary bg-primary/10' : status === 'paste' ? 'border-2 border-primary bg-primary/10' : 'bg-green-500'}`}>
               {status === 'loading' || status === 'paste'
@@ -344,13 +346,14 @@ function JobPreviewContent() {
             <div className="w-5 h-5 rounded-full border-2 border-neutral-20 bg-white/60 flex items-center justify-center">
               <span className="text-[10px] text-neutral-40">3</span>
             </div>
-            <span className="text-[12px] text-neutral-40 whitespace-nowrap">Get the job</span>
+            <span className="text-[12px] text-neutral-40 whitespace-nowrap">Apply &amp; get hired</span>
           </div>
+        </div>
         </div>
 
         {/* Loading */}
         {status === 'loading' && (
-          <div className="py-8 sm:py-12">
+          <div className="max-w-[500px] mx-auto py-8 sm:py-12">
             {/* Animated spinner with gradient ring */}
             <div className="relative w-20 h-20 mx-auto mb-8">
               <div className="w-20 h-20 rounded-full border-[3px] border-primary/10" />
@@ -445,7 +448,7 @@ function JobPreviewContent() {
 
         {/* Paste state */}
         {status === 'paste' && (
-          <div>
+          <div className="max-w-[500px] mx-auto">
             <div className="mb-3 sm:mb-5">
               <div className="hidden sm:flex w-14 h-14 bg-gradient-to-br from-primary/10 to-blue-400/10 rounded-2xl items-center justify-center mx-auto mb-4 border border-primary/10">
                 <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -510,7 +513,7 @@ function JobPreviewContent() {
 
         {/* Error state */}
         {status === 'error' && (
-          <div>
+          <div className="max-w-[500px] mx-auto">
             {!showPaste ? (
               <>
                 <div className="text-center mb-6">
@@ -580,78 +583,103 @@ function JobPreviewContent() {
 
         {/* Ready state */}
         {status === 'ready' && job && (
-          <div>
-            {/* Job header */}
-            <div className="mb-7">
-              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-[11px] font-bold px-2.5 py-1 rounded-full mb-3 uppercase tracking-wide border border-green-200/50">
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                Analyzed
+          <div className="max-w-[500px] mx-auto">
+
+            {/* ── Premium analysis result card ── */}
+            <div className="bg-white rounded-2xl shadow-xl shadow-neutral-900/[0.08] border border-neutral-100 overflow-hidden">
+
+              {/* Card header — gradient bar */}
+              <div className="bg-gradient-to-r from-neutral-90 to-neutral-80 px-6 py-4 flex items-center justify-between">
+                <div>
+                  <p className="text-white/60 text-[11px] font-medium uppercase tracking-wider">Analysis complete</p>
+                  <p className="text-white text-[14px] font-semibold mt-0.5 leading-tight">
+                    {job.title}{job.company ? <span className="text-white/50 font-normal"> · {job.company}</span> : ''}
+                  </p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
               </div>
-              <h1 className="text-[26px] sm:text-[30px] font-semibold text-neutral-90 tracking-tight leading-tight mb-1.5">
-                {job.title || 'This Role'}
-              </h1>
-              {job.company && (
-                <p className="text-[15px] text-neutral-60">
-                  {job.company}{job.location ? <span className="text-neutral-40"> · {job.location}</span> : ''}
-                </p>
-              )}
+
+              {/* Card body */}
+              <div className="p-6">
+
+                {/* Readiness checklist */}
+                <div className="space-y-3.5 mb-6">
+                  {[
+                    { label: 'ATS Keywords', value: `${allKeywords.length} identified`, detail: allKeywords.join(', ') },
+                    { label: 'Professional Summary', value: 'Ready to generate', detail: null },
+                    { label: 'Bullet Points', value: 'Ready to generate', detail: null },
+                    { label: 'ATS Format', value: 'Text-based PDF', detail: null },
+                  ].map(({ label, value, detail }, i) => (
+                    <div key={i} className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-2.5 min-w-0">
+                        <div className="w-5 h-5 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-medium text-neutral-90">{label}</p>
+                          {detail && <p className="text-[11px] text-neutral-40 mt-0.5 truncate">{detail}</p>}
+                        </div>
+                      </div>
+                      <span className="text-[11px] text-green-700 bg-green-50 px-2 py-0.5 rounded-full font-medium flex-shrink-0 mt-0.5">{value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Separator */}
+                <div className="border-t border-neutral-100 mb-5" />
+
+                {/* CTA inside card */}
+                <button
+                  onClick={handleGoogleSignup}
+                  disabled={authLoading}
+                  className="w-full flex items-center justify-center gap-3 bg-primary text-white rounded-xl px-6 py-3.5 text-[14px] font-semibold hover:bg-primary-dark transition-all shadow-md shadow-primary/15 disabled:opacity-70 mb-2.5"
+                >
+                  {authLoading
+                    ? <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    : <GoogleIcon />
+                  }
+                  {authLoading ? 'Redirecting...' : 'Build my resume for this role'}
+                </button>
+
+                <Link
+                  href={`/auth/signup?job=${encodeURIComponent(jobUrl)}`}
+                  className="w-full flex items-center justify-center gap-2 border border-neutral-20 text-neutral-70 rounded-xl px-6 py-3 text-[13px] font-medium hover:bg-neutral-10 hover:border-neutral-30 transition-all"
+                >
+                  <svg className="w-4 h-4 text-neutral-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                  Sign up with email
+                </Link>
+              </div>
             </div>
 
-            {/* Keywords card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-10/60 p-5 mb-4 shadow-lg shadow-neutral-900/[0.04]">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[14px] font-semibold text-neutral-90">
-                  {allKeywords.length} keywords found
-                </span>
-                <span className="text-[11px] text-primary bg-primary/8 px-2.5 py-1 rounded-full font-semibold">
-                  ATS Keywords
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {visibleKeywords.map((kw, i) => (
-                  <span key={i} className="px-2.5 py-1 bg-primary/8 text-primary rounded-lg text-[12px] font-medium border border-primary/15">
-                    {kw}
-                  </span>
+            {/* Below card — social proof */}
+            <div className="mt-5 flex items-center justify-center gap-2">
+              <div className="flex items-center gap-0.5">
+                {[1,2,3,4,5].map(s => (
+                  <svg key={s} className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
                 ))}
-                {hiddenCount > 0 && (
-                  <span className="px-2.5 py-1 bg-neutral-10 text-neutral-40 rounded-lg text-[12px] font-medium">
-                    +{hiddenCount} more
-                  </span>
-                )}
               </div>
-              <p className="text-[12px] text-neutral-40 mt-3 pt-3 border-t border-neutral-10">
-                We&apos;ll place these keywords throughout your resume to pass ATS filters.
+              <p className="text-[11px] text-neutral-40">
+                <span className="italic">&ldquo;Got 3 interview callbacks in the first week.&rdquo;</span> — Sarah K.
               </p>
             </div>
 
-            {/* Value prop */}
-            <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-xl p-4 mb-6 backdrop-blur-sm">
-              <svg className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-              </svg>
-              <p className="text-[13px] text-primary">
-                <span className="font-semibold">Your resume will be tailored for this exact role.</span> We&apos;ll pre-fill keywords, suggest bullet points, and highlight the skills that matter for this position.
-              </p>
+            <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-neutral-35 font-medium">
+              <span>No credit card</span>
+              <span className="text-neutral-20">·</span>
+              <span>ATS-optimized</span>
+              <span className="text-neutral-20">·</span>
+              <span>Ready in 5 min</span>
+              <span className="text-neutral-20">·</span>
+              <span>12,000+ resumes built</span>
             </div>
 
-            {/* CTA */}
-            <button
-              onClick={handleGoogleSignup}
-              disabled={authLoading}
-              className="w-full flex items-center justify-center gap-3 bg-primary text-white rounded-xl px-6 py-4 text-[15px] font-semibold hover:bg-primary-dark transition-all shadow-md shadow-primary/10 hover:shadow-lg disabled:opacity-70 mb-3"
-            >
-              {authLoading
-                ? <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                : <GoogleIcon />
-              }
-              {authLoading ? 'Redirecting to Google...' : 'Get my tailored resume, it\'s free'}
-            </button>
-            <p className="text-center text-[13px] text-neutral-40">
+            <p className="text-center text-[12px] text-neutral-40 mt-4">
               Already have an account?{' '}
-              <Link
-                href={`/auth/login?job=${encodeURIComponent(jobUrl)}&redirectTo=/builder/new`}
-                className="text-primary hover:text-primary-dark font-medium"
-              >
+              <Link href={`/auth/login?job=${encodeURIComponent(jobUrl)}`} className="text-primary hover:text-primary-dark font-medium">
                 Sign in
               </Link>
             </p>

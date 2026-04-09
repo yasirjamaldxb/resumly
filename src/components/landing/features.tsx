@@ -11,7 +11,7 @@ const tools = [
     description: 'Paste a job link and our AI creates a tailored resume that matches the role\'s keywords, skills, and requirements so your application gets noticed.',
     color: 'bg-blue-50',
     iconColor: 'text-primary',
-    link: '/',
+    link: '#hero-input',
     linkText: 'Paste a job link',
     mockup: (
       <div className="bg-white/80 rounded-xl p-4 mb-4 min-h-[120px] shadow-sm">
@@ -62,27 +62,33 @@ const tools = [
   {
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
       </svg>
     ),
-    title: 'Cover Letter Generator',
-    description: 'Auto-generate a matching cover letter from your resume and the job description. Tailored to the role and ready to send. No more staring at a blank page.',
+    title: 'Application Tracker',
+    description: 'Track every job application from submission to interview. See your pipeline at a glance with a Kanban board, and never lose track of where you applied.',
     color: 'bg-purple-50',
     iconColor: 'text-purple-600',
-    link: '/',
-    linkText: 'Generate a cover letter',
+    link: '#hero-input',
+    linkText: 'Start tracking',
     mockup: (
       <div className="bg-white/80 rounded-xl p-4 mb-4 min-h-[120px] shadow-sm">
-        <div className="text-[10px] text-neutral-50 mb-2">Dear Hiring Manager,</div>
-        <div className="space-y-1">
-          <div className="h-1.5 bg-purple-100 rounded w-full" />
-          <div className="h-1.5 bg-purple-100 rounded w-11/12" />
-          <div className="h-1.5 bg-purple-100 rounded w-full" />
-          <div className="h-1.5 bg-purple-100 rounded w-4/5" />
-          <div className="h-1.5 bg-neutral-10 rounded w-full mt-2" />
-          <div className="h-1.5 bg-neutral-10 rounded w-3/4" />
+        <div className="text-[11px] font-semibold text-neutral-70 mb-2.5">Your applications</div>
+        <div className="space-y-2">
+          {[
+            { role: 'Product Designer', company: 'Stripe', status: 'Applied', color: 'bg-green-100 text-green-700' },
+            { role: 'UX Lead', company: 'Notion', status: 'Interview', color: 'bg-purple-100 text-purple-700' },
+            { role: 'Design Manager', company: 'Linear', status: 'Draft', color: 'bg-neutral-100 text-neutral-600' },
+          ].map(app => (
+            <div key={app.role} className="flex items-center justify-between bg-white rounded-lg px-2.5 py-1.5">
+              <div>
+                <div className="text-[10px] font-medium text-neutral-80">{app.role}</div>
+                <div className="text-[9px] text-neutral-40">{app.company}</div>
+              </div>
+              <span className={`text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${app.color}`}>{app.status}</span>
+            </div>
+          ))}
         </div>
-        <div className="text-[9px] text-purple-600 font-medium mt-2">Tailored to job requirements</div>
       </div>
     ),
   },

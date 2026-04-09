@@ -4,17 +4,17 @@ import { Footer } from '@/components/layout/footer';
 import { ATSCheckerClient } from './ats-checker-client';
 
 export const metadata: Metadata = {
-  title: 'Free ATS Resume Checker: Score Your Resume Instantly (2026)',
+  title: 'ATS Resume Checker: Score Your Resume Instantly (2026)',
   description:
-    'Upload your resume and get an instant ATS compatibility score. Our free checker analyzes formatting, keywords, sections, and content quality, with actionable fix suggestions.',
+    'Upload your resume and get an instant ATS compatibility score. Analyzes formatting, keywords, sections, and content quality with actionable fix suggestions.',
   keywords: [
     'ATS resume checker', 'ATS score', 'resume scanner', 'applicant tracking system',
-    'ATS friendly resume', 'resume checker free', 'ATS compatibility', 'resume score',
-    'ATS resume test', 'resume analyzer', 'free ATS check',
+    'ATS friendly resume', 'ATS compatibility', 'resume score',
+    'ATS resume test', 'resume analyzer',
   ].join(', '),
   alternates: { canonical: 'https://resumly.app/ats-checker' },
   openGraph: {
-    title: 'Free ATS Resume Checker · Resumly',
+    title: 'ATS Resume Checker · Resumly',
     description: 'Upload your resume and get an instant ATS compatibility score with actionable fix suggestions.',
     url: 'https://resumly.app/ats-checker',
     siteName: 'Resumly',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free ATS Resume Checker · Resumly',
+    title: 'ATS Resume Checker · Resumly',
     description: 'Upload your resume and get an instant ATS compatibility score with actionable fix suggestions.',
   },
 };
@@ -105,7 +105,7 @@ export default function ATSCheckerPage() {
             </h2>
             <div className="space-y-4">
               {[
-                { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want, no sign-up required, no limits.' },
+                { q: 'Do I need to sign up to use the ATS checker?', a: 'No sign-up required. Upload as many resumes as you want with no limits.' },
                 { q: 'Is my resume data safe?', a: 'Your resume is processed in memory and never stored on our servers. It is deleted immediately after analysis.' },
                 { q: 'What score should I aim for?', a: 'Aim for 80% or higher. Resumes scoring 90%+ have the best chance of passing ATS screening. Focus on fixing the suggestions our checker provides.' },
                 { q: 'Does this replace a human review?', a: 'No. Our ATS checker identifies formatting and structural issues that cause ATS rejection. You should still have your resume reviewed by a professional or mentor for content quality.' },
@@ -130,8 +130,8 @@ export default function ATSCheckerPage() {
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
             mainEntity: [
-              { q: 'Is the ATS checker free?', a: 'Yes, completely free. Upload as many resumes as you want, no sign-up required, no limits.' },
-              { q: 'Is my resume data safe?', a: 'Your resume is processed in memory and never stored on our servers.' },
+              { q: 'Do I need to sign up to use the ATS checker?', a: 'No sign-up required. Upload as many resumes as you want with no limits.' },
+              { q: 'Is my resume data safe?', a: 'Your resume is processed in memory and never stored on our servers. It is deleted immediately after analysis.' },
               { q: 'What score should I aim for?', a: 'Aim for 80% or higher. Resumes scoring 90%+ have the best chance of passing ATS screening.' },
               { q: 'What file formats are supported?', a: 'Currently we support PDF files only.' },
             ].map(faq => ({
@@ -151,7 +151,7 @@ export default function ATSCheckerPage() {
             '@type': 'WebApplication',
             name: 'Resumly ATS Resume Checker',
             url: 'https://resumly.app/ats-checker',
-            description: 'Free ATS resume compatibility checker with instant scoring and fix suggestions.',
+            description: 'ATS resume compatibility checker with instant scoring and fix suggestions.',
             applicationCategory: 'BusinessApplication',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           }),

@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'AI Resume Builder: Land Your Dream Job with AI Help (2026)',
   description:
-    'Let AI write your resume. Our AI resume builder generates tailored summaries, bullet points, and skills for your target job in seconds. Free, no ChatGPT prompting required.',
+    'Let AI write your resume. Our AI resume builder generates tailored summaries, bullet points, and skills for your target job in seconds. No ChatGPT prompting required.',
   keywords: ['AI resume builder', 'AI resume writer', 'resume builder AI', 'ChatGPT resume', 'AI CV builder', 'best AI resume builder 2026'],
   alternates: { canonical: 'https://resumly.app/ai-resume-builder' },
   openGraph: {
     title: 'AI Resume Builder: Land Your Dream Job with AI Help · Resumly',
-    description: 'Let AI write your resume. Tailored summaries, bullet points, and skills in seconds. Free to use.',
+    description: 'Let AI write your resume. Tailored summaries, bullet points, and skills in seconds.',
   },
 };
 
@@ -62,10 +62,10 @@ export default function AIResumeBuilderPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="xl" asChild>
-                <Link href="/builder/new">Try AI Resume Builder Free →</Link>
+                <Link href="/#hero-input">Try AI Resume Builder →</Link>
               </Button>
             </div>
-            <p className="text-sm text-gray-500 mt-3">No sign-up required. No credit card. Free forever.</p>
+            <p className="text-sm text-gray-500 mt-3">No sign-up required. No credit card needed.</p>
           </div>
         </section>
 
@@ -139,7 +139,7 @@ export default function AIResumeBuilderPage() {
             </div>
             <div className="mt-10 text-center">
               <Button size="xl" asChild>
-                <Link href="/builder/new">Start with AI Resume Builder →</Link>
+                <Link href="/#hero-input">Start with AI Resume Builder →</Link>
               </Button>
             </div>
           </div>
@@ -152,8 +152,8 @@ export default function AIResumeBuilderPage() {
             <div className="space-y-6 text-gray-700">
               {[
                 {
-                  q: 'Is the AI resume builder free?',
-                  a: 'Yes, our AI resume builder is completely free to use. AI suggestions for summaries, bullet points, and skills are all included at no cost.',
+                  q: 'Do I need to create an account to use the AI resume builder?',
+                  a: 'No sign-up required. AI suggestions for summaries, bullet points, and skills are available right away. Create an account to save and manage your resumes.',
                 },
                 {
                   q: 'Will AI-generated resumes pass ATS?',
@@ -186,8 +186,8 @@ export default function AIResumeBuilderPage() {
               mainEntity: [
                 {
                   '@type': 'Question',
-                  name: 'Is the AI resume builder free?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, our AI resume builder is completely free to use. AI suggestions for summaries, bullet points, and skills are all included at no cost. No credit card required.' },
+                  name: 'Do I need to create an account to use the AI resume builder?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'No sign-up required. AI suggestions for summaries, bullet points, and skills are available right away. No credit card needed.' },
                 },
                 {
                   '@type': 'Question',

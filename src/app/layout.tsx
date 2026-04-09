@@ -13,12 +13,12 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://resumly.app'),
   title: {
-    default: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
+    default: 'AI Resume Builder: Create Your Resume Online in Minutes · Resumly',
     template: '%s · Resumly',
   },
   description:
-    'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, and instant text-based PDF download. 100% free.',
-  keywords: ['resume builder', 'free resume builder', 'ATS resume', 'CV builder', 'resume templates', 'resume maker', 'online resume builder'],
+    'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, and instant text-based PDF download.',
+  keywords: ['resume builder', 'AI resume builder', 'ATS resume', 'CV builder', 'resume templates', 'resume maker', 'online resume builder'],
   authors: [{ name: 'Resumly' }],
   creator: 'Resumly',
   publisher: 'Resumly',
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://resumly.app',
     siteName: 'Resumly',
-    title: 'Free Resume Builder: Create Your Resume Online in Minutes · Resumly',
-    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF. 100% free.',
+    title: 'AI Resume Builder: Create Your Resume Online in Minutes · Resumly',
+    description: 'Build a professional resume that gets interviews. 10 ATS-friendly templates, AI writing help, instant PDF.',
   },
   twitter: {
     card: 'summary_large_image',

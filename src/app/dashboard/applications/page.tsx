@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { ApplicationsClient } from './applications-client';
 
 export const metadata: Metadata = {
   title: 'Applications – Resumly',
@@ -37,6 +38,26 @@ export default async function ApplicationsPage() {
 
   const hasApps = applications && applications.length > 0;
 
+  // Normalize the data for client components
+  const normalizedApps = (applications || []).map((app) => {
+    const jobArr = app.job as unknown as { id: string; title: string; company: string; location: string; salary: string; url: string }[] | null;
+    const job = Array.isArray(jobArr) ? jobArr[0] : jobArr;
+    const resumeArr = app.resume as unknown as { id: string; title: string; ats_score: number }[] | null;
+    const resume = Array.isArray(resumeArr) ? resumeArr[0] : resumeArr;
+    const clArr = app.cover_letter as unknown as { id: string; content: string; tone: string }[] | null;
+    const coverLetter = Array.isArray(clArr) ? clArr[0] : clArr;
+    return {
+      id: app.id,
+      status: app.status,
+      applied_at: app.applied_at,
+      created_at: app.created_at,
+      notes: app.notes,
+      job: job || null,
+      resume: resume || null,
+      cover_letter: coverLetter || null,
+    };
+  });
+
   return (
     <>
       <div className="flex items-center justify-between mb-5">
@@ -64,66 +85,7 @@ export default async function ApplicationsPage() {
       )}
 
       {hasApps && (
-        <div className="bg-white rounded-xl border border-neutral-20 shadow-sm overflow-hidden">
-          <div className="hidden sm:grid sm:grid-cols-[1fr_140px_140px_120px_90px] gap-4 px-4 py-2 border-b border-neutral-20">
-            <span className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider">Position</span>
-            <span className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider">Resume</span>
-            <span className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider">Cover Letter</span>
-            <span className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider">Status</span>
-            <span className="text-[11px] font-semibold text-neutral-40 uppercase tracking-wider">Date</span>
-          </div>
-          {applications.map((app) => {
-            const jobArr = app.job as unknown as { id: string; title: string; company: string; location: string; salary: string; url: string }[] | null;
-            const job = Array.isArray(jobArr) ? jobArr[0] : jobArr;
-            const resumeArr = app.resume as unknown as { id: string; title: string; ats_score: number }[] | null;
-            const resume = Array.isArray(resumeArr) ? resumeArr[0] : resumeArr;
-            const clArr = app.cover_letter as unknown as { id: string; content: string; tone: string }[] | null;
-            const coverLetter = Array.isArray(clArr) ? clArr[0] : clArr;
-            const status = STATUS_CONFIG[app.status] || STATUS_CONFIG.draft;
-
-            return (
-              <div key={app.id} className="grid sm:grid-cols-[1fr_140px_140px_120px_90px] gap-1.5 sm:gap-4 px-4 py-3 border-b border-neutral-20/60 last:border-0 hover:bg-primary/[0.02] transition-colors items-center">
-                <div className="min-w-0">
-                  <p className="font-medium text-[13px] text-neutral-90 truncate">{job?.title || 'Untitled'}</p>
-                  <p className="text-[11px] text-neutral-50 truncate">{job?.company}{job?.location ? ` \u00b7 ${job.location}` : ''}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {resume ? (
-                    <>
-                      <Link href={`/dashboard/resume/${resume.id}`} className="text-[12px] text-primary hover:underline font-medium">View</Link>
-                      <span className="text-neutral-20">\u00b7</span>
-                      <Link href={`/dashboard/resume/${resume.id}?download=true`} className="text-[12px] text-neutral-50 hover:text-primary font-medium">PDF</Link>
-                    </>
-                  ) : (
-                    <span className="text-[12px] text-neutral-30">&mdash;</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {coverLetter ? (
-                    <>
-                      <Link href={`/dashboard/cover-letter/${coverLetter.id}`} className="text-[12px] text-green-600 hover:underline font-medium">View</Link>
-                      <span className="text-neutral-20">\u00b7</span>
-                      <Link href={`/dashboard/cover-letter/${coverLetter.id}?download=true`} className="text-[12px] text-neutral-50 hover:text-green-600 font-medium">PDF</Link>
-                    </>
-                  ) : job ? (
-                    <Link href={`/funnel/${job.id}/cover-letter${resume ? `?resumeId=${resume.id}` : ''}`} className="text-[12px] text-primary hover:underline font-medium">Generate</Link>
-                  ) : (
-                    <span className="text-[12px] text-neutral-30">&mdash;</span>
-                  )}
-                </div>
-                <div>
-                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium ${status.bg} ${status.text}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                    {status.label}
-                  </span>
-                </div>
-                <div className="text-[12px] text-neutral-40">
-                  {new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ApplicationsClient applications={normalizedApps} statusConfig={STATUS_CONFIG} />
       )}
     </>
   );

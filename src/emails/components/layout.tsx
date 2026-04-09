@@ -42,7 +42,7 @@ export function EmailLayout({ preview, children, unsubscribeUrl }: EmailLayoutPr
           <Hr style={hr} />
           <Section style={footer}>
             <Text style={footerText}>
-              Resumly, free professional resume builder
+              Resumly, AI resume builder
             </Text>
             <Text style={footerText}>
               <Link href={unsubscribeUrl} style={unsubscribeLink}>

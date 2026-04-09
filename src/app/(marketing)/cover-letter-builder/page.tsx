@@ -4,14 +4,14 @@ import { Footer } from '@/components/layout/footer';
 import { CoverLetterClient } from './cover-letter-client';
 
 export const metadata: Metadata = {
-  title: 'Free AI Cover Letter Builder – Write in Minutes (2026)',
+  title: 'AI Cover Letter Builder – Write in Minutes (2026)',
   description:
-    'Create a professional cover letter in minutes with AI assistance. Paste the job description to generate a targeted, ATS-friendly cover letter. Free, no sign-up required.',
-  keywords: ['cover letter builder', 'free cover letter', 'AI cover letter', 'cover letter generator', 'cover letter template', 'ATS cover letter', 'job application letter'],
+    'Create a professional cover letter in minutes with AI assistance. Paste the job description to generate a targeted, ATS-friendly cover letter. No sign-up required.',
+  keywords: ['cover letter builder', 'AI cover letter', 'cover letter generator', 'cover letter template', 'ATS cover letter', 'job application letter'],
   alternates: { canonical: 'https://resumly.app/cover-letter-builder' },
   openGraph: {
-    title: 'Free AI Cover Letter Builder · Resumly',
-    description: 'Generate a professional, ATS-friendly cover letter in seconds with AI. Free and no sign-up required.',
+    title: 'AI Cover Letter Builder · Resumly',
+    description: 'Generate a professional, ATS-friendly cover letter in seconds with AI. No sign-up required.',
     url: 'https://resumly.app/cover-letter-builder',
   },
   other: {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
       '@type': 'FAQPage',
       mainEntity: [
         { '@type': 'Question', name: 'How do I write a cover letter with AI?', acceptedAnswer: { '@type': 'Answer', text: 'Enter your name, the job title, and company name. Optionally paste the job description and your background. Click Generate and our AI writes a tailored, ATS-friendly cover letter in seconds. You can edit the result before copying or downloading.' } },
-        { '@type': 'Question', name: 'Is the AI cover letter builder free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, Resumly cover letter builder is completely free. No account, no credit card, and no watermarks. Generate as many cover letters as you need.' } },
+        { '@type': 'Question', name: 'Do I need an account to use the cover letter builder?', acceptedAnswer: { '@type': 'Answer', text: 'No account or credit card required. Generate as many cover letters as you need with no watermarks.' } },
         { '@type': 'Question', name: 'Should I include a cover letter with my resume?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Studies show that 83% of hiring managers say cover letters are important in hiring decisions. A targeted cover letter can set you apart from candidates who only submit a resume, especially when it addresses the specific job requirements.' } },
         { '@type': 'Question', name: 'How long should a cover letter be?', acceptedAnswer: { '@type': 'Answer', text: 'A cover letter should be 200 to 400 words, or about three paragraphs. Hiring managers spend an average of 30 seconds reading a cover letter, so keep it concise and focused on your strongest qualifications for the role.' } },
         { '@type': 'Question', name: 'What makes a good cover letter?', acceptedAnswer: { '@type': 'Answer', text: 'A good cover letter opens with a compelling hook, proves your fit with 2-3 specific achievements that match the job requirements, and closes with a confident call to action. It should reference the company by name and use keywords from the job posting naturally.' } },
@@ -78,7 +78,7 @@ export default function CoverLetterBuilderPage() {
                 Writing a personalized cover letter for every application is time-consuming. Job seekers applying to 10-20 positions per week often default to generic templates, which hurts their chances. An AI cover letter builder solves this by analyzing the job description and your background to generate a unique, targeted letter in seconds.
               </p>
               <p>
-                Resumly&apos;s AI cover letter builder uses your actual experience and the specific job requirements to write a letter that sounds human, not templated. It automatically weaves in relevant keywords for ATS compatibility while maintaining a natural, professional tone. You can edit the result, adjust the tone, and regenerate as many times as you need, completely free.
+                Resumly&apos;s AI cover letter builder uses your actual experience and the specific job requirements to write a letter that sounds human, not templated. It automatically weaves in relevant keywords for ATS compatibility while maintaining a natural, professional tone. You can edit the result, adjust the tone, and regenerate as many times as you need.
               </p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function CoverLetterBuilderPage() {
             <div className="space-y-4">
               {[
                 { q: 'How do I write a cover letter with AI?', a: 'Enter your name, the job title, and company name. Optionally paste the job description and your background for better results. Click Generate and our AI writes a tailored, ATS-friendly cover letter in seconds. You can edit the result before copying or downloading.' },
-                { q: 'Is the AI cover letter builder free?', a: 'Yes, completely free. No account required, no credit card, and no watermarks. Generate as many cover letters as you need for different job applications.' },
+                { q: 'Do I need an account to use the cover letter builder?', a: 'No account or credit card required. Generate as many cover letters as you need for different job applications, with no watermarks.' },
                 { q: 'Should I include a cover letter with my resume?', a: 'Yes. Studies show that 83% of hiring managers say cover letters are important in hiring decisions. A targeted cover letter sets you apart from candidates who only submit a resume, especially when it addresses specific job requirements.' },
                 { q: 'How long should a cover letter be?', a: 'A cover letter should be 200 to 400 words, or about three paragraphs. Hiring managers spend an average of 30 seconds reading a cover letter, so keep it concise and focused on your strongest qualifications.' },
                 { q: 'What makes a good cover letter?', a: 'A good cover letter opens with a compelling hook, proves your fit with 2-3 specific achievements that match the job requirements, and closes with a confident call to action. It should reference the company by name and use keywords from the job posting naturally.' },

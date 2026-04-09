@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import JobRecommendations from '@/components/dashboard/job-recommendations';
+import { UpgradeBanner } from '@/components/dashboard/upgrade-banner';
+import { PLAN_LIMITS, type PlanTier } from '@/lib/plans';
 
 export const metadata: Metadata = {
   title: 'Dashboard – Resumly',
@@ -25,7 +28,7 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/auth/login');
 
-  const [{ data: resumes }, { data: applications }, { count: downloadCount }] = await Promise.all([
+  const [{ data: resumes }, { data: applications }, { count: downloadCount }, { data: profile }, { count: totalResumeCount }] = await Promise.all([
     supabase
       .from('resumes')
       .select('id, title, template_id, updated_at, resume_data')
@@ -48,7 +51,19 @@ export default async function DashboardPage() {
       .select('*', { count: 'exact', head: true })
       .eq('event_type', 'pdf_download')
       .eq('user_id', user.id),
+    supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('resumes')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id),
   ]);
+
+  const userTier = (profile?.subscription_tier || 'free') as PlanTier;
+  const maxResumes = PLAN_LIMITS[userTier].maxResumes;
 
   const calcAtsScore = (rd: Record<string, unknown>): number => {
     const p = rd?.personalDetails as Record<string, string> | undefined;
@@ -121,6 +136,13 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      {/* Upgrade banner for free users at resume limit */}
+      <UpgradeBanner
+        resumeCount={totalResumeCount || 0}
+        maxResumes={maxResumes === Infinity ? 999 : maxResumes}
+        tier={userTier}
+      />
+
       {/* Empty state */}
       {isEmpty && (
         <div className="text-center py-14 sm:py-16 bg-white rounded-xl border border-neutral-20 shadow-sm">
@@ -131,15 +153,15 @@ export default async function DashboardPage() {
           </div>
           <h3 className="text-[15px] font-semibold text-neutral-90 mb-1.5">Start your first application</h3>
           <p className="text-neutral-50 text-[13px] mb-6 max-w-md mx-auto leading-relaxed">
-            Paste a job link and we&apos;ll create an ATS-optimized resume tailored to the role.
+            Paste a job link and get a tailored, ATS-optimized resume in under 5 minutes.
           </p>
-          <div className="flex gap-2.5 justify-center">
-            <Button asChild size="sm" className="gap-2">
+          <div className="flex flex-col items-center gap-2.5">
+            <Button asChild size="lg" className="gap-2 px-8">
               <Link href="/">Paste a Job Link</Link>
             </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/builder/new">Create Resume</Link>
-            </Button>
+            <Link href="/dashboard" className="text-[12px] text-neutral-40 hover:text-neutral-60 transition-colors">
+              or create a resume from scratch
+            </Link>
           </div>
         </div>
       )}
@@ -199,6 +221,9 @@ export default async function DashboardPage() {
         </section>
       )}
 
+      {/* Recommended jobs */}
+      {!isEmpty && <JobRecommendations />}
+
       {/* Quick actions */}
       {!isEmpty && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -213,7 +238,7 @@ export default async function DashboardPage() {
             <p className="text-[12px] text-neutral-50">Paste a job link to get started</p>
           </Link>
           <Link
-            href="/builder/new"
+            href="/dashboard"
             className="group bg-white rounded-xl border border-neutral-20 shadow-sm px-5 py-4 hover:shadow-md hover:border-neutral-30 transition-all"
           >
             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center mb-2.5 group-hover:bg-green-100 transition-colors">

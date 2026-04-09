@@ -5,12 +5,12 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder: Make & Download Your Resume Easily (2026)',
+  title: 'AI Resume Builder: Make & Download Your Resume Easily (2026)',
   description:
-    'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant text-based PDF download. No watermarks, no fees, completely free.',
+    'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant text-based PDF download. No watermarks.',
   alternates: { canonical: 'https://resumly.app/resume-builder' },
   openGraph: {
-    title: 'Free Resume Builder: Make & Download Your Resume Easily · Resumly',
+    title: 'AI Resume Builder: Make & Download Your Resume Easily · Resumly',
     description: 'Create a professional resume in under 10 minutes. AI writes your bullet points, 10 ATS-optimized templates, instant PDF.',
   },
 };
@@ -33,15 +33,15 @@ export default function ResumeBuilderPage() {
         <section className="bg-gradient-to-b from-blue-50 to-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
-              Free Resume Builder: Build Your Resume Online
+              AI Resume Builder: Build Your Resume Online
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Create a professional, ATS-friendly resume in minutes. Our AI-powered builder guides you through every step. No design skills needed.
             </p>
             <Button size="xl" asChild>
-              <Link href="/builder/new">Start Building for Free →</Link>
+              <Link href="/#hero-input">Start Building Now →</Link>
             </Button>
-            <p className="text-sm text-gray-500 mt-3">No sign-up required. Free forever.</p>
+            <p className="text-sm text-gray-500 mt-3">No sign-up required. No credit card needed.</p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-12 text-left">
               {benefits.map((b) => (
@@ -57,11 +57,11 @@ export default function ResumeBuilderPage() {
         {/* How to use section - SEO content */}
         <section className="py-20 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">How to use the free resume builder</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">How to use the resume builder</h2>
 
             <div className="prose prose-lg max-w-none text-gray-600 space-y-6">
               <p>
-                Building a professional resume has never been easier. Our free online resume builder walks you through each section, offers AI-powered writing suggestions, and ensures your resume passes ATS (Applicant Tracking System) filters used by 99% of Fortune 500 companies.
+                Building a professional resume has never been easier. Our online resume builder walks you through each section, offers AI-powered writing suggestions, and ensures your resume passes ATS (Applicant Tracking System) filters used by 99% of Fortune 500 companies.
               </p>
 
               <h3 className="text-xl font-bold text-gray-900">Step 1: Choose a template</h3>
@@ -92,7 +92,7 @@ export default function ResumeBuilderPage() {
 
             <div className="mt-10 text-center">
               <Button size="xl" asChild>
-                <Link href="/builder/new">Build My Resume Now →</Link>
+                <Link href="/#hero-input">Build My Resume Now →</Link>
               </Button>
             </div>
           </div>
@@ -107,8 +107,8 @@ export default function ResumeBuilderPage() {
               mainEntity: [
                 {
                   '@type': 'Question',
-                  name: 'Is this resume builder really free?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, Resumly is 100% free. There are no hidden charges, no premium paywalls, and no credit card required. You get full access to all 10 templates, AI writing assistance, ATS scoring, and unlimited PDF downloads.' },
+                  name: 'Do I need to create an account to use the resume builder?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'No sign-up is required to start building your resume. You can create and download a resume right away. Creating an account lets you save your resumes and access them later.' },
                 },
                 {
                   '@type': 'Question',
@@ -133,7 +133,7 @@ export default function ResumeBuilderPage() {
                 {
                   '@type': 'Question',
                   name: 'How is Resumly different from other resume builders?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Resumly generates real text-based PDFs instead of image screenshots, which means your resume is fully readable by ATS systems. It is also completely free with no watermarks, includes AI writing assistance, and offers a real-time ATS score checker.' },
+                  acceptedAnswer: { '@type': 'Answer', text: 'Resumly generates real text-based PDFs instead of image screenshots, which means your resume is fully readable by ATS systems. It also includes AI writing assistance, no watermarks, and a real-time ATS score checker.' },
                 },
               ],
             }),

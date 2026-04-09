@@ -1,6 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Paths that require authentication — only these run Supabase auth
+const PROTECTED_PATHS = ['/dashboard', '/builder', '/z9k-panel', '/funnel'];
+
 export async function middleware(request: NextRequest) {
   // Force canonical domain: redirect www → non-www, http → https
   const host = request.headers.get('host') || '';
@@ -19,10 +22,20 @@ export async function middleware(request: NextRequest) {
   ) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/callback';
-    // Preserve all query params (code, next, type, etc.)
     return NextResponse.redirect(url);
   }
 
+  // ── Skip auth for public pages (marketing, blog, SEO pages) ──
+  // This lets Googlebot crawl without hitting Supabase auth on every request
+  const isProtected = PROTECTED_PATHS.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (!isProtected) {
+    return NextResponse.next();
+  }
+
+  // ── Auth check only for protected paths ──
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -57,17 +70,10 @@ export async function middleware(request: NextRequest) {
     // rather than redirecting to login and creating a loop
   }
 
-  const protectedPaths = ['/dashboard', '/builder', '/z9k-panel'];
-  const isProtected = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  if (isProtected && !user) {
+  if (!user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/auth/login';
-    // Only put the pathname in redirectTo (avoids nested ?-in-? query string bugs)
     loginUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    // Preserve job URL as its own param so it survives the OAuth flow
     const jobParam = request.nextUrl.searchParams.get('job');
     if (jobParam) loginUrl.searchParams.set('job', jobParam);
     return NextResponse.redirect(loginUrl);

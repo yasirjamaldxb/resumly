@@ -19,13 +19,13 @@ export default function ReferralEmail({ firstName, unsubscribeUrl, shareUrl }: P
       </Text>
 
       <Text style={text}>
-        Thanks for being part of Resumly! We&apos;re a small team building the best free resume
+        Thanks for being part of Resumly! We&apos;re a small team building the best AI resume
         builder out there, and every user who shares us helps us grow.
       </Text>
 
       <Text style={text}>
         If you know someone who&apos;s job hunting, looking to update their resume, or graduating soon,
-        share Resumly with them. It&apos;s free and takes 3 minutes to get a professional resume.
+        share Resumly with them. It takes 3 minutes to get a professional resume.
       </Text>
 
       <EmailButton href={shareUrl}>Share Resumly →</EmailButton>

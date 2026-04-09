@@ -323,10 +323,10 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
             <div className="flex-1">
               <p className="font-semibold text-gray-900">Ready to put this into practice?</p>
-              <p className="text-sm text-gray-600 mt-1">Build your ATS-optimized resume in minutes with Resumly, free.</p>
+              <p className="text-sm text-gray-600 mt-1">Build your ATS-optimized resume in minutes with Resumly.</p>
             </div>
             <Button asChild className="flex-shrink-0">
-              <Link href="/builder/new">Build My Resume →</Link>
+              <Link href="/#hero-input">Build My Resume →</Link>
             </Button>
           </div>
 
@@ -351,9 +351,9 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Bottom CTA */}
           <div className="mt-16 bg-blue-600 text-white rounded-2xl p-8 text-center">
             <h2 className="text-2xl font-bold mb-2">Apply what you learned</h2>
-            <p className="text-blue-100 mb-6">Build an ATS-optimized resume using our free builder. Everything from this guide is built right in.</p>
+            <p className="text-blue-100 mb-6">Build an ATS-optimized resume with AI. Everything from this guide is built right in.</p>
             <Button className="bg-white text-blue-600 hover:bg-blue-50 font-semibold" size="lg" asChild>
-              <Link href="/builder/new">Build My Resume Free →</Link>
+              <Link href="/#hero-input">Build My Resume →</Link>
             </Button>
           </div>
 

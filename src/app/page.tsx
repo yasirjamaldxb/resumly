@@ -41,13 +41,13 @@ const exampleCategories = [
   { title: 'Software Engineer', slug: 'software-engineer' },
   { title: 'Product Manager', slug: 'product-manager' },
   { title: 'Marketing', slug: 'marketing-manager' },
-  { title: 'Data Analyst', slug: 'data-analyst' },
+  { title: 'Data Scientist', slug: 'data-scientist' },
   { title: 'Designer', slug: 'graphic-designer' },
   { title: 'Finance', slug: 'accountant' },
-  { title: 'Healthcare', slug: 'doctor' },
+  { title: 'Healthcare', slug: 'nurse' },
   { title: 'Teacher', slug: 'teacher' },
-  { title: 'Sales', slug: 'retail' },
-  { title: 'HR', slug: 'human-resources' },
+  { title: 'Sales', slug: 'sales-manager' },
+  { title: 'HR', slug: 'hr-manager' },
 ];
 
 const blogPosts = [
@@ -157,6 +157,8 @@ export default function HomePage() {
   return (
     <>
       <Header />
+      {/* Spacer for fixed header */}
+      <div className="h-[64px]" />
       <main>
         <HeroSection />
         <StatsBar />
@@ -181,7 +183,7 @@ export default function HomePage() {
             url: 'https://resumly.app',
             description: 'AI-powered job search companion that creates tailored, ATS-optimized resumes from any job link.',
             applicationCategory: 'BusinessApplication',
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'First application free' },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'First application included' },
           }),
         }}
       />

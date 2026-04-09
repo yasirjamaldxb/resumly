@@ -415,6 +415,197 @@ const EXAMPLES: Record<string, ExampleData> = {
       'Implemented pharmacist-driven hypertension management protocol, achieving 45% reduction in uncontrolled BP among enrolled patients',
     ],
   },
+  'cdl-driver': {
+    title: 'CDL Truck Driver',
+    description: 'A strong CDL truck driver resume leads with your license class, endorsements, and clean driving record. Recruiters look for safety, reliability, and route experience. You do not need fancy words — clear facts win the interview.',
+    keySkills: ['Class A CDL', 'DOT Compliance', 'HAZMAT Endorsement', 'Tanker Endorsement', 'Pre-Trip Inspection', 'ELD Logs', 'Route Planning', 'Load Securement', 'GPS Navigation', 'Defensive Driving', 'Clean MVR'],
+    sections: ['License & Endorsements', 'Professional Summary', 'Driving Experience', 'Safety Record', 'Education / Training'],
+    tips: [
+      'Put your CDL class (A/B/C) and endorsements (H, N, T, P, X) at the very top',
+      'State your miles driven and years accident-free: "500k+ accident-free miles"',
+      'List the types of equipment you drove: dry van, reefer, flatbed, tanker, doubles',
+      'Mention your clean MVR and DOT medical card status',
+      'Quantify on-time delivery rate: "99% on-time over 3 years"',
+      'If you have no gaps or tickets, say so explicitly — that alone can get you the interview',
+    ],
+    sampleBullets: [
+      'Drove 120,000+ miles annually across 48 states hauling dry van freight with a 100% on-time delivery record',
+      'Maintained a clean MVR and zero preventable accidents over 6 years and 750,000+ miles',
+      'Completed pre-trip and post-trip inspections per DOT regulations, identifying and reporting maintenance issues before they caused downtime',
+      'Trained 4 new drivers on ELD logging, load securement, and safe backing procedures',
+    ],
+  },
+  'delivery-driver': {
+    title: 'Delivery Driver',
+    description: 'Delivery driver resumes should focus on reliability, customer service, and safe driving. Whether you drive for Amazon, FedEx, UPS, or a local business, employers want someone who shows up on time and treats customers well.',
+    keySkills: ['Valid Driver License', 'Clean Driving Record', 'Route Optimization', 'Customer Service', 'Package Handling', 'GPS Navigation', 'Time Management', 'Cash Handling', 'Vehicle Maintenance', 'Physical Stamina'],
+    sections: ['Professional Summary', 'Driving Experience', 'Skills', 'Education', 'Certifications'],
+    tips: [
+      'Start with your driving record: "5 years clean driving record, valid Class D license"',
+      'Mention how many deliveries per day or packages per shift you handled',
+      'Emphasize reliability: "Never missed a shift in 2 years"',
+      'Include any customer service ratings or positive feedback scores',
+      'List physical ability to lift 50+ lbs if relevant',
+    ],
+    sampleBullets: [
+      'Delivered 120-150 packages per day across assigned routes with a 99.2% on-time rate',
+      'Maintained 4.9/5 customer rating through friendly, professional service and careful handling of packages',
+      'Drove 40,000+ miles with zero accidents or moving violations over 3 years',
+      'Optimized daily routes to reduce fuel consumption by 15% and complete deliveries 45 minutes faster on average',
+    ],
+  },
+  'forklift-operator': {
+    title: 'Forklift Operator',
+    description: 'Forklift operator resumes should lead with your OSHA certification and equipment experience. Warehouses and manufacturers need operators who can move product quickly and safely.',
+    keySkills: ['OSHA Forklift Certification', 'Sit-Down Forklift', 'Stand-Up Forklift', 'Reach Truck', 'Pallet Jack', 'Cherry Picker', 'Load Balancing', 'Pre-Shift Inspection', 'Inventory Management', 'Safety Compliance'],
+    sections: ['Certifications', 'Professional Summary', 'Experience', 'Skills', 'Education'],
+    tips: [
+      'List your OSHA forklift certification with expiration date at the top',
+      'Specify which forklift types you operate: sit-down, stand-up, reach truck, order picker',
+      'Mention weight capacities you are certified for',
+      'Highlight any injury-free stretches and safety awards',
+      'Quantify throughput: pallets per hour, loads per shift',
+    ],
+    sampleBullets: [
+      'Operated sit-down and stand-up forklifts to move 250+ pallets per shift in a 300,000 sq ft distribution center',
+      'Maintained zero-incident safety record over 4 years of daily forklift operation',
+      'Performed daily pre-shift equipment inspections and reported maintenance issues promptly, preventing costly downtime',
+      'Loaded and unloaded 30+ trailers per day while maintaining accurate bill of lading records',
+    ],
+  },
+  'security-guard': {
+    title: 'Security Guard',
+    description: 'Security guard resumes need to show reliability, alertness, and any relevant licenses or training. Employers want someone dependable who can handle routine patrols and stay calm in incidents.',
+    keySkills: ['Security License / Guard Card', 'CPR/First Aid', 'Patrolling', 'Access Control', 'CCTV Monitoring', 'Incident Reporting', 'Emergency Response', 'De-escalation', 'Report Writing', 'Customer Service'],
+    sections: ['Licenses & Certifications', 'Professional Summary', 'Security Experience', 'Training', 'Skills'],
+    tips: [
+      'List your state guard card or security license and expiration date prominently',
+      'Mention CPR/First Aid, AED, and any fire safety training',
+      'Include the types of sites you secured: retail, corporate, hospital, residential, event',
+      'Emphasize any incident response experience or report writing',
+      'Show reliability with perfect attendance or long tenure',
+    ],
+    sampleBullets: [
+      'Conducted hourly foot patrols of a 15-acre corporate campus, detecting and reporting 12 security issues before escalation',
+      'Monitored 48 CCTV cameras and controlled building access for 800+ employees during overnight shifts',
+      'Responded to medical emergencies by administering first aid and coordinating with EMS, resulting in 3 lives saved',
+      'Wrote detailed daily activity reports and incident documentation adhering to client requirements',
+    ],
+  },
+  'construction-worker': {
+    title: 'Construction Worker',
+    description: 'Construction resumes should highlight your trade skills, safety certifications, and years of hands-on experience. List the specific tools, equipment, and project types you have worked on.',
+    keySkills: ['OSHA 10/30', 'Framing', 'Concrete Work', 'Demolition', 'Blueprint Reading', 'Power Tools', 'Hand Tools', 'Scaffolding', 'Site Safety', 'Heavy Lifting', 'Teamwork'],
+    sections: ['Certifications', 'Professional Summary', 'Construction Experience', 'Skills', 'Education'],
+    tips: [
+      'List OSHA 10 or OSHA 30 certification and expiration at the top',
+      'Specify the trades and project types: residential, commercial, road work, demolition',
+      'Mention tools and equipment you can operate independently',
+      'Quantify: "Completed 15+ residential framing projects"',
+      'Highlight any supervisory or crew lead experience',
+    ],
+    sampleBullets: [
+      'Framed, roofed, and finished 20+ single-family homes as part of a 6-person crew while maintaining OSHA safety standards',
+      'Operated power and hand tools including nail guns, circular saws, and jackhammers safely with zero injuries over 5 years',
+      'Read blueprints and executed layouts for concrete foundations, interior walls, and rough carpentry',
+      'Trained and mentored 3 apprentices on safe tool use, measurement accuracy, and site cleanup',
+    ],
+  },
+  'mechanic': {
+    title: 'Auto Mechanic',
+    description: 'Mechanic resumes should lead with your ASE certifications, diagnostic experience, and brands you know. Shops hire based on efficiency and certifications.',
+    keySkills: ['ASE Certification', 'Engine Diagnostics', 'Brake Systems', 'Suspension & Steering', 'Electrical Systems', 'Transmission Service', 'OBD-II Scanners', 'Hydraulics', 'Preventive Maintenance', 'Customer Service'],
+    sections: ['ASE Certifications', 'Professional Summary', 'Mechanic Experience', 'Skills', 'Education & Training'],
+    tips: [
+      'Put ASE certifications (A1-A8) and year earned at the top',
+      'List vehicle brands/specialties: domestic, import, diesel, hybrid, EV',
+      'Mention flat rate hours billed vs actual — efficient mechanics are paid more',
+      'Include diagnostic tools and software you know: Snap-on, Mitchell, Alldata',
+      'Highlight any manufacturer-specific training (GM, Ford, Toyota, etc.)',
+    ],
+    sampleBullets: [
+      'Diagnosed and repaired engine, brake, and electrical issues on 15+ vehicles per day, maintaining a 1.2 flat-rate efficiency ratio',
+      'Earned 6 ASE certifications including Master Automobile Technician status',
+      'Performed complex transmission rebuilds, engine replacements, and hybrid system repairs across domestic and import brands',
+      'Maintained customer satisfaction scores above 4.8/5 through clear explanations and honest estimates',
+    ],
+  },
+  'retail-sales': {
+    title: 'Retail Sales Associate',
+    description: 'Retail resumes should emphasize customer service, sales performance, and teamwork. Even entry-level candidates can stand out by quantifying sales results and showing reliability.',
+    keySkills: ['Customer Service', 'POS Systems', 'Cash Handling', 'Upselling', 'Inventory Management', 'Visual Merchandising', 'Product Knowledge', 'Loss Prevention', 'Team Collaboration', 'Conflict Resolution'],
+    sections: ['Professional Summary', 'Retail Experience', 'Skills', 'Education'],
+    tips: [
+      'Quantify sales results: "Averaged $2,500 in daily sales, 15% above team average"',
+      'Mention conversion rates or attachment rates if you tracked them',
+      'Highlight customer satisfaction ratings or compliments',
+      'List POS systems you have used (Square, Shopify POS, Lightspeed)',
+      'Mention perfect attendance or long tenure — retail values reliability',
+    ],
+    sampleBullets: [
+      'Exceeded monthly sales targets by 20% on average through personalized product recommendations and active listening',
+      'Handled cash, credit, and mobile payments for 150+ customers per shift with zero till discrepancies over 12 months',
+      'Trained 6 new associates on POS systems, loss prevention, and customer service standards',
+      'Maintained 4.9/5 customer satisfaction rating and received 12 written customer compliments in one year',
+    ],
+  },
+  'cleaner': {
+    title: 'Cleaner / Housekeeper',
+    description: 'Cleaning and housekeeping resumes should focus on reliability, attention to detail, and the specific environments you have cleaned. Trust and dependability matter more than fancy wording.',
+    keySkills: ['Deep Cleaning', 'Sanitization', 'Floor Care', 'Laundry', 'Chemical Handling', 'Attention to Detail', 'Time Management', 'OSHA Safety', 'Equipment Operation', 'Reliability'],
+    sections: ['Professional Summary', 'Cleaning Experience', 'Skills', 'References'],
+    tips: [
+      'List the types of sites you cleaned: homes, offices, hospitals, hotels, schools',
+      'Mention bonding and insurance if you worked independently',
+      'Quantify: "Cleaned 12 hotel rooms per shift to 5-star standards"',
+      'Highlight reliability: perfect attendance, long tenure, client retention',
+      'List references — cleaning jobs are often won on trust',
+    ],
+    sampleBullets: [
+      'Cleaned and sanitized 14 guest rooms per shift at a 4-star hotel, consistently passing inspection with 98%+ scores',
+      'Maintained a 4-year perfect attendance record while servicing 25 residential clients on a weekly rotation',
+      'Followed OSHA safety protocols for chemical handling and disposal with zero incidents',
+      'Retained 100% of regular clients over 3 years through consistent quality and trustworthy service',
+    ],
+  },
+  'home-health-aide': {
+    title: 'Home Health Aide',
+    description: 'Home health aide resumes should highlight your certification, compassion, and specific care experience. Families and agencies hire based on trust, reliability, and training.',
+    keySkills: ['HHA Certification', 'CNA', 'CPR/First Aid', 'Patient Transfers', 'Medication Reminders', 'Personal Care', 'Meal Preparation', 'Vital Signs', 'Dementia Care', 'Mobility Assistance'],
+    sections: ['Certifications', 'Professional Summary', 'Care Experience', 'Skills', 'Education'],
+    tips: [
+      'List your HHA or CNA certification and state registry number at the top',
+      'Mention CPR and First Aid certification with expiration dates',
+      'Specify patient populations: elderly, dementia, post-surgical, pediatric, hospice',
+      'Highlight soft skills: patience, empathy, dependability',
+      'Quantify: "Provided care for 3-4 clients per week over 5 years"',
+    ],
+    sampleBullets: [
+      'Provided personal care, medication reminders, and companionship to 4 elderly clients weekly, including two with advanced dementia',
+      'Assisted with bathing, dressing, grooming, and safe patient transfers using gait belts and lift equipment',
+      'Prepared nutritious meals and maintained clean, safe home environments aligned with care plans',
+      'Monitored vital signs and promptly reported changes in health status to RN case managers, preventing 2 hospital readmissions',
+    ],
+  },
+  'electrician': {
+    title: 'Electrician',
+    description: 'Electrician resumes should lead with your license, years of experience, and specialties (residential, commercial, industrial). Hiring managers want licensed, safety-conscious pros.',
+    keySkills: ['Electrical License', 'NEC Code', 'Conduit Bending', 'Wiring & Troubleshooting', 'Blueprint Reading', 'Panel Installation', 'Motor Controls', 'Low Voltage', 'OSHA 10', 'Lockout/Tagout'],
+    sections: ['License & Certifications', 'Professional Summary', 'Experience', 'Skills', 'Education / Apprenticeship'],
+    tips: [
+      'Put your journeyman or master electrician license number and state at the top',
+      'Specify residential, commercial, or industrial focus',
+      'Mention years of NEC code experience',
+      'Include apprenticeship hours and training',
+      'Quantify: "Wired 40+ residential new-construction homes"',
+    ],
+    sampleBullets: [
+      'Wired 25+ new residential builds from rough-in to trim, passing all inspections on the first attempt',
+      'Installed and upgraded electrical panels up to 400A in both residential and light commercial settings',
+      'Diagnosed and repaired complex electrical faults using multimeters and thermal imaging, reducing customer downtime by 50%',
+      'Mentored 2 apprentices on NEC code compliance, safe work practices, and quality craftsmanship',
+    ],
+  },
 };
 
 function getExampleData(slug: string): ExampleData {
@@ -437,9 +628,20 @@ function getExampleData(slug: string): ExampleData {
 
 const RELATED_EXAMPLES: Record<string, string[]> = {
   'software-engineer': ['web-developer', 'data-scientist', 'ux-designer', 'product-manager'],
-  'nurse': ['medical-assistant', 'pharmacist', 'teacher', 'customer-service'],
+  'nurse': ['medical-assistant', 'pharmacist', 'home-health-aide', 'customer-service'],
   'marketing-manager': ['sales-manager', 'graphic-designer', 'product-manager', 'business-analyst'],
   'accountant': ['financial-analyst', 'business-analyst', 'hr-manager', 'project-manager'],
+  'cdl-driver': ['delivery-driver', 'warehouse-worker', 'forklift-operator', 'mechanic'],
+  'delivery-driver': ['cdl-driver', 'warehouse-worker', 'retail-sales', 'customer-service'],
+  'warehouse-worker': ['forklift-operator', 'cdl-driver', 'delivery-driver', 'construction-worker'],
+  'forklift-operator': ['warehouse-worker', 'construction-worker', 'cdl-driver', 'mechanic'],
+  'construction-worker': ['electrician', 'mechanic', 'forklift-operator', 'warehouse-worker'],
+  'mechanic': ['electrician', 'construction-worker', 'cdl-driver', 'forklift-operator'],
+  'electrician': ['construction-worker', 'mechanic', 'forklift-operator', 'warehouse-worker'],
+  'security-guard': ['customer-service', 'retail-sales', 'cleaner', 'warehouse-worker'],
+  'retail-sales': ['customer-service', 'cleaner', 'cashier', 'delivery-driver'],
+  'cleaner': ['home-health-aide', 'retail-sales', 'security-guard', 'warehouse-worker'],
+  'home-health-aide': ['nurse', 'medical-assistant', 'cleaner', 'customer-service'],
 };
 
 type Props = { params: Promise<{ category: string }> };
@@ -449,7 +651,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = getExampleData(category);
   return {
     title: `${data.title} Resume Example & Writing Tips for 2026`,
-    description: `See a real ${data.title} resume example for 2026 with expert writing tips. Learn exactly what to include, what keywords to use, and how to pass ATS. Build yours free in minutes.`,
+    description: `See a real ${data.title} resume example for 2026 with expert writing tips. Learn exactly what to include, what keywords to use, and how to pass ATS.`,
     alternates: { canonical: `https://resumly.app/resume-examples/${category}` },
     openGraph: {
       title: `${data.title} Resume Example 2026 | Resumly`,
@@ -486,7 +688,7 @@ export default async function ResumeExamplePage({ params }: Props) {
               </div>
               <div className="flex-shrink-0">
                 <Button size="lg" asChild>
-                  <Link href={`/builder/new?role=${encodeURIComponent(data.title)}`}>
+                  <Link href="/#hero-input">
                     Build My Resume →
                   </Link>
                 </Button>
@@ -615,8 +817,8 @@ export default async function ResumeExamplePage({ params }: Props) {
                     Use our AI to auto-fill skills and generate bullet points for your role
                   </p>
                   <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold" asChild>
-                    <Link href={`/builder/new?role=${encodeURIComponent(data.title)}`}>
-                      Build for Free
+                    <Link href="/#hero-input">
+                      Build My Resume
                     </Link>
                   </Button>
                 </div>

@@ -79,7 +79,7 @@ export function CoverLetterClient() {
             AI-Powered
           </div>
           <h1 className="text-[38px] sm:text-[52px] font-bold text-neutral-90 tracking-tight leading-[1.1] mb-4">
-            Free AI Cover Letter Builder
+            AI Cover Letter Builder
           </h1>
           <p className="text-[17px] text-neutral-50 max-w-[520px] mx-auto leading-relaxed">
             Fill in your details and get a tailored, ATS-friendly cover letter in seconds. No templates, genuinely personalized.
@@ -304,12 +304,12 @@ export function CoverLetterClient() {
       <section className="py-12 bg-white border-t border-neutral-20">
         <div className="max-w-[600px] mx-auto px-6 text-center">
           <h2 className="text-[22px] font-semibold text-neutral-90 tracking-tight mb-2">Need a resume to go with it?</h2>
-          <p className="text-[14px] text-neutral-50 mb-6">Build a matching ATS-friendly resume in under 10 minutes. Free, no account required.</p>
+          <p className="text-[14px] text-neutral-50 mb-6">Build a matching ATS-friendly resume in under 10 minutes. No account required.</p>
           <Link
-            href="/builder/new"
+            href="/#hero-input"
             className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-md text-[14px]"
           >
-            Build My Resume for Free
+            Build My Resume Now
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

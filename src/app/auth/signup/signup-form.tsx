@@ -54,8 +54,27 @@ export function SignupForm() {
         <p className="text-neutral-50 text-[14px] mb-6">
           We sent a confirmation link to <strong>{email}</strong>. You can verify later. Start building your resume now.
         </p>
-        <Button size="lg" className="w-full" onClick={() => router.push('/builder/new')}>
-          Start Building My Resume →
+        <Button size="lg" className="w-full" onClick={() => {
+          // If user was analyzing a job before signup, take them back to the funnel
+          try {
+            const pendingJob = localStorage.getItem('resumly_pending_job') || localStorage.getItem('resumly_job_context');
+            if (pendingJob) {
+              const jobData = JSON.parse(pendingJob);
+              if (jobData?.url) {
+                router.push(`/job-preview?url=${encodeURIComponent(jobData.url)}&from=auth`);
+                return;
+              }
+            }
+          } catch {}
+          router.push('/dashboard');
+        }}>
+          {(() => {
+            try {
+              const pendingJob = typeof window !== 'undefined' && (localStorage.getItem('resumly_pending_job') || localStorage.getItem('resumly_job_context'));
+              if (pendingJob) return 'Continue to Your Tailored Resume →';
+            } catch {}
+            return 'Start Building My Resume →';
+          })()}
         </Button>
         <p className="text-[13px] text-neutral-40 mt-4">Check your inbox to verify your email when you&apos;re ready.</p>
       </div>
@@ -88,7 +107,7 @@ export function SignupForm() {
         <Input label="Password" type="password" placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} required hint="At least 8 characters" />
         {error && <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">{error}</div>}
         <Button type="submit" size="lg" loading={loading} className="w-full">
-          Create Free Account
+          Create Account
         </Button>
         <p className="text-xs text-center text-neutral-40">
           By creating an account, you agree to our{' '}

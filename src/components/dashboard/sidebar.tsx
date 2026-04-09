@@ -42,6 +42,15 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: 'Discover Jobs',
+    href: '/dashboard/discover',
+    icon: (
+      <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+      </svg>
+    ),
+  },
+  {
     label: 'Resumes',
     href: '/dashboard/resumes',
     icon: (
@@ -93,7 +102,8 @@ export function Sidebar({ user }: SidebarProps) {
       {/* New application button */}
       <div className="px-3 mb-1">
         <Link
-          href="/"
+          href="/#hero-input"
+          onClick={() => setMobileOpen(false)}
           className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-primary text-white text-[13px] font-semibold hover:bg-primary-dark transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -162,6 +172,8 @@ export function Sidebar({ user }: SidebarProps) {
           </Link>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
             className="p-2 rounded-lg hover:bg-neutral-5 text-neutral-50"
           >
             {mobileOpen ? (

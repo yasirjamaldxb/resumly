@@ -356,7 +356,7 @@ export function ProfileClient({ userId, email, profile, profileData }: ProfileCl
                   ) : (
                     <div className="flex items-start justify-between group cursor-pointer" onClick={() => setEditingWork(w.id)}>
                       <div className="min-w-0">
-                        <p className="font-medium text-[14px] text-neutral-90">{w.position || 'Untitled Position'}</p>
+                        <p className="font-medium text-[14px] text-neutral-90">{w.position || (w as unknown as { title?: string; role?: string; jobTitle?: string }).title || (w as unknown as { role?: string }).role || (w as unknown as { jobTitle?: string }).jobTitle || 'Add job title'}</p>
                         <p className="text-[12px] text-neutral-50 mt-0.5">{w.company}{w.startDate ? ` \u00b7 ${w.startDate} – ${w.endDate || 'Present'}` : ''}</p>
                         {w.bullets.filter(Boolean).length > 0 && (
                           <ul className="mt-1.5 space-y-0.5">
@@ -424,7 +424,7 @@ export function ProfileClient({ userId, email, profile, profileData }: ProfileCl
                   ) : (
                     <div className="flex items-start justify-between group cursor-pointer" onClick={() => setEditingEdu(e.id)}>
                       <div>
-                        <p className="font-medium text-[14px] text-neutral-90">{e.degree || 'Untitled Degree'}</p>
+                        <p className="font-medium text-[14px] text-neutral-90">{e.degree || (e as unknown as { title?: string }).title || 'Add degree'}</p>
                         <p className="text-[12px] text-neutral-50 mt-0.5">{e.institution}{e.startDate ? ` \u00b7 ${e.startDate} – ${e.endDate || 'Present'}` : ''}</p>
                       </div>
                       <button className="text-neutral-30 group-hover:text-primary transition-colors shrink-0 mt-0.5">

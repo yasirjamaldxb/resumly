@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { SignupForm } from './signup-form';
 
 export const metadata: Metadata = {
-  title: 'Create Free Account – Resumly',
-  description: 'Create a free Resumly account and start building your ATS-friendly resume today.',
+  title: 'Create an Account – Resumly',
+  description: 'Create a Resumly account and start building your ATS-friendly resume today.',
   robots: 'noindex',
 };
 
@@ -21,7 +21,7 @@ export default function SignupPage() {
             <span className="text-lg font-semibold text-white tracking-tight">resumly<span className="text-white/50">.app</span></span>
           </Link>
           <h2 className="text-[30px] leading-[1.25] font-medium text-white tracking-tight mb-3">Build your resume.<br />Land the interview.</h2>
-          <p className="text-white/50 text-[15px] mb-8">Free, ATS-optimized, ready in minutes.</p>
+          <p className="text-white/50 text-[15px] mb-8">ATS-optimized, ready in minutes.</p>
 
           {/* Mini resume card mockup */}
           <div className="bg-white rounded-xl shadow-2xl p-5 mb-5 relative">
@@ -67,7 +67,7 @@ export default function SignupPage() {
             ))}
           </div>
         </div>
-        <div className="relative z-10 text-white/30 text-[12px]">100% free, no credit card required</div>
+        <div className="relative z-10 text-white/30 text-[12px]">No credit card required</div>
       </div>
 
       {/* Right panel - form */}
@@ -82,7 +82,7 @@ export default function SignupPage() {
             </Link>
           </div>
           <div className="mb-8">
-            <h1 className="text-[28px] font-medium text-neutral-90 tracking-tight">Create your free account</h1>
+            <h1 className="text-[28px] font-medium text-neutral-90 tracking-tight">Create your account</h1>
             <p className="text-neutral-50 mt-1.5 text-[15px]">Build your perfect resume in minutes</p>
           </div>
           <SignupForm />

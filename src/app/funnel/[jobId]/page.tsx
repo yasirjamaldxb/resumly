@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
@@ -12,6 +12,95 @@ import { UpgradeModal } from '@/components/upgrade-modal';
 import { RoleSelector } from '@/components/role-selector';
 import { type RoleDefinition } from '@/lib/roles';
 import { buildUserContext, getSuggestedSkillsForRole, type UserProfile } from '@/lib/user-context';
+
+// ─── Error Boundary ─────────────────────────────────
+
+class FunnelErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[FunnelPage] Crash:', error, info.componentStack);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#f7f9fc] flex flex-col items-center justify-center px-5 text-center">
+          <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mb-5">
+            <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <h1 className="text-[22px] font-bold text-neutral-90 mb-2">Something went wrong</h1>
+          <p className="text-[14px] text-neutral-50 mb-6 max-w-sm">
+            We hit an unexpected error loading your resume data. This usually fixes itself on retry.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => this.setState({ hasError: false, error: null })}
+              className="px-5 py-2.5 bg-primary text-white text-[13px] font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Try again
+            </button>
+            <a
+              href="/dashboard"
+              className="px-5 py-2.5 bg-white border border-neutral-20 text-neutral-60 text-[13px] font-semibold rounded-lg hover:bg-neutral-5 transition-colors"
+            >
+              Go to dashboard
+            </a>
+          </div>
+          {this.state.error && (
+            <details className="mt-6 text-left max-w-md">
+              <summary className="text-[11px] text-neutral-30 cursor-pointer">Error details</summary>
+              <pre className="mt-2 text-[10px] text-red-400 bg-red-50 p-3 rounded-lg overflow-auto max-h-40">
+                {this.state.error.message}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ─── Safe data normalizer ────────────────────────────
+// Ensures all arrays and nested objects are never null/undefined
+// regardless of what Supabase JSONB returns
+function safeResumeData(data: ResumeData): ResumeData {
+  return {
+    ...data,
+    skills: Array.isArray(data.skills) ? data.skills : [],
+    workExperience: Array.isArray(data.workExperience)
+      ? data.workExperience.map(w => ({ ...w, bullets: Array.isArray(w.bullets) ? w.bullets : [] }))
+      : [],
+    education: Array.isArray(data.education) ? data.education : [],
+    certifications: Array.isArray(data.certifications) ? data.certifications : [],
+    languages: Array.isArray(data.languages) ? data.languages : [],
+    projects: Array.isArray(data.projects) ? data.projects : [],
+    customSections: Array.isArray(data.customSections) ? data.customSections : [],
+    personalDetails: {
+      ...(data.personalDetails || {}),
+      firstName: data.personalDetails?.firstName ?? '',
+      lastName: data.personalDetails?.lastName ?? '',
+      email: data.personalDetails?.email ?? '',
+      phone: data.personalDetails?.phone ?? '',
+      location: data.personalDetails?.location ?? '',
+      jobTitle: data.personalDetails?.jobTitle ?? '',
+      summary: data.personalDetails?.summary ?? '',
+      linkedIn: data.personalDetails?.linkedIn ?? '',
+      website: data.personalDetails?.website ?? '',
+      photo: data.personalDetails?.photo ?? '',
+    },
+  };
+}
 
 // ─── Types ───────────────────────────────────────────
 
@@ -92,20 +181,27 @@ function PaperPreview({ data, templateId, scale = 0.5, className = '' }: {
 function computeMatch(resumeData: ResumeData, jobData: JobData | null): MatchAnalysis {
   if (!jobData) return { score: 0, matched: [], missing: [], strongPoints: [] };
 
-  // Build resume text corpus for matching
+  // Helper to coerce any value to a safe lowercase string
+  const safeLower = (v: unknown): string => (typeof v === 'string' ? v.toLowerCase() : '');
+
+  // Build resume text corpus for matching (guard against null arrays & undefined fields from DB)
+  const skills = (resumeData.skills || []).filter(s => s && typeof s.name === 'string');
+  const experience = (resumeData.workExperience || []).filter(Boolean);
+  const education = (resumeData.education || []).filter(Boolean);
   const resumeText = [
-    resumeData.personalDetails.summary,
-    resumeData.personalDetails.jobTitle,
-    ...resumeData.skills.map(s => s.name),
-    ...resumeData.workExperience.flatMap(w => [w.position, w.company, ...w.bullets]),
-    ...resumeData.education.map(e => `${e.degree} ${e.institution} ${e.field || ''}`),
+    resumeData.personalDetails?.summary || '',
+    resumeData.personalDetails?.jobTitle || '',
+    ...skills.map(s => s.name || ''),
+    ...experience.flatMap(w => [w.position || '', w.company || '', ...((w.bullets || []).filter((b): b is string => typeof b === 'string'))]),
+    ...education.map(e => `${e.degree || ''} ${e.institution || ''} ${e.field || ''}`),
   ].join(' ').toLowerCase();
 
-  // Combine all job keywords
+  // Combine all job keywords — filter to strings only
   const allJobTerms = [
     ...(jobData.skills || []),
     ...(jobData.keywords || []),
-  ];
+  ].filter((t): t is string => typeof t === 'string' && t.length > 0);
+
   // Deduplicate case-insensitively
   const seen = new Set<string>();
   const uniqueTerms = allJobTerms.filter(t => {
@@ -137,18 +233,19 @@ function computeMatch(resumeData: ResumeData, jobData: JobData | null): MatchAna
 
   // Identify strong points from requirements
   const strongPoints: string[] = [];
-  const reqs = jobData.requirements || [];
-  const resumeSkillNames = resumeData.skills.map(s => s.name.toLowerCase());
+  const reqs = (jobData.requirements || []).filter((r): r is string => typeof r === 'string' && r.length > 0);
+  const resumeSkillNames = skills.map(s => safeLower(s.name)).filter(Boolean);
 
-  if (resumeData.workExperience.length >= 3) strongPoints.push(`${resumeData.workExperience.length} relevant roles`);
-  if (resumeData.education.length > 0) strongPoints.push('Education matches');
+  if (experience.length >= 3) strongPoints.push(`${experience.length} relevant roles`);
+  if (education.length > 0) strongPoints.push('Education matches');
 
   // Check experience-level requirements
   for (const req of reqs.slice(0, 5)) {
     const reqLower = req.toLowerCase();
-    const hasMatch = resumeData.workExperience.some(w =>
-      w.bullets.some(b => {
-        const bLower = b.toLowerCase();
+    const hasMatch = experience.some(w =>
+      (w.bullets || []).some(b => {
+        const bLower = safeLower(b);
+        if (!bLower) return false;
         const reqWords = reqLower.split(/\s+/).filter(w => w.length > 3);
         return reqWords.filter(rw => bLower.includes(rw)).length >= 2;
       })
@@ -184,7 +281,15 @@ function MatchScoreRing({ score, size = 56, strokeWidth = 4 }: { score: number; 
 
 // ─── Main Component ──────────────────────────────────
 
-export default function FunnelPage() {
+export default function FunnelPageWrapper() {
+  return (
+    <FunnelErrorBoundary>
+      <FunnelPage />
+    </FunnelErrorBoundary>
+  );
+}
+
+function FunnelPage() {
   const params = useParams();
   const router = useRouter();
   const jobId = params.jobId as string;
@@ -291,13 +396,15 @@ export default function FunnelPage() {
 
         if (existingResumes && existingResumes.length > 0 && existingResumes[0].resume_data) {
           const saved = existingResumes[0].resume_data as ResumeData;
+          // Normalize all arrays and nested objects from DB JSONB
+          const safeResume = safeResumeData(saved);
           setResumeData(prev => ({
-            ...saved,
+            ...safeResume,
             personalDetails: {
-              ...saved.personalDetails,
-              firstName: saved.personalDetails.firstName || prev.personalDetails.firstName,
-              lastName: saved.personalDetails.lastName || prev.personalDetails.lastName,
-              email: saved.personalDetails.email || prev.personalDetails.email,
+              ...safeResume.personalDetails,
+              firstName: safeResume.personalDetails.firstName || prev.personalDetails.firstName,
+              lastName: safeResume.personalDetails.lastName || prev.personalDetails.lastName,
+              email: safeResume.personalDetails.email || prev.personalDetails.email,
             },
           }));
           if (existingResumes[0].template_id) setSelectedTemplate(existingResumes[0].template_id);
@@ -344,7 +451,7 @@ export default function FunnelPage() {
       for (const key of Object.keys(mergedPD) as Array<keyof typeof mergedPD>) {
         if (!mergedPD[key] || (typeof mergedPD[key] === 'string' && !(mergedPD[key] as string).trim())) delete mergedPD[key];
       }
-      setResumeData(prev => ({
+      setResumeData(prev => safeResumeData({
         ...prev,
         personalDetails: { ...prev.personalDetails, ...mergedPD },
         workExperience: parsed.workExperience?.length ? parsed.workExperience : prev.workExperience,
@@ -385,7 +492,7 @@ export default function FunnelPage() {
       const opt = result.optimization;
       setOptimization(opt);
       setResumeData(prev => {
-        const updated = { ...prev };
+        const updated = safeResumeData({ ...prev });
         if (opt.summary) updated.personalDetails = { ...updated.personalDetails, summary: opt.summary };
         if (opt.jobTitle) updated.personalDetails = { ...updated.personalDetails, jobTitle: opt.jobTitle };
         if (opt.skills?.length) {
@@ -395,7 +502,9 @@ export default function FunnelPage() {
           const exp = [...updated.workExperience];
           for (const imp of opt.bulletImprovements) {
             const entry = exp[imp.experienceIndex];
-            if (entry?.bullets[imp.bulletIndex] !== undefined) entry.bullets[imp.bulletIndex] = imp.improved;
+            if (entry && Array.isArray(entry.bullets) && entry.bullets[imp.bulletIndex] !== undefined) {
+              entry.bullets[imp.bulletIndex] = imp.improved;
+            }
           }
           updated.workExperience = exp;
         }
@@ -591,11 +700,11 @@ export default function FunnelPage() {
         if (!pd.email?.trim()) missingFields.push('email');
         if (!pd.phone?.trim()) missingFields.push('phone');
         if (!pd.location?.trim()) missingFields.push('location');
-        const hasNoExperience = resumeData.workExperience.length === 0;
+        const hasNoExperience = (resumeData.workExperience || []).length === 0;
         const totalExtracted = [pd.firstName, pd.lastName, pd.email, pd.phone, pd.jobTitle].filter(Boolean).length;
 
         // Skill gap analysis
-        const userSkillNames = resumeData.skills.map(s => s.name.toLowerCase());
+        const userSkillNames = (resumeData.skills || []).map(s => s.name.toLowerCase());
         const allJobTerms = [...(jobData?.skills || []), ...(jobData?.keywords || [])];
         const seen = new Set<string>();
         const uniqueJobSkills = allJobTerms.filter(t => { const lower = t.toLowerCase(); if (seen.has(lower)) return false; seen.add(lower); return true; });
@@ -685,9 +794,9 @@ export default function FunnelPage() {
                     {pd.firstName && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{pd.firstName} {pd.lastName}</span>}
                     {pd.jobTitle && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{pd.jobTitle}</span>}
                     {pd.email && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{pd.email}</span>}
-                    {resumeData.workExperience.length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.workExperience.length} jobs</span>}
-                    {resumeData.skills.length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.skills.length} skills</span>}
-                    {resumeData.education.length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.education.length} education</span>}
+                    {(resumeData.workExperience || []).length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.workExperience.length} jobs</span>}
+                    {(resumeData.skills || []).length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.skills.length} skills</span>}
+                    {(resumeData.education || []).length > 0 && <span className="bg-white border border-green-200 text-green-700 px-2 py-0.5 rounded">{resumeData.education.length} education</span>}
                   </div>
                 </div>
               )}
@@ -785,7 +894,7 @@ export default function FunnelPage() {
                         <div key={skill} className="flex items-center justify-between bg-white rounded-lg border border-neutral-20 px-3.5 py-2.5">
                           <span className="text-[13px] font-medium text-neutral-70">{skill}</span>
                           <div className="flex items-center gap-1.5">
-                            <button onClick={() => { setConfirmedSkills(prev => [...prev, skill]); setResumeData(prev => ({ ...prev, skills: [...prev.skills, { id: crypto.randomUUID(), name: skill, level: 'intermediate' as const }] })); }} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors">Yes</button>
+                            <button onClick={() => { setConfirmedSkills(prev => [...prev, skill]); setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), { id: crypto.randomUUID(), name: skill, level: 'intermediate' as const }] })); }} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors">Yes</button>
                             <button onClick={() => setRejectedSkills(prev => [...prev, skill])} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-neutral-50/50 text-neutral-40 hover:bg-neutral-100 border border-neutral-20 transition-colors">No</button>
                           </div>
                         </div>
@@ -986,10 +1095,12 @@ export default function FunnelPage() {
               <div className="w-full max-w-[640px]">
                 <PaperPreview data={resumeData} templateId={selectedTemplate} scale={0.78} className="shadow-[0_2px_8px_rgba(0,0,0,0.06),0_12px_40px_rgba(0,0,0,0.08)] rounded-sm" />
                 <div className="flex items-center justify-between mt-4 px-1">
-                  <Link href={`/builder/new?jobId=${jobId}`} className="text-[12px] text-neutral-40 hover:text-primary transition-colors flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    Edit in full editor
-                  </Link>
+                  {savedResumeId && (
+                    <Link href={`/builder/${savedResumeId}`} className="text-[12px] text-neutral-40 hover:text-primary transition-colors flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                      Edit in full editor
+                    </Link>
+                  )}
                 </div>
               </div>
 
@@ -1225,10 +1336,10 @@ export default function FunnelPage() {
       )}
 
       <UpgradeModal
-        isOpen={showUpgrade}
+        open={showUpgrade}
         onClose={() => setShowUpgrade(false)}
         currentTier="free"
-        message={upgradeMessage}
+        feature={upgradeMessage}
       />
     </div>
   );

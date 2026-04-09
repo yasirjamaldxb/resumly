@@ -4,13 +4,13 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Examples by Industry & Job Title (2026)',
+  title: 'Resume Examples by Industry & Job Title (2026)',
   description:
-    'Browse free resume examples with writing guides for every industry. See real samples, learn what works, and build your own ATS-friendly resume in minutes.',
+    'Browse resume examples with writing guides for every industry. See real samples, learn what works, and build your own ATS-friendly resume in minutes.',
   alternates: { canonical: 'https://resumly.app/resume-examples' },
   openGraph: {
-    title: 'Free Resume Examples by Industry & Job Title (2026) · Resumly',
-    description: 'Browse resume examples with writing guides. See what works for your field and build yours free.',
+    title: 'Resume Examples by Industry & Job Title (2026) · Resumly',
+    description: 'Browse resume examples with writing guides. See what works for your field and build yours.',
   },
 };
 
@@ -38,9 +38,22 @@ const EXAMPLES = [
   // Education
   { slug: 'teacher', title: 'Teacher', icon: '📚', category: 'Education', searches: '60k/mo' },
   { slug: 'student', title: 'Student / Entry Level', icon: '🎓', category: 'Education', searches: '115k/mo' },
-  // Other
+  // Service
   { slug: 'customer-service', title: 'Customer Service', icon: '💬', category: 'Service', searches: '72k/mo' },
-  { slug: 'warehouse-worker', title: 'Warehouse Worker', icon: '📦', category: 'Logistics', searches: '48k/mo' },
+  { slug: 'retail-sales', title: 'Retail Sales Associate', icon: '🛍️', category: 'Service', searches: '55k/mo' },
+  { slug: 'cleaner', title: 'Cleaner / Housekeeper', icon: '🧼', category: 'Service', searches: '38k/mo' },
+  { slug: 'security-guard', title: 'Security Guard', icon: '🛡️', category: 'Service', searches: '45k/mo' },
+  // Trades & Logistics
+  { slug: 'warehouse-worker', title: 'Warehouse Worker', icon: '📦', category: 'Trades & Logistics', searches: '48k/mo' },
+  { slug: 'cdl-driver', title: 'CDL Truck Driver', icon: '🚚', category: 'Trades & Logistics', searches: '92k/mo' },
+  { slug: 'delivery-driver', title: 'Delivery Driver', icon: '🚗', category: 'Trades & Logistics', searches: '68k/mo' },
+  { slug: 'forklift-operator', title: 'Forklift Operator', icon: '🏗️', category: 'Trades & Logistics', searches: '35k/mo' },
+  { slug: 'construction-worker', title: 'Construction Worker', icon: '👷', category: 'Trades & Logistics', searches: '52k/mo' },
+  { slug: 'mechanic', title: 'Auto Mechanic', icon: '🔧', category: 'Trades & Logistics', searches: '48k/mo' },
+  { slug: 'electrician', title: 'Electrician', icon: '⚡', category: 'Trades & Logistics', searches: '42k/mo' },
+  // Healthcare (blue-collar)
+  { slug: 'home-health-aide', title: 'Home Health Aide', icon: '🏠', category: 'Healthcare', searches: '36k/mo' },
+  // Education
   { slug: 'high-school-student', title: 'High School Student', icon: '🏫', category: 'Education', searches: '85k/mo' },
   { slug: 'internship', title: 'Internship', icon: '🌱', category: 'Education', searches: '68k/mo' },
 ];
@@ -98,7 +111,7 @@ export default function ResumeExamplesPage() {
               </p>
               <p>
                 Never copy a resume example word-for-word. Instead, use them as inspiration and customize with your own experience and achievements.
-                Our free resume builder makes it easy to adapt any example to your specific background.
+                Our resume builder makes it easy to adapt any example to your specific background.
               </p>
             </div>
           </div>

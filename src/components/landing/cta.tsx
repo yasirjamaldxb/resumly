@@ -1,5 +1,4 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { CTAInput } from '@/components/landing/cta-input';
 
 export function CTASection() {
   return (
@@ -11,15 +10,11 @@ export function CTASection() {
           next interview?
         </h2>
         <p className="text-[15px] text-white/80 mb-7">
-          Paste a job link and get a tailored resume in minutes. Your first application is free.no credit card needed.
+          Paste a job link and get a tailored resume in minutes. No credit card needed.
         </p>
-        <Button
-          size="lg"
-          className="bg-white text-primary hover:bg-neutral-10 shadow-lg font-semibold"
-          asChild
-        >
-          <Link href="/">Start your application</Link>
-        </Button>
+        <div className="max-w-[480px] mx-auto">
+          <CTAInput />
+        </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
           {['AI-Tailored Resumes', 'ATS-Optimized', 'Cover Letters', 'Application Tracking'].map((item) => (

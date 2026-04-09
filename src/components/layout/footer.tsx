@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 const footerLinks = {
   'Resume Tools': [
-    { label: 'Free Resume Builder', href: '/resume-builder' },
+    { label: 'Resume Builder', href: '/resume-builder' },
     { label: 'Resume Templates', href: '/resume-templates' },
     { label: 'ATS Resume Checker', href: '/ats-checker' },
     { label: 'AI Resume Builder', href: '/ai-resume-builder' },
-    { label: 'Cover Letter Builder', href: '/cover-letter-builder' },
+    { label: 'Pricing', href: '/pricing' },
   ],
   'Resume Examples': [
     { label: 'Software Engineer', href: '/resume-examples/software-engineer' },
@@ -45,7 +45,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-[14px] leading-relaxed mb-5 text-neutral-40">
-              Free ATS-friendly resume builder. Create professional resumes with text-based PDF downloads.
+              ATS-friendly resume builder. Create professional resumes with text-based PDF downloads.
             </p>
           </div>
 

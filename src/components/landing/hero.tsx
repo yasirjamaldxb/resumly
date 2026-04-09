@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import { JobLinkInput } from '@/components/landing/job-link-input';
+import { ResumeMock } from '@/components/landing/resume-mock';
 
 export function HeroSection() {
   return (
@@ -17,7 +17,7 @@ export function HeroSection() {
         }}
       />
 
-      <div className="relative max-w-[1100px] mx-auto px-6 pt-20 pb-20">
+      <div className="relative max-w-[1100px] mx-auto px-6 pt-10 pb-16">
         <div className="grid lg:grid-cols-[1fr_380px] gap-12 items-center">
 
           {/* Left */}
@@ -40,11 +40,11 @@ export function HeroSection() {
                     </div>
                   ))}
                 </div>
-                <span className="text-[11px] text-neutral-50 font-medium">Trusted by 2,000+ professionals</span>
+                <span className="text-[11px] text-neutral-50 font-medium">12,000+ resumes built</span>
               </div>
             </div>
 
-            {/* Headline: pain-first, outcome-driven */}
+            {/* Headline */}
             <h1 className="text-[36px] sm:text-[46px] lg:text-[52px] font-bold text-neutral-90 leading-[1.08] tracking-[-0.03em] mb-4">
               One job link.
               <br />
@@ -58,43 +58,33 @@ export function HeroSection() {
             </p>
 
             {/* THE INPUT */}
-            <div className="mb-4 max-w-[560px]">
+            <div id="hero-input" className="mb-4 max-w-[560px] scroll-mt-24">
               <JobLinkInput />
             </div>
 
-            {/* Free badge + what you get */}
+            {/* What you get */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <span className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 text-[12px] font-semibold px-3 py-1 rounded-full">
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                First application free
-              </span>
               <span className="text-[12px] text-neutral-40 font-medium">Resume + Cover Letter + ATS Check</span>
               <span className="text-neutral-20">·</span>
               <span className="text-[12px] text-neutral-40 font-medium">No credit card</span>
+              <span className="text-neutral-20">·</span>
+              <span className="text-[12px] text-neutral-40 font-medium">Ready in 5 minutes</span>
             </div>
           </div>
 
-          {/* Right: visual proof */}
+          {/* Right: live resume mock */}
           <div className="hidden lg:block relative">
             <div className="relative">
-              <div className="w-full aspect-[1/1.35] bg-white rounded-2xl shadow-2xl border border-neutral-20/60 overflow-hidden">
-                <Image
-                  src="/templates/professional.png"
-                  alt="AI-generated resume tailored to job description"
-                  width={794}
-                  height={1123}
-                  className="w-full h-full object-cover object-top"
-                  quality={85}
-                  priority
-                />
+
+              {/* Resume card — full page rendered HTML */}
+              <div className="w-full aspect-[1/1.41] bg-white rounded-2xl shadow-2xl border border-neutral-20/40 overflow-hidden ring-1 ring-black/[0.04]">
+                <ResumeMock />
               </div>
 
               {/* ATS score badge */}
-              <div className="absolute -left-8 top-[35%] bg-white rounded-xl shadow-lg border border-neutral-20/60 px-3 py-2.5 flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-white text-[12px] font-bold">92%</span>
+              <div className="absolute -left-10 top-[30%] bg-white rounded-xl shadow-xl border border-neutral-20/60 px-3 py-2.5 flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-[11px] font-bold">92%</span>
                 </div>
                 <div>
                   <div className="text-[11px] font-semibold text-neutral-80">ATS Score</div>
@@ -103,14 +93,14 @@ export function HeroSection() {
               </div>
 
               {/* Tailored for tag */}
-              <div className="absolute -right-4 top-6 bg-white rounded-lg shadow-lg border border-neutral-20/60 px-3 py-2">
+              <div className="absolute -right-6 top-8 bg-white rounded-lg shadow-xl border border-neutral-20/60 px-3 py-2">
                 <div className="text-[10px] text-neutral-40 mb-0.5">Tailored for</div>
-                <div className="text-[12px] font-semibold text-neutral-80">Product Designer at Stripe</div>
+                <div className="text-[12px] font-semibold text-neutral-80">Sr. Product Manager at Stripe</div>
               </div>
 
               {/* Cover letter indicator */}
-              <div className="absolute -right-2 bottom-[30%] bg-white rounded-lg shadow-lg border border-neutral-20/60 px-3 py-2 flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="absolute -right-4 bottom-[28%] bg-white rounded-lg shadow-xl border border-neutral-20/60 px-3 py-2 flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
                 <div>
@@ -120,14 +110,15 @@ export function HeroSection() {
               </div>
 
               {/* Keywords matched */}
-              <div className="absolute -left-4 bottom-12 bg-white rounded-lg shadow-lg border border-neutral-20/60 px-3 py-2">
+              <div className="absolute -left-6 bottom-14 bg-white rounded-lg shadow-xl border border-neutral-20/60 px-3 py-2">
                 <div className="text-[10px] text-neutral-40 mb-1.5">Keywords matched</div>
                 <div className="flex flex-wrap gap-1">
-                  {['Figma', 'Design Systems', 'User Research'].map(k => (
+                  {['Product Strategy', 'OKRs', 'Agile', 'Roadmap'].map(k => (
                     <span key={k} className="px-1.5 py-0.5 bg-primary/8 rounded text-[9px] text-primary font-medium">{k}</span>
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
 

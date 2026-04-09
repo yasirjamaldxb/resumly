@@ -4,7 +4,7 @@ const BASE_URL = 'https://resumly.app';
 
 // Use a fixed date so Google doesn't see "always changing" timestamps
 // Update this when you actually change content
-const LAST_UPDATED = '2026-03-23';
+const LAST_UPDATED = '2026-04-07';
 
 const RESUME_EXAMPLES = [
   'software-engineer', 'nurse', 'student', 'marketing-manager',
@@ -28,8 +28,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/ai-resume-builder`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/resume-templates`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/resume-examples`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/cover-letter-builder`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/ats-checker`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/pricing`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/blog`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/privacy`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.3 },
     { url: `${BASE_URL}/terms`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.3 },

@@ -7,13 +7,13 @@ import { TEMPLATE_LIST } from '@/types/resume';
 import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: 'Free Resume Templates 2026 [Download & Edit Instantly]',
+  title: 'Resume Templates 2026 [Download & Edit Instantly]',
   description:
-    'Download free, ATS-friendly resume templates for 2026. 10 professionally designed templates: modern, classic, minimal, creative. Edit online and download as text-based PDF.',
+    'ATS-friendly resume templates for 2026. 10 professionally designed templates: modern, classic, minimal, creative. Edit online and download as text-based PDF.',
   alternates: { canonical: 'https://resumly.app/resume-templates' },
   openGraph: {
-    title: 'Free Resume Templates 2026 [Download & Edit] · Resumly',
-    description: '10 free, ATS-optimized resume templates. Edit online, download as text-based PDF instantly.',
+    title: 'Resume Templates 2026 [Download & Edit] · Resumly',
+    description: '10 ATS-optimized resume templates. Edit online, download as text-based PDF instantly.',
   },
 };
 
@@ -35,14 +35,14 @@ export default function ResumeTemplatesPage() {
         <section className="bg-gradient-to-b from-gray-50 to-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4">
-              Free Resume Templates for 2026
+              Resume Templates for 2026
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-              {TEMPLATE_LIST.length} professionally designed templates. All ATS-tested. All free.
+              {TEMPLATE_LIST.length} professionally designed templates. All ATS-tested.
               Choose the one that fits your industry and style.
             </p>
             <Button size="lg" asChild>
-              <Link href="/builder/new">Use a Template →</Link>
+              <Link href="/#hero-input">Use a Template →</Link>
             </Button>
           </div>
         </section>
@@ -98,7 +98,7 @@ export default function ResumeTemplatesPage() {
                         </div>
 
                         <Button className="w-full" asChild>
-                          <Link href={`/builder/new?template=${template.id}`}>
+                          <Link href="/#hero-input">
                             Use This Template
                           </Link>
                         </Button>
@@ -140,8 +140,8 @@ export default function ResumeTemplatesPage() {
               mainEntity: [
                 {
                   '@type': 'Question',
-                  name: 'Are these resume templates free to download?',
-                  acceptedAnswer: { '@type': 'Answer', text: 'Yes, all 10 resume templates are completely free to use. You can edit them online and download as a text-based PDF with no watermarks, no fees, and no credit card required.' },
+                  name: 'Do I need an account to use these resume templates?',
+                  acceptedAnswer: { '@type': 'Answer', text: 'No sign-up required to get started. All 10 resume templates are available to edit online and download as a text-based PDF with no watermarks and no credit card required.' },
                 },
                 {
                   '@type': 'Question',

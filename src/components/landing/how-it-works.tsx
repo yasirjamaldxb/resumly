@@ -6,7 +6,7 @@ const features = [
     tagColor: 'bg-primary/10 text-primary',
     title: 'Paste any job link',
     description: 'Found a job you like on LinkedIn, Indeed, or any job board? Just paste the link. We\'ll extract the title, company, skills, and requirements automatically.',
-    link: '/',
+    link: '#hero-input',
     linkText: 'Try it now',
     bg: 'bg-white',
     mockup: (
@@ -36,8 +36,8 @@ const features = [
     tagColor: 'bg-purple-100 text-purple-700',
     title: 'AI builds your resume',
     description: 'Our AI takes your experience and rewrites it to match the job description.highlighting the right skills, using the right keywords, in the right format.',
-    link: '/builder/new',
-    linkText: 'See how it works',
+    link: '#hero-input',
+    linkText: 'Try it now',
     bg: 'bg-white',
     mockup: (
       <div className="bg-purple-50 rounded-xl p-3.5 mt-3">
@@ -64,8 +64,8 @@ const features = [
     tagColor: 'bg-green-100 text-green-700',
     title: 'Get your cover letter too',
     description: 'A matching cover letter is auto-generated from your resume and the job posting. Personalized, professional, and ready to send alongside your CV.',
-    link: '/',
-    linkText: 'Generate yours',
+    link: '#hero-input',
+    linkText: 'Get started',
     bg: 'bg-white',
     mockup: (
       <div className="bg-green-50 rounded-xl p-3.5 mt-3">
@@ -90,8 +90,8 @@ const features = [
     tagColor: 'bg-blue-100 text-blue-700',
     title: 'Track and repeat',
     description: 'Download your PDF, track your application status, and when you find another job.do it all again in seconds. Your profile is saved, so repeat applications are instant.',
-    link: '/dashboard',
-    linkText: 'See the dashboard',
+    link: '#hero-input',
+    linkText: 'Start now',
     bg: 'bg-white',
     mockup: (
       <div className="bg-blue-50 rounded-xl p-3.5 mt-3">

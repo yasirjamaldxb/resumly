@@ -38,7 +38,7 @@ export default function DownloadPushEmail({ firstName, unsubscribeUrl, builderUr
       <EmailButton href={builderUrl}>Download Your Resume →</EmailButton>
 
       <Text style={subtext}>
-        Completely free. No watermarks. No sign-up walls.
+        No watermarks. No sign-up walls.
       </Text>
     </EmailLayout>
   );

@@ -50,7 +50,7 @@ const nextConfig: NextConfig = {
       },
       { source: '/cv-builder', destination: '/resume-builder', permanent: true },
       { source: '/cv-templates', destination: '/resume-templates', permanent: true },
-      { source: '/builder', destination: '/builder/new', permanent: false },
+      { source: '/builder', destination: '/#hero-input', permanent: false },
     ];
   },
 

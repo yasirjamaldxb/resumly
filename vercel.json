@@ -4,13 +4,39 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "crons": [],
+  "crons": [
+    {
+      "path": "/api/cron/send-drip",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/job-alerts",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/re-engage",
+      "schedule": "0 9 * * *"
+    }
+  ],
   "functions": {
     "app/api/resume/generate-pdf/route.ts": {
       "memory": 2048,
       "maxDuration": 60
     }
   },
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.resumly.app" }],
+      "destination": "https://resumly.app/:path",
+      "permanent": true
+    },
+    {
+      "source": "/cover-letter-builder",
+      "destination": "/?ref=cover-letter",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

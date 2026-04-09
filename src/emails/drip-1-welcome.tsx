@@ -20,7 +20,7 @@ export default function WelcomeEmail({ firstName, unsubscribeUrl, builderUrl }: 
 
       <Text style={text}>
         Thanks for joining Resumly. You now have access to professional resume templates,
-        AI-powered writing suggestions, and instant PDF downloads, all completely free.
+        AI-powered writing suggestions, and instant PDF downloads.
       </Text>
 
       <Text style={text}>
