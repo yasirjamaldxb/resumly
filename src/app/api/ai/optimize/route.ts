@@ -108,16 +108,39 @@ SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).
     const completion = await openai.chat.completions.create({
       model: 'gemini-2.5-flash',
       messages: [
-        { role: 'system', content: 'You are a resume optimization expert. Return only valid JSON.' },
+        { role: 'system', content: 'You are a resume optimization expert. You MUST respond with ONLY valid JSON — no markdown fences, no explanatory text, no preamble. Start with { and end with }.' },
         { role: 'user', content: prompt },
       ],
       temperature: 0.3,
       max_tokens: 16000,
+      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content || '';
-    const jsonStr = content.replace(/```json\s*\n?/g, '').replace(/```\s*$/g, '').trim();
-    const result = JSON.parse(jsonStr);
+    // Robust JSON extraction: strip markdown fences of any flavor, then
+    // take the first { ... } block if there's any stray preamble.
+    let jsonStr = content
+      .replace(/^[\s\S]*?```(?:json)?\s*\n?/, '')
+      .replace(/\n?```[\s\S]*$/, '')
+      .trim();
+    if (!jsonStr.startsWith('{')) {
+      const firstBrace = jsonStr.indexOf('{');
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+      }
+    }
+    let result: Record<string, unknown>;
+    try {
+      result = JSON.parse(jsonStr);
+    } catch (parseErr) {
+      console.error('[optimize] JSON parse failed. Raw content (first 500 chars):', content.slice(0, 500));
+      console.error('[optimize] Parse error:', parseErr);
+      return NextResponse.json({
+        error: 'AI returned an invalid response. Please try again.',
+        debug: process.env.NODE_ENV === 'development' ? content.slice(0, 300) : undefined,
+      }, { status: 502 });
+    }
 
     // Increment usage counter + log cost
     await Promise.all([
@@ -127,7 +150,11 @@ SKILLS THE CANDIDATE CONFIRMED THEY DO NOT HAVE: ${(rejectedSkills as string[]).
 
     return NextResponse.json({ success: true, optimization: result });
   } catch (error) {
-    console.error('AI optimize error:', error);
-    return NextResponse.json({ error: 'AI optimization failed' }, { status: 500 });
+    const errMsg = error instanceof Error ? error.message : 'unknown';
+    console.error('[optimize] Error:', errMsg, error instanceof Error ? error.stack : '');
+    return NextResponse.json({
+      error: 'AI optimization failed',
+      debug: process.env.NODE_ENV === 'development' ? errMsg : undefined,
+    }, { status: 500 });
   }
 }
