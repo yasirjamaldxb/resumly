@@ -41,7 +41,7 @@ export function getTemplateStyles(data: ResumeData, scale: number = 1) {
     // Computed page dimensions
     pageWidth: (settings.pageFormat === 'a4' ? 794 : 816) * scale,
     pageHeight: (settings.pageFormat === 'a4' ? 1123 : 1056) * scale,
-    colorScheme: data.colorScheme,
+    colorScheme: (typeof data.colorScheme === 'string' && data.colorScheme.startsWith('#')) ? data.colorScheme : '#2563eb',
     scale,
   };
 }
