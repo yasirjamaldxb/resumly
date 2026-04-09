@@ -18,7 +18,17 @@ interface Props {
   scale?: number;
 }
 
-export function ResumeTemplate({ data, scale = 1 }: Props) {
+export function ResumeTemplate({ data: rawData, scale = 1 }: Props) {
+  // Normalize skills / work / education to drop legacy null or empty-name entries
+  const data: ResumeData = {
+    ...rawData,
+    skills: (rawData.skills || []).filter(s => s && typeof s.name === 'string' && s.name.trim().length > 0),
+    workExperience: (rawData.workExperience || []).filter(w => w && typeof w === 'object'),
+    education: (rawData.education || []).filter(e => e && typeof e === 'object'),
+    certifications: (rawData.certifications || []).filter(c => c && typeof c === 'object'),
+    languages: (rawData.languages || []).filter(l => l && typeof l === 'object'),
+    projects: (rawData.projects || []).filter(p => p && typeof p === 'object'),
+  };
   const styles = getTemplateStyles(data, scale);
 
   const template = (() => { switch (data.templateId) {

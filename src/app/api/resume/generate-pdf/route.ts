@@ -21,8 +21,24 @@ export async function POST(req: NextRequest) {
   let browser: any = null;
 
   try {
-    const body = await req.json();
-    const { resumeData } = body;
+    // Accept both JSON (fetch) and form-urlencoded (hidden form POST) so the
+    // browser can be trusted to stream the response straight to the user's
+    // Downloads folder via Content-Disposition, skipping the JS blob path that
+    // triggers Chrome's "Save As" dialog.
+    const contentType = req.headers.get('content-type') || '';
+    let resumeData: unknown;
+    if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+      const form = await req.formData();
+      const raw = form.get('resumeData');
+      try {
+        resumeData = typeof raw === 'string' ? JSON.parse(raw) : null;
+      } catch {
+        resumeData = null;
+      }
+    } else {
+      const body = await req.json();
+      resumeData = body?.resumeData;
+    }
 
     if (!resumeData) {
       return NextResponse.json({ error: 'resumeData is required' }, { status: 400 });
@@ -363,10 +379,17 @@ export async function POST(req: NextRequest) {
 
     trackEvent({ event: 'pdf_download', metadata: { method: 'server-ssr-puppeteer', template: resumeData.templateId } });
 
+    // Build a nice filename from the candidate's name so Chrome saves directly
+    const pd = (resumeData as { personalDetails?: { firstName?: string; lastName?: string } }).personalDetails || {};
+    const safe = (v: string | undefined) => (v || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40);
+    const nameParts = [safe(pd.firstName), safe(pd.lastName)].filter(Boolean);
+    const baseName = nameParts.length ? nameParts.join('_') + '_Resume' : 'Resume';
+    const filename = `${baseName}.pdf`;
+
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
+        'Content-Disposition': `attachment; filename="${filename}"`,
         'Cache-Control': 'no-store',
       },
     });

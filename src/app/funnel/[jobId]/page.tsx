@@ -476,11 +476,20 @@ function FunnelPage() {
     setOptimizing(true);
     setError(null);
     try {
-      const res = await fetch('/api/ai/optimize', {
+      const payload = JSON.stringify({ resumeData, jobData, userProfile, rejectedSkills });
+      const doFetch = () => fetch('/api/ai/optimize', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeData, jobData, userProfile, rejectedSkills }),
+        body: payload,
       });
+      let res = await doFetch();
+      // Supabase SSR can return 401 on the first request after navigation while
+      // the cookie session is still refreshing — refresh the client session and retry once.
+      if (res.status === 401) {
+        await supabase.auth.getSession();
+        res = await doFetch();
+      }
       const result = await res.json();
       if (!res.ok) {
         if (result.error === 'limit_reached') {
@@ -517,7 +526,7 @@ function FunnelPage() {
     } finally {
       setOptimizing(false);
     }
-  }, [resumeData, jobData, userProfile, rejectedSkills]);
+  }, [resumeData, jobData, userProfile, rejectedSkills, supabase]);
 
   // Save resume & go to cover letter
   const handleSaveAndContinue = async () => {
@@ -554,8 +563,9 @@ function FunnelPage() {
     setError(null);
     try {
       const pd = resumeData.personalDetails;
-      const res = await fetch('/api/ai/cover-letter', {
+      const doFetch = () => fetch('/api/ai/cover-letter', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           yourName: `${pd.firstName || ''} ${pd.lastName || ''}`.trim(),
@@ -580,6 +590,11 @@ function FunnelPage() {
           userProfile,
         }),
       });
+      let res = await doFetch();
+      if (res.status === 401) {
+        await supabase.auth.getSession();
+        res = await doFetch();
+      }
       const result = await res.json();
       if (!res.ok) {
         if (result.error === 'limit_reached') {
@@ -596,7 +611,7 @@ function FunnelPage() {
     } finally {
       setGeneratingCoverLetter(false);
     }
-  }, [resumeData, jobData, coverLetterTone]);
+  }, [resumeData, jobData, coverLetterTone, supabase]);
 
   const handleFinish = async () => {
     setSaving(true);
@@ -621,31 +636,42 @@ function FunnelPage() {
     }
   };
 
-  const handleDownloadPdf = async () => {
+  const handleDownloadPdf = () => {
     if (downloadingPdf) return;
     setDownloadingPdf(true);
     try {
-      const first = resumeData.personalDetails?.firstName || 'resume';
-      const last = resumeData.personalDetails?.lastName || '';
-      const filename = [first, last].filter(Boolean).join('_') + '_resume.pdf';
-      const res = await fetch('/api/resume/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeData: { ...resumeData, templateId: selectedTemplate } }),
-      });
-      if (!res.ok) throw new Error('pdf');
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // POST to a hidden iframe so the browser streams the PDF response to
+      // the user's default Downloads folder using the Content-Disposition
+      // header set by the API. This bypasses the JS blob-anchor path that
+      // triggers Chrome's "Save As" dialog and keeps the current page intact.
+      const iframeName = `pdf-download-${Date.now()}`;
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/api/resume/generate-pdf';
+      form.target = iframeName;
+      form.enctype = 'application/x-www-form-urlencoded';
+      form.style.display = 'none';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'resumeData';
+      input.value = JSON.stringify({ ...resumeData, templateId: selectedTemplate });
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+
+      // Clean up after the browser has had a chance to consume the response
+      setTimeout(() => {
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+        setDownloadingPdf(false);
+      }, 4000);
     } catch {
       setError('Resume PDF download failed. Please try again.');
-    } finally {
       setDownloadingPdf(false);
     }
   };
@@ -951,8 +977,19 @@ function FunnelPage() {
                         <div key={skill} className="flex items-center justify-between bg-white rounded-lg border border-neutral-20 px-3.5 py-2.5">
                           <span className="text-[13px] font-medium text-neutral-70">{skill}</span>
                           <div className="flex items-center gap-1.5">
-                            <button onClick={() => { setConfirmedSkills(prev => [...prev, skill]); setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), { id: crypto.randomUUID(), name: skill, level: 'intermediate' as const }] })); }} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors">Yes</button>
-                            <button onClick={() => setRejectedSkills(prev => [...prev, skill])} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-neutral-50/50 text-neutral-40 hover:bg-neutral-100 border border-neutral-20 transition-colors">No</button>
+                            <button onClick={() => {
+                              const skillLower = skill.toLowerCase();
+                              setConfirmedSkills(prev => prev.some(s => s.toLowerCase() === skillLower) ? prev : [...prev, skill]);
+                              setResumeData(prev => {
+                                const existing = (prev.skills || []).filter(s => s && typeof s.name === 'string');
+                                if (existing.some(s => s.name.toLowerCase() === skillLower)) return prev;
+                                return { ...prev, skills: [...existing, { id: crypto.randomUUID(), name: skill, level: 'intermediate' as const }] };
+                              });
+                            }} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors">Yes</button>
+                            <button onClick={() => {
+                              const skillLower = skill.toLowerCase();
+                              setRejectedSkills(prev => prev.some(s => s.toLowerCase() === skillLower) ? prev : [...prev, skill]);
+                            }} className="px-3 py-1 rounded-md text-[11px] font-semibold bg-neutral-50/50 text-neutral-40 hover:bg-neutral-100 border border-neutral-20 transition-colors">No</button>
                           </div>
                         </div>
                       ))}
