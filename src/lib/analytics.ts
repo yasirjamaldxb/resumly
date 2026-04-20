@@ -12,7 +12,15 @@ export type EventType =
   | 'ats_check'
   | 'ats_email_capture'
   | 'ai_suggest'
-  | 'api_error';
+  | 'api_error'
+  | 'funnel_step_viewed'
+  | 'funnel_step_completed'
+  | 'funnel_abandoned'
+  | 'onboarding_complete'
+  | 'upgrade_click'
+  | 'checkout_started'
+  | 'checkout_success'
+  | 'cta_click';
 
 interface TrackEventParams {
   event: EventType;

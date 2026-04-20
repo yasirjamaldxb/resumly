@@ -12,6 +12,7 @@ import { UpgradeModal } from '@/components/upgrade-modal';
 import { RoleSelector } from '@/components/role-selector';
 import { type RoleDefinition } from '@/lib/roles';
 import { buildUserContext, getSuggestedSkillsForRole, type UserProfile } from '@/lib/user-context';
+import { track } from '@/lib/analytics-client';
 
 // ─── Error Boundary ─────────────────────────────────
 
@@ -301,6 +302,16 @@ function FunnelPage() {
 
   // Core state
   const [step, setStep] = useState<FunnelStep>('analyze');
+
+  // Track every funnel step as it's viewed — this is how we find drop-off.
+  useEffect(() => {
+    track('funnel_step_viewed', { step, jobId });
+    // Fire an abandon beacon if the user closes the tab mid-funnel.
+    const onLeave = () => track('funnel_abandoned', { step, jobId });
+    window.addEventListener('beforeunload', onLeave);
+    return () => window.removeEventListener('beforeunload', onLeave);
+  }, [step, jobId]);
+
   const [cvUploaded, setCvUploaded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [jobData, setJobData] = useState<JobData | null>(null);
@@ -556,8 +567,12 @@ function FunnelPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_id: jobId, resume_id: saveResult.id, status: 'draft' }),
       });
-      if (user) await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', user.id);
+      if (user) {
+        await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', user.id);
+        track('onboarding_complete', { jobId, resumeId: saveResult.id });
+      }
 
+      track('funnel_step_completed', { from: 'resume', to: 'cover-letter', jobId, resumeId: saveResult.id });
       setStep('cover-letter');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
@@ -1030,6 +1045,7 @@ function FunnelPage() {
                       }).eq('id', user.id);
                     }
                   }
+                  track('funnel_step_completed', { from: 'analyze', to: 'resume', jobId, hadProfileData: hasProfileData });
                   setStep('resume');
                 }}
               >

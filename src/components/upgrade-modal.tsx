@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { PLAN_PRICES } from '@/lib/plans';
+import { track } from '@/lib/analytics-client';
 
 interface UpgradeModalProps {
   open: boolean;
@@ -49,6 +50,7 @@ export function UpgradeModal({ open, onClose, message, feature, currentTier = 'f
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
 
   const handleCheckout = (plan: 'starter' | 'pro') => {
+    track('checkout_started', { plan, billing, source: 'upgrade_modal', currentTier });
     const productId = PRODUCT_IDS[`${plan}_${billing}`];
     if (!productId) {
       window.location.href = `/api/checkout?plan=${plan}&billing=${billing}`;

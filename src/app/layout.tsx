@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Suspense } from 'react';
 import { GoogleAnalytics } from '@/components/analytics/google-analytics';
+import { PageViewTracker } from '@/components/analytics/page-view-tracker';
 import { OrganizationSchema, WebSiteSchema, SoftwareApplicationSchema } from '@/components/seo/schema';
 import './globals.css';
 
@@ -63,6 +65,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <PageViewTracker />
+        </Suspense>
         <OrganizationSchema />
         <WebSiteSchema />
         <SoftwareApplicationSchema />
