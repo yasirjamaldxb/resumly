@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { track } from '@/lib/analytics-client';
 
 interface ExtensionPayload {
   jsonLd: {
@@ -52,6 +53,14 @@ export default function ImportPage() {
         setErrorMsg('Could not decode the imported data. Try importing again.');
         setStatus('error');
         return;
+      }
+
+      // Fire analytics — extension drove a job-import, with source hostname
+      try {
+        const host = new URL(payload.url || 'https://unknown').hostname.replace(/^www\./, '');
+        track('cta_click', { source: 'chrome_extension', action: 'import_started', host });
+      } catch {
+        track('cta_click', { source: 'chrome_extension', action: 'import_started' });
       }
 
       // Show what we're importing

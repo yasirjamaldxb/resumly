@@ -83,6 +83,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/ats-checker`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/cover-letter-builder`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/resume-keywords-extractor`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${BASE_URL}/chrome-extension`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE_URL}/chrome-extension/privacy`, lastModified: LAST_UPDATED, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/pricing`, lastModified: LAST_UPDATED, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/blog`, lastModified: LAST_UPDATED, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/privacy`, lastModified: LAST_UPDATED, changeFrequency: 'yearly', priority: 0.2 },

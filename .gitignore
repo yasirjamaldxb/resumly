@@ -44,3 +44,6 @@ next-env.d.ts
 
 .vercel
 test-pdfs/
+
+# Chrome Web Store build output
+resumly-extension.zip
