@@ -29,8 +29,8 @@ function Shield() {
 
 /* ── Feature lists ── */
 const FREE_FEATURES = [
-  '1 tailored resume',
-  '1 cover letter',
+  '3 tailored resumes',
+  '3 cover letters',
   'ATS optimization',
   'PDF download',
   '10 resume templates',
@@ -56,8 +56,8 @@ const PRO_FEATURES = [
 
 /* ── Comparison table data ── */
 const COMPARE_FEATURES = [
-  { name: 'Tailored resumes', free: '1', starter: '20', pro: 'Unlimited' },
-  { name: 'Cover letters', free: '1', starter: '10', pro: 'Unlimited' },
+  { name: 'Tailored resumes', free: '3', starter: '20', pro: 'Unlimited' },
+  { name: 'Cover letters', free: '3', starter: '10', pro: 'Unlimited' },
   { name: 'ATS optimization', free: true, starter: true, pro: true },
   { name: 'Resume templates', free: '10', starter: '10', pro: '10' },
   { name: 'PDF download', free: true, starter: true, pro: true },
@@ -72,7 +72,7 @@ const COMPARE_FEATURES = [
 const FAQS = [
   {
     q: 'Can I try Resumly for free?',
-    a: 'Yes! Create your first tailored resume and cover letter completely free. No credit card required.',
+    a: 'Yes! Create up to 3 tailored resumes and 3 cover letters completely free. No credit card required.',
   },
   {
     q: 'What counts as an "application"?',
@@ -184,7 +184,7 @@ export function PricingClient() {
           {/* Mobile: Pro first for conversion, Desktop: 3-col with Pro center */}
           <div className="grid md:grid-cols-3 gap-5 md:gap-6">
             {/* Free */}
-            <div className="border border-neutral-15 rounded-2xl p-7 bg-white flex flex-col order-2 md:order-1">
+            <div className="border border-neutral-15 rounded-2xl p-7 bg-white flex flex-col order-3 md:order-1">
               <h2 className="text-[20px] font-bold text-neutral-90">Free</h2>
               <p className="text-[13px] text-neutral-50 mt-1 mb-6">Try it out, zero risk</p>
 
@@ -211,8 +211,8 @@ export function PricingClient() {
               </ul>
             </div>
 
-            {/* Pro — recommended, center on desktop, first on mobile */}
-            <div className="relative border-2 border-primary rounded-2xl p-7 bg-primary/[0.02] flex flex-col order-1 md:order-2 md:scale-[1.04] md:shadow-xl md:z-10">
+            {/* Pro — recommended, RIGHT on desktop (after Starter so "Everything in Starter, plus" reads correctly), first on mobile */}
+            <div className="relative border-2 border-primary rounded-2xl p-7 bg-primary/[0.02] flex flex-col order-1 md:order-3 md:scale-[1.04] md:shadow-xl md:z-10">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                 <span className="bg-primary text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
                   Most Popular
@@ -253,8 +253,8 @@ export function PricingClient() {
               </ul>
             </div>
 
-            {/* Starter */}
-            <div className="border border-neutral-15 rounded-2xl p-7 bg-white flex flex-col order-3">
+            {/* Starter — center on desktop (between Free and Pro so Pro's "Everything in Starter" makes visual sense) */}
+            <div className="border border-neutral-15 rounded-2xl p-7 bg-white flex flex-col order-2 md:order-2">
               <h2 className="text-[20px] font-bold text-neutral-90">Starter</h2>
               <p className="text-[13px] text-neutral-50 mt-1 mb-6">For active job seekers</p>
 

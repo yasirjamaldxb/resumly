@@ -153,7 +153,7 @@ export default async function DashboardPage() {
           </div>
           <h3 className="text-[15px] font-semibold text-neutral-90 mb-1.5">Start your first application</h3>
           <p className="text-neutral-50 text-[13px] mb-6 max-w-md mx-auto leading-relaxed">
-            Paste a job link and get a tailored, ATS-optimized resume in under 5 minutes.
+            Paste a job link and get a tailored, ATS-optimized resume in under 60 seconds.
           </p>
           <div className="flex flex-col items-center gap-2.5">
             <Button asChild size="lg" className="gap-2 px-8">

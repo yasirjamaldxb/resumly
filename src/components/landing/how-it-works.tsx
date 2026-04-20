@@ -124,7 +124,7 @@ export function HowItWorks() {
           How Resumly works
         </h2>
         <p className="text-[14px] text-neutral-50 text-center mb-12 max-w-[480px] mx-auto">
-          From job link to tailored application in under 5 minutes. No templates to fill out manually.AI handles everything.
+          From job link to tailored application in under 60 seconds. No templates to fill out manually. AI handles everything.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-5">

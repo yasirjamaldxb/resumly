@@ -68,7 +68,7 @@ function MegaTemplates() {
         <Link href="/resume-builder" className="group block">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">{icons.builder}</div>
           <span className="text-[15px] font-semibold text-neutral-80 group-hover:text-primary transition-colors flex items-center gap-1">Resume Builder <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></span>
-          <p className="text-[13px] text-neutral-50 mt-1 leading-snug">Build powerful resumes in only 5 minutes with our easy to use Resume Builder.</p>
+          <p className="text-[13px] text-neutral-50 mt-1 leading-snug">Build powerful resumes in under 60 seconds with our easy to use Resume Builder.</p>
         </Link>
         <Link href="/ai-resume-builder" className="group block">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">{icons.ai}</div>
