@@ -614,20 +614,60 @@ const EXAMPLES: Record<string, ExampleData> = {
   },
 };
 
+// Category-based skill heuristics so programmatic pages get role-relevant skills
+// instead of generic filler. Matched by slug keyword.
+const CATEGORY_SKILLS: { match: RegExp; skills: string[] }[] = [
+  { match: /engineer|developer|devops|cloud|cyber|qa|sre|systems|network|database/, skills: ['JavaScript', 'Python', 'Git', 'SQL', 'AWS', 'Docker', 'REST APIs', 'Agile', 'CI/CD', 'Linux', 'Problem Solving', 'Code Review'] },
+  { match: /data|analyst|machine-learning|scientist/, skills: ['SQL', 'Python', 'Excel', 'Tableau', 'Power BI', 'Statistics', 'R', 'Data Visualization', 'A/B Testing', 'Machine Learning', 'Attention to Detail', 'Communication'] },
+  { match: /designer|photograph|video/, skills: ['Figma', 'Adobe Creative Suite', 'Photoshop', 'Illustrator', 'Sketch', 'Prototyping', 'User Research', 'Typography', 'Visual Design', 'Branding', 'Collaboration', 'Creative Problem Solving'] },
+  { match: /marketing|brand|seo|social-media|content|copy|public-relations/, skills: ['SEO', 'Content Strategy', 'Google Analytics', 'Social Media', 'Email Marketing', 'Copywriting', 'A/B Testing', 'Campaign Management', 'Brand Strategy', 'HubSpot', 'Communication', 'Creativity'] },
+  { match: /sales|account|business-development/, skills: ['Salesforce', 'HubSpot', 'Cold Calling', 'Negotiation', 'CRM', 'Pipeline Management', 'Account Management', 'Prospecting', 'Closing', 'Communication', 'Relationship Building', 'Quota Attainment'] },
+  { match: /nurse|medical|pharmac|dental|physical-therap|patient|caregiver|health|physician|veterinary|radiologic/, skills: ['Patient Care', 'Medical Records', 'EHR', 'HIPAA Compliance', 'CPR Certified', 'Vital Signs', 'Medication Administration', 'Clinical Assessment', 'Documentation', 'Empathy', 'Team Collaboration', 'Attention to Detail'] },
+  { match: /teacher|tutor|professor|education|librar|counselor/, skills: ['Lesson Planning', 'Classroom Management', 'Curriculum Development', 'Student Assessment', 'Differentiated Instruction', 'Parent Communication', 'Educational Technology', 'Google Classroom', 'Patience', 'Public Speaking', 'Mentoring', 'Subject Matter Expertise'] },
+  { match: /account|financ|auditor|tax|bookkeep|investment/, skills: ['Excel', 'QuickBooks', 'GAAP', 'Financial Reporting', 'Accounts Payable', 'Accounts Receivable', 'Reconciliation', 'Budgeting', 'Forecasting', 'SAP', 'Attention to Detail', 'Analytical Thinking'] },
+  { match: /project-manager|program-manager|operations/, skills: ['Agile', 'Scrum', 'Jira', 'Asana', 'Risk Management', 'Stakeholder Management', 'Budget Management', 'PMP', 'Roadmapping', 'Cross-functional Leadership', 'Communication', 'Problem Solving'] },
+  { match: /hr|recruiter|executive-assistant|administrative|office-manager/, skills: ['Workday', 'Recruiting', 'Onboarding', 'Employee Relations', 'HRIS', 'Benefits Administration', 'Compliance', 'Microsoft Office', 'Calendar Management', 'Confidentiality', 'Communication', 'Organization'] },
+  { match: /cdl|truck|delivery|uber|driver/, skills: ['CDL Class A', 'DOT Compliance', 'Route Planning', 'Safe Driving Record', 'Vehicle Inspection', 'Logbook Management', 'Customer Service', 'Time Management', 'GPS Navigation', 'Heavy Lifting', 'Reliability', 'Independence'] },
+  { match: /electrician|plumber|carpenter|hvac|welder|mechanic|construction|laborer/, skills: ['Hand Tools', 'Power Tools', 'Blueprint Reading', 'OSHA Certified', 'Safety Protocols', 'Problem Solving', 'Physical Stamina', 'Quality Control', 'Troubleshooting', 'Teamwork', 'Attention to Detail', 'Time Management'] },
+  { match: /warehouse|forklift|laborer/, skills: ['Forklift Operation', 'Inventory Management', 'Shipping & Receiving', 'OSHA Safety', 'Order Picking', 'Heavy Lifting', 'RF Scanner', 'Pallet Jack', 'Warehouse Management Systems', 'Teamwork', 'Reliability', 'Physical Stamina'] },
+  { match: /retail|cashier|sales-representative|customer-service|call-center|barista|bartender|server|waiter|host|cook|chef|flight-attendant/, skills: ['Customer Service', 'POS Systems', 'Cash Handling', 'Upselling', 'Conflict Resolution', 'Multitasking', 'Product Knowledge', 'Active Listening', 'Communication', 'Teamwork', 'Reliability', 'Friendly Demeanor'] },
+  { match: /lawyer|attorney|paralegal|legal/, skills: ['Legal Research', 'LexisNexis', 'Westlaw', 'Contract Drafting', 'Litigation Support', 'Case Management', 'Document Review', 'Court Filings', 'Confidentiality', 'Written Communication', 'Analytical Thinking', 'Attention to Detail'] },
+  { match: /police|firefighter|security|military/, skills: ['Public Safety', 'Emergency Response', 'Conflict De-escalation', 'Report Writing', 'Leadership Under Pressure', 'Physical Fitness', 'First Aid / CPR', 'Investigation', 'Teamwork', 'Integrity', 'Discipline', 'Situational Awareness'] },
+  { match: /social-work|counselor/, skills: ['Case Management', 'Client Assessment', 'Crisis Intervention', 'Resource Referral', 'Documentation', 'HIPAA Compliance', 'Advocacy', 'Empathy', 'Active Listening', 'Cultural Competency', 'Collaboration', 'Patience'] },
+  { match: /real-estate|insurance|event|freelancer|personal-trainer|yoga/, skills: ['Client Relationship Management', 'Networking', 'Negotiation', 'Sales', 'Scheduling', 'Social Media', 'CRM', 'Business Development', 'Communication', 'Self-Motivation', 'Adaptability', 'Customer Service'] },
+  { match: /student|internship|entry-level|no-experience|recent-graduate|career-change/, skills: ['Microsoft Office', 'Google Workspace', 'Communication', 'Teamwork', 'Time Management', 'Problem Solving', 'Adaptability', 'Research', 'Writing', 'Attention to Detail', 'Willingness to Learn', 'Organization'] },
+];
+
+function skillsForSlug(slug: string): string[] {
+  for (const { match, skills } of CATEGORY_SKILLS) {
+    if (match.test(slug)) return skills;
+  }
+  return ['Communication', 'Problem Solving', 'Time Management', 'Teamwork', 'Leadership', 'Microsoft Office', 'Attention to Detail', 'Adaptability', 'Critical Thinking', 'Organization', 'Initiative', 'Collaboration'];
+}
+
 function getExampleData(slug: string): ExampleData {
   if (EXAMPLES[slug]) return EXAMPLES[slug];
   const title = slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   return {
     title,
-    description: `A strong ${title} resume highlights your most relevant experience, skills, and achievements for the role. Here's how to create a resume that gets past ATS filters and impresses hiring managers in 2026.`,
-    keySkills: ['Communication', 'Problem Solving', 'Time Management', 'Teamwork', 'Leadership', 'Microsoft Office', 'Attention to Detail', 'Customer Service'],
-    sections: ['Professional Summary', 'Work Experience', 'Education', 'Skills'],
+    description: `A strong ${title} resume highlights your most relevant experience, skills, and measurable achievements for the role. This guide shows you exactly what to include, which keywords ATS systems look for, and how to land more interviews in 2026.`,
+    keySkills: skillsForSlug(slug),
+    sections: ['Professional Summary', 'Work Experience', 'Skills', 'Education', 'Certifications', 'Projects'],
     tips: [
-      'Tailor your resume to the specific job description using keywords from the posting',
-      'Quantify achievements with numbers, percentages, and dollar amounts',
-      'Start every bullet point with a strong action verb',
-      'Keep it to 1-2 pages maximum. Recruiters spend 6-7 seconds on first review',
-      'Proofread carefully. Typos are an immediate disqualifier for most hiring managers',
+      `Use "${title}" verbatim in your resume headline and summary — ATS systems match exact job titles`,
+      'Mirror keywords from the job description. 75% of resumes are rejected by ATS for missing keywords',
+      'Quantify every achievement with numbers, percentages, dollar amounts, or team sizes',
+      'Start every bullet with a strong action verb — Led, Built, Designed, Increased, Reduced, Launched',
+      'Keep it to 1-2 pages. Recruiters spend 6-7 seconds on first review — make every line earn its place',
+      'Use a clean, single-column format. Avoid tables, text boxes, headers/footers, and graphics',
+      'Save as a text-based PDF (not scanned image) to stay parseable by ATS',
+      'Proofread carefully — typos are an immediate disqualifier for most hiring managers',
+    ],
+    sampleBullets: [
+      `Delivered consistent results as a ${title.toLowerCase()} by applying best practices and continuous improvement`,
+      `Collaborated cross-functionally to complete high-impact projects on time and under budget`,
+      `Mentored junior colleagues and contributed to team process improvements that increased efficiency by 20%`,
+      `Recognized for exceptional performance and dedication to quality in the ${title.toLowerCase()} role`,
     ],
   };
 }
