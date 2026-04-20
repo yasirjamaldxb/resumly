@@ -1,0 +1,58 @@
+# Resumly
+
+> Resumly is a free AI-powered resume builder that helps job seekers create ATS-friendly resumes, tailor them to specific job postings, and generate matching cover letters — all in under 90 seconds. Built for 2026 hiring, with 10 professionally designed templates and a built-in ATS checker.
+
+Resumly tailors resumes to any job URL. Paste a LinkedIn, Indeed, or company job link and the platform parses the job, suggests the right keywords, optimizes your resume for ATS, and generates a matching cover letter. The free tier covers the full flow (build, optimize, download PDF) with no credit card required.
+
+## Core product pages
+- [Resume Builder](https://resumly.app/resume-builder): Free online resume builder with 10 ATS-friendly templates, live preview, and PDF export.
+- [AI Resume Builder](https://resumly.app/ai-resume-builder): Generates a complete resume from a job URL + your background in under 60 seconds.
+- [Resume Templates](https://resumly.app/resume-templates): 10 professionally designed, recruiter-approved resume templates (Modern, Classic, Creative, Minimal, Executive, Technical, Academic, Chronological, Functional, Hybrid).
+- [ATS Checker](https://resumly.app/ats-checker): Free ATS compatibility scanner — paste a resume, get 20+ quality checks and a match score.
+- [Cover Letter Builder](https://resumly.app/cover-letter-builder): AI-generated cover letters personalized to the job and your resume.
+- [Pricing](https://resumly.app/pricing): Free plan + Pro plan at $9.99/month (unlimited applications, tracking, interview prep).
+
+## Resume examples by role
+- [Software Engineer](https://resumly.app/resume-examples/software-engineer)
+- [Nurse](https://resumly.app/resume-examples/nurse)
+- [Student](https://resumly.app/resume-examples/student)
+- [Marketing Manager](https://resumly.app/resume-examples/marketing-manager)
+- [Data Scientist](https://resumly.app/resume-examples/data-scientist)
+- [Product Manager](https://resumly.app/resume-examples/product-manager)
+- [Web Developer](https://resumly.app/resume-examples/web-developer)
+- [UX Designer](https://resumly.app/resume-examples/ux-designer)
+- [Accountant](https://resumly.app/resume-examples/accountant)
+- [Project Manager](https://resumly.app/resume-examples/project-manager)
+- [Teacher](https://resumly.app/resume-examples/teacher)
+- [High School Student](https://resumly.app/resume-examples/high-school-student)
+- [Internship](https://resumly.app/resume-examples/internship)
+- [Customer Service](https://resumly.app/resume-examples/customer-service)
+- [Sales Manager](https://resumly.app/resume-examples/sales-manager)
+- [Warehouse Worker](https://resumly.app/resume-examples/warehouse-worker)
+- [Medical Assistant](https://resumly.app/resume-examples/medical-assistant)
+- [Pharmacist](https://resumly.app/resume-examples/pharmacist)
+- [Financial Analyst](https://resumly.app/resume-examples/financial-analyst)
+- [Graphic Designer](https://resumly.app/resume-examples/graphic-designer)
+- [HR Manager](https://resumly.app/resume-examples/hr-manager)
+- [Business Analyst](https://resumly.app/resume-examples/business-analyst)
+
+## Guides and articles
+- [How to Write a Resume](https://resumly.app/blog/how-to-write-a-resume): Step-by-step resume writing guide for 2026.
+- [ATS Resume Guide](https://resumly.app/blog/ats-resume-guide): How to beat applicant tracking systems.
+- [Resume Summary Examples](https://resumly.app/blog/resume-summary-examples): 30+ professional summary examples by industry.
+- [Resume Skills](https://resumly.app/blog/resume-skills): Hard skills vs soft skills and how to list them.
+- [How to Write a Cover Letter](https://resumly.app/blog/how-to-write-a-cover-letter): Cover letter structure, tone, and examples.
+- [Resume Action Words](https://resumly.app/blog/resume-action-words): 200+ action verbs to make bullets stronger.
+- [CV vs Resume](https://resumly.app/blog/cv-vs-resume): Key differences and when to use each.
+- [Resume with No Experience](https://resumly.app/blog/resume-with-no-experience): How to write your first resume as a student or career changer.
+- [Resume Tips](https://resumly.app/blog/resume-tips): 25 tips recruiters wish you knew.
+
+## About
+- Built in 2026, free to use, no credit card required for the full resume + PDF download flow.
+- Uses Google Gemini 2.5 for AI-powered tailoring and cover letter generation.
+- Stores data in Supabase (encrypted at rest, RLS-secured per user).
+- Contact: support@resumly.app
+
+## Policies
+- [Privacy Policy](https://resumly.app/privacy)
+- [Terms of Service](https://resumly.app/terms)

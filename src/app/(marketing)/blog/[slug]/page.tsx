@@ -5,6 +5,11 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { BLOG_POSTS } from '../page';
+import {
+  ArticleSchema,
+  BreadcrumbListSchema,
+  FAQPageSchema,
+} from '@/components/seo/schema';
 
 const BLOG_CONTENT: Record<string, { intro: string; sections: { heading: string; content: string }[] }> = {
   'how-to-write-a-resume': {
@@ -375,23 +380,37 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </article>
 
-        {/* Article structured data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Article',
-              headline: post.title,
-              description: post.description,
-              datePublished: post.date,
-              dateModified: post.date,
-              author: { '@type': 'Organization', name: 'Resumly Careers Team', url: 'https://resumly.app' },
-              publisher: { '@type': 'Organization', name: 'Resumly', url: 'https://resumly.app' },
-              mainEntityOfPage: { '@type': 'WebPage', '@id': `https://resumly.app/blog/${slug}` },
-            }),
-          }}
+        {/* Structured data — BlogPosting + Breadcrumb + FAQ (when content exists) */}
+        <ArticleSchema
+          type="BlogPosting"
+          headline={post.title}
+          description={post.description}
+          url={`https://resumly.app/blog/${slug}`}
+          datePublished={post.date}
+          dateModified={post.date}
+          authorName="Resumly Careers Team"
+          wordCount={
+            content
+              ? content.intro.split(/\s+/).length +
+                content.sections.reduce((n, s) => n + s.content.split(/\s+/).length, 0)
+              : undefined
+          }
         />
+        <BreadcrumbListSchema
+          items={[
+            { name: 'Home', url: 'https://resumly.app' },
+            { name: 'Blog', url: 'https://resumly.app/blog' },
+            { name: post.title, url: `https://resumly.app/blog/${slug}` },
+          ]}
+        />
+        {content && (
+          <FAQPageSchema
+            items={content.sections.slice(0, 6).map((s) => ({
+              question: s.heading.endsWith('?') ? s.heading : `${s.heading}?`,
+              answer: s.content,
+            }))}
+          />
+        )}
       </main>
       <Footer />
     </>

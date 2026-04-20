@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { GoogleAnalytics } from '@/components/analytics/google-analytics';
+import { OrganizationSchema, WebSiteSchema, SoftwareApplicationSchema } from '@/components/seo/schema';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -62,6 +63,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <GoogleAnalytics />
+        <OrganizationSchema />
+        <WebSiteSchema />
+        <SoftwareApplicationSchema />
         {children}
       </body>
     </html>

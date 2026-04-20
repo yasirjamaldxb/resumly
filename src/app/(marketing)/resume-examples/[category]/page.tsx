@@ -3,6 +3,12 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
+import {
+  ArticleSchema,
+  BreadcrumbListSchema,
+  FAQPageSchema,
+  HowToSchema,
+} from '@/components/seo/schema';
 
 interface ExampleData {
   title: string;
@@ -862,21 +868,58 @@ export default async function ResumeExamplePage({ params }: Props) {
       </main>
       <Footer />
 
-      {/* Structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: `${data.title} Resume Example for 2026`,
-            description: data.description,
-            author: { '@type': 'Organization', name: 'Resumly' },
-            publisher: { '@type': 'Organization', name: 'Resumly', url: 'https://resumly.app' },
-            datePublished: '2026-01-01',
-            dateModified: new Date().toISOString().split('T')[0],
-          }),
-        }}
+      {/* Structured data — Article + Breadcrumb + FAQ + HowTo */}
+      <ArticleSchema
+        headline={`${data.title} Resume Example for 2026`}
+        description={data.description}
+        url={`https://resumly.app/resume-examples/${category}`}
+        datePublished="2026-01-01"
+        dateModified={new Date().toISOString().split('T')[0]}
+        type="Article"
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: 'Home', url: 'https://resumly.app' },
+          { name: 'Resume Examples', url: 'https://resumly.app/resume-examples' },
+          { name: `${data.title} Resume`, url: `https://resumly.app/resume-examples/${category}` },
+        ]}
+      />
+      <FAQPageSchema
+        items={[
+          {
+            question: `What should a ${data.title} resume include?`,
+            answer: `A strong ${data.title} resume should include: ${data.sections.join(', ')}. Focus on quantified achievements, relevant keywords from the job description, and a clean ATS-friendly format.`,
+          },
+          {
+            question: `What are the most important skills for a ${data.title} resume in 2026?`,
+            answer: `Top skills to include on a ${data.title} resume: ${data.keySkills.slice(0, 8).join(', ')}. Tailor the skills list to match the specific job posting you're applying to.`,
+          },
+          {
+            question: `How long should a ${data.title} resume be?`,
+            answer: `For most ${data.title} roles, keep your resume to one page if you have under 10 years of experience. Senior candidates with 10+ years can extend to two pages. Never go beyond two pages.`,
+          },
+          {
+            question: `Will a ${data.title} resume pass ATS?`,
+            answer: `Yes — if you use standard section headings, mirror keywords from the job description verbatim, avoid tables and text boxes, and submit as a text-based PDF. Resumly's templates are built to pass Workday, Greenhouse, and Lever ATS systems with scores of 95+.`,
+          },
+          {
+            question: `Should I include a summary on my ${data.title} resume?`,
+            answer: `Yes. A 2-3 sentence professional summary at the top of your ${data.title} resume helps recruiters quickly see your fit. Include your years of experience, top skills, and a measurable achievement.`,
+          },
+          {
+            question: `Is Resumly free for ${data.title} resumes?`,
+            answer: `Yes. Resumly is free to build, optimize, and download your ${data.title} resume as a PDF — no credit card required. Premium features like unlimited applications and interview prep are available on the Pro plan.`,
+          },
+        ]}
+      />
+      <HowToSchema
+        name={`How to write a ${data.title} resume`}
+        description={`Step-by-step guide to writing a ${data.title} resume that passes ATS and lands interviews in 2026.`}
+        totalTime="PT15M"
+        steps={data.sections.map((section, i) => ({
+          name: `Step ${i + 1}: ${section}`,
+          text: `Complete the ${section} section of your ${data.title} resume. Use the guidance and examples on this page to fill it out correctly.`,
+        }))}
       />
     </>
   );
